@@ -11,6 +11,7 @@ import ExperiencesPage from "./pages/experiences/page.tsx";
 import TourPage from "./pages/tour/page.tsx";
 import GalleryPage from "./pages/gallery/page.tsx";
 import ContactPage from "./pages/contact/page.tsx";
+import AdminPage from "./pages/admin/page.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 export default function App() {
@@ -29,6 +30,7 @@ export default function App() {
         <Route path="/tour" element={<TourPage />} />
         <Route path="/gallery" element={<GalleryPage />} />
         <Route path="/contact" element={<ContactPage />} />
+        <Route path="/admin" element={<AdminPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

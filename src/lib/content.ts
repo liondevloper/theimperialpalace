@@ -21,6 +21,9 @@ const TARGETS: Record<ContentKey, Row[] | Row> = {
   contact: CONTACT_INFORMATION,
 };
 
+// Snapshot of the built-in content, taken before any saved edits are applied.
+const DEFAULTS: Record<ContentKey, Row[] | Row> = structuredClone(TARGETS);
+
 const isContentKey = (value: unknown): value is ContentKey => CONTENT_KEYS.some((k) => k === value);
 const isRow = (value: unknown): value is Row => typeof value === "object" && value !== null && !Array.isArray(value);
 
@@ -57,14 +60,25 @@ export async function loadContent(): Promise<void> {
   for (const row of data) if (isContentKey(row.key)) applyContent(row.key, row.data);
 }
 
-/** Tidies a section before saving: slugs, and tour hotspots that point to a removed location. */
+// Keeps slugs and ids unique so two items never share a page address.
+function uniqueBy(rows: Row[], field: string): Row[] {
+  const seen = new Map<string, number>();
+  return rows.map((r) => {
+    const base = String(r[field]);
+    const count = (seen.get(base) ?? 0) + 1;
+    seen.set(base, count);
+    return count === 1 ? r : { ...r, [field]: `${base}-${count}` };
+  });
+}
+
+/** Tidies a section before saving: unique slugs, and tour hotspots that point to a removed location. */
 export function normalize(key: ContentKey, data: Row[] | Row): Row[] | Row {
   if (!Array.isArray(data)) return data;
   if (key === "rooms" || key === "restaurants") {
-    return data.map((r) => ({ ...r, slug: slugify(typeof r.slug === "string" && r.slug.trim() ? r.slug : String(r.name ?? "")) }));
+    return uniqueBy(data.map((r) => ({ ...r, slug: slugify(typeof r.slug === "string" && r.slug.trim() ? r.slug : String(r.name ?? "")) })), "slug");
   }
   if (key === "tour") {
-    const withIds = data.map((r) => ({ ...r, id: slugify(typeof r.id === "string" && r.id.trim() ? r.id : String(r.label ?? "")) }));
+    const withIds = uniqueBy(data.map((r) => ({ ...r, id: slugify(typeof r.id === "string" && r.id.trim() ? r.id : String(r.label ?? "")) })), "id");
     const ids = new Set(withIds.map((r) => r.id));
     return withIds.map((r) => ({
       ...r,
@@ -85,7 +99,9 @@ export async function saveContent(key: ContentKey, data: Row[] | Row): Promise<s
 
 export async function resetContent(key: ContentKey): Promise<string | null> {
   const { error } = await supabase.from("site_content").delete().eq("key", key);
-  return error ? "Could not reset this section." : null;
+  if (error) return "Could not reset this section.";
+  applyContent(key, structuredClone(DEFAULTS[key]));
+  return null;
 }
 
 const MAX_UPLOAD = 5 * 1024 * 1024;
@@ -94,7 +110,8 @@ const MAX_UPLOAD = 5 * 1024 * 1024;
 export async function uploadImage(file: File): Promise<string> {
   if (!file.type.startsWith("image/")) throw new Error("Please choose an image file.");
   if (file.size > MAX_UPLOAD) throw new Error("Image must be smaller than 5 MB.");
-  const path = `${Date.now()}-${slugify(file.name.replace(/\.[^.]+$/, "")) || "image"}.${file.name.split(".").pop()?.toLowerCase() ?? "jpg"}`;
+  const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
+  const path = `${Date.now()}-${slugify(file.name.replace(/\.[^.]+$/, "")) || "image"}.${ext}`;
   const { error } = await supabase.storage.from("site-media").upload(path, file, { contentType: file.type });
   if (error) throw new Error("Upload failed. Please try again.");
   return supabase.storage.from("site-media").getPublicUrl(path).data.publicUrl;
