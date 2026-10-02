@@ -3,7 +3,8 @@ import type { ChangeEvent, FormEvent } from "react";
 import { Check } from "lucide-react";
 import { FORM_CONFIGS, todayIso, validate } from "../lib/forms.ts";
 import type { EnquiryKind, FormField } from "../lib/forms.ts";
-import { DEMO_DISCLAIMER, THANK_YOU } from "../lib/site-config.ts";
+import { submitEnquiry } from "../lib/enquiries.ts";
+import { THANK_YOU } from "../lib/site-config.ts";
 import { BTN, FIELD, LABEL } from "../lib/styles.ts";
 
 type Props = { kind: EnquiryKind; defaults?: Record<string, string>; showHeading?: boolean };
@@ -20,6 +21,8 @@ export default function EnquiryForm({ kind, defaults = {}, showHeading = true }:
   const [values, setValues] = useState(() => initialValues(config.fields, defaults));
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [submitError, setSubmitError] = useState("");
   const fieldId = (name: string) => `${uid}-${name}`;
 
   const onChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -28,7 +31,7 @@ export default function EnquiryForm({ kind, defaults = {}, showHeading = true }:
     setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
-  const onSubmit = (event: FormEvent) => {
+  const onSubmit = async (event: FormEvent) => {
     event.preventDefault();
     const found = validate(config.fields, values);
     setErrors(found);
@@ -37,7 +40,12 @@ export default function EnquiryForm({ kind, defaults = {}, showHeading = true }:
       document.getElementById(fieldId(firstInvalid.name))?.focus();
       return;
     }
-    setSent(true);
+    setSending(true);
+    setSubmitError("");
+    const result = await submitEnquiry(kind, values);
+    setSending(false);
+    if (result.ok) setSent(true);
+    else setSubmitError(result.message);
   };
 
   if (sent) {
@@ -45,7 +53,7 @@ export default function EnquiryForm({ kind, defaults = {}, showHeading = true }:
       <div className="flex flex-col items-center py-8 text-center" role="status">
         <span className="mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-[#c9a84c] text-[#14110c]"><Check className="h-7 w-7" /></span>
         <h3 className="font-serif text-3xl font-light text-foreground">{THANK_YOU}</h3>
-        <p className="mt-3 max-w-sm text-sm leading-6 text-muted-foreground">{DEMO_DISCLAIMER}</p>
+        <p className="mt-3 max-w-sm text-sm leading-6 text-muted-foreground">Our team will get back to you shortly.</p>
       </div>
     );
   }
@@ -76,8 +84,8 @@ export default function EnquiryForm({ kind, defaults = {}, showHeading = true }:
           </div>
         );
       })}
-      <button type="submit" className={`${BTN.gold} sm:col-span-2`}>{config.submitLabel}</button>
-      <p className="text-xs leading-5 text-muted-foreground sm:col-span-2">{DEMO_DISCLAIMER}</p>
+      {submitError && <p role="alert" className="text-sm text-destructive sm:col-span-2">{submitError}</p>}
+      <button type="submit" disabled={sending} className={`${BTN.gold} sm:col-span-2 disabled:opacity-60`}>{sending ? "Sending..." : config.submitLabel}</button>
     </form>
   );
 }
