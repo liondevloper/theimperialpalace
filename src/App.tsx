@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import ScrollToTop from "./components/scroll-to-top.tsx";
 import Index from "./pages/Index.tsx";
 import StayPage from "./pages/stay/page.tsx";
 import RoomDetailPage from "./pages/stay/room-detail.tsx";
@@ -10,10 +11,12 @@ import ExperiencesPage from "./pages/experiences/page.tsx";
 import TourPage from "./pages/tour/page.tsx";
 import GalleryPage from "./pages/gallery/page.tsx";
 import ContactPage from "./pages/contact/page.tsx";
+import NotFound from "./pages/NotFound.tsx";
 
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/stay" element={<StayPage />} />
@@ -26,6 +29,7 @@ export default function App() {
         <Route path="/tour" element={<TourPage />} />
         <Route path="/gallery" element={<GalleryPage />} />
         <Route path="/contact" element={<ContactPage />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );

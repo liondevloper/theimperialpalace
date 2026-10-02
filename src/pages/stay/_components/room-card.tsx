@@ -1,25 +1,22 @@
 import { Link } from "react-router-dom";
-import { BedDouble, Coffee, ShieldCheck, Wifi } from "lucide-react";
-import type { Room } from "../../lib/hotel-data.ts";
+import Img from "../../../components/img.tsx";
+import type { Room } from "../../../lib/hotel-data.ts";
+import { BTN } from "../../../lib/styles.ts";
 
-const AMENITY_ICONS = [Wifi, BedDouble, Coffee, ShieldCheck];
 export default function RoomCard({ room }: { room: Room }) {
   return (
-    <article className="group overflow-hidden border border-border bg-card transition-colors hover:border-[#c9a84c]/40">
-      <Link to={`/stay/${room.slug}`} className="relative block h-[260px] overflow-hidden">
-        <img src={room.images[0]} alt={room.name} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
-        {room.badge && <span className="absolute right-4 top-4 bg-[#c9a84c] px-3 py-1 text-[9px] uppercase tracking-[0.2em] text-[#1a1510]">{room.badge}</span>}
+    <article className="group flex h-full flex-col border border-border bg-card">
+      <Link to={`/stay/${room.slug}`} className="relative block aspect-[4/3] overflow-hidden" aria-label={`View ${room.name}`}>
+        <Img src={room.images[0]} alt={`${room.name} at The Imperial Palace`} width={800} height={600} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+        {room.badge && <span className="absolute right-3 top-3 bg-[#c9a84c] px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-[#14110c]">{room.badge}</span>}
       </Link>
-      <div className="p-6">
-        <div className="mb-2 flex items-start justify-between gap-3">
+      <div className="flex flex-1 flex-col p-6">
+        <div className="flex items-baseline justify-between gap-3">
           <h3 className="font-serif text-2xl font-light text-foreground">{room.name}</h3>
-          <span className="shrink-0 pt-2 text-[10px] text-muted-foreground">{room.size}</span>
+          <span className="shrink-0 text-xs text-muted-foreground">{room.size}</span>
         </div>
-        <p className="min-h-[72px] text-sm leading-6 text-muted-foreground">{room.desc}</p>
-        <div className="my-5 flex flex-wrap gap-3">
-          {room.amenities.slice(0, 4).map((amenity, index) => { const Icon = AMENITY_ICONS[index] ?? Wifi; return <span key={amenity} title={amenity} className="inline-flex items-center gap-1.5 text-[10px] text-muted-foreground"><Icon className="h-3.5 w-3.5 text-[#9a7730]" />{amenity}</span>; })}
-        </div>
-        <Link to={`/stay/${room.slug}`} className="inline-flex border border-[#c9a84c] px-5 py-2.5 text-[10px] uppercase tracking-[0.2em] text-[#9a7730] transition-colors hover:bg-[#c9a84c] hover:text-[#1a1510]">View Details</Link>
+        <p className="mt-3 flex-1 text-sm leading-6 text-muted-foreground">{room.desc}</p>
+        <Link to={`/stay/${room.slug}`} className={`${BTN.outline} mt-6 w-fit`}>View details</Link>
       </div>
     </article>
   );

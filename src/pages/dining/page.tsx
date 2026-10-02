@@ -1,33 +1,31 @@
 import { useState } from "react";
-import { Clock3, Utensils } from "lucide-react";
+import { Clock3 } from "lucide-react";
 import PageLayout from "../../components/page-layout.tsx";
 import EnquiryModal from "../../components/enquiry-modal.tsx";
-import { OutlineButton, PageHero, Reveal, SectionHeading } from "../../components/hotel-page.tsx";
-import { DINING_VENUES } from "../../lib/hotel-data.ts";
+import Img from "../../components/img.tsx";
+import { PageHero, Reveal, SectionHeading } from "../../components/hotel-page.tsx";
+import { RESTAURANTS } from "../../lib/hotel-data.ts";
+import { BTN } from "../../lib/styles.ts";
 
 export default function DiningPage() {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [venueName, setVenueName] = useState("our dining venues");
-  const openEnquiry = (name: string) => { setVenueName(name); setModalOpen(true); };
+  const [venue, setVenue] = useState<string | null>(null);
   return (
-    <PageLayout>
-      <PageHero eyebrow="A table for every occasion" title="The pleasures of the table" image={DINING_VENUES[0].image} subtitle="Four distinctive ways to savour the moment, from leisurely meals to something sweet after supper." />
+    <PageLayout title="Dining | The Imperial Palace Rajkot" description="The Courtyard, Senso, Delicacy and in-room dining at The Imperial Palace, Rajkot.">
+      <PageHero eyebrow="A table for every occasion" title="The pleasures of the table" image={RESTAURANTS[0].image} subtitle="Four distinctive ways to savour the moment, from leisurely meals to something sweet after supper." />
       <section className="px-5 py-16 md:py-24 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <Reveal><SectionHeading eyebrow="Culinary experiences" title="A taste of the palace" description="Gather, linger, and discover a menu of memorable moments across our dining venues." align="center" /></Reveal>
-          <div className="space-y-16 md:space-y-24">
-            {DINING_VENUES.map((venue, index) => (
-              <Reveal key={venue.name}>
-                <article className={`grid overflow-hidden border border-border md:grid-cols-2 ${index % 2 ? "md:[&>div:first-child]:order-2" : ""}`}>
-                  <div className="group min-h-[300px] overflow-hidden">
-                    <img src={venue.image} alt={venue.name} className="h-full min-h-[300px] w-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                  </div>
-                  <div className="flex flex-col justify-center p-7 md:p-12">
-                    <p className="mb-4 flex items-center gap-2 text-[10px] uppercase tracking-[0.25em] text-[#9a7730]"><Utensils className="h-3.5 w-3.5" />{venue.category}</p>
-                    <h2 className="font-serif text-3xl font-light text-foreground md:text-4xl">{venue.name}</h2>
-                    <p className="mt-5 text-sm leading-7 text-muted-foreground">{venue.description}</p>
-                    <p className="mt-5 flex items-center gap-2 text-xs text-muted-foreground"><Clock3 className="h-4 w-4 text-[#9a7730]" />{venue.timing}</p>
-                    <OutlineButton onClick={() => openEnquiry(venue.name)} className="mt-7 w-fit">Make a Reservation</OutlineButton>
+          <Reveal><SectionHeading eyebrow="Culinary experiences" title="A taste of the palace" align="center" /></Reveal>
+          <div className="space-y-14 md:space-y-20">
+            {RESTAURANTS.map((r, index) => (
+              <Reveal key={r.slug}>
+                <article id={r.slug} className="grid scroll-mt-24 items-center gap-8 md:grid-cols-2 md:gap-14">
+                  <Img src={r.image} alt={`${r.name}, ${r.category}`} width={1000} height={750} className={`aspect-[4/3] w-full object-cover ${index % 2 ? "md:order-2" : ""}`} />
+                  <div>
+                    <p className="text-[11px] uppercase tracking-[0.25em] text-[#6f5318]">{r.category}</p>
+                    <h2 className="mt-3 font-serif text-3xl font-light text-foreground md:text-4xl">{r.name}</h2>
+                    <p className="mt-5 text-sm leading-7 text-muted-foreground">{r.description}</p>
+                    <p className="mt-5 flex items-center gap-2 text-sm text-muted-foreground"><Clock3 className="h-4 w-4 text-[#6f5318]" />{r.timing}</p>
+                    <button type="button" onClick={() => setVenue(r.name)} className={`${BTN.outline} mt-7`}>Make a reservation</button>
                   </div>
                 </article>
               </Reveal>
@@ -35,7 +33,7 @@ export default function DiningPage() {
           </div>
         </div>
       </section>
-      <EnquiryModal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={`Reserve ${venueName}`} subtitle="Let us know when you would like to visit." />
+      <EnquiryModal kind="dining" open={venue !== null} onClose={() => setVenue(null)} defaults={venue ? { restaurant: venue } : {}} />
     </PageLayout>
   );
 }
