@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import PageLayout from "../../components/page-layout.tsx";
 import Modal from "../../components/modal.tsx";
 import Img from "../../components/img.tsx";
@@ -12,18 +12,20 @@ export default function GalleryPage() {
   const [active, setActive] = useState<number | null>(null);
   const filtered = useMemo(() => GALLERY.filter((g) => category === "All" || g.category === category), [category]);
   const current = active !== null ? filtered[active] : undefined;
-  const step = (dir: number) => setActive((i) => (i === null ? i : (i + dir + filtered.length) % filtered.length));
+  const count = filtered.length;
 
   useEffect(() => {
     if (active === null) return;
+    const step = (dir: number) => setActive((i) => (i === null ? i : (i + dir + count) % count));
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowRight") step(1);
       if (e.key === "ArrowLeft") step(-1);
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [active, filtered.length]);
+  }, [active, count]);
+
+  const step = (dir: number) => setActive((i) => (i === null ? i : (i + dir + count) % count));
 
   return (
     <PageLayout title="Gallery | The Imperial Palace Rajkot" description="Photographs of the rooms, dining, celebrations and wellness spaces at The Imperial Palace, Rajkot.">
@@ -58,7 +60,6 @@ export default function GalleryPage() {
           </div>
         )}
       </Modal>
-      <span className="hidden"><X /></span>
     </PageLayout>
   );
 }
