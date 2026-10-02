@@ -1,57 +1,54 @@
 import { useState } from "react";
-import { BriefcaseBusiness, UsersRound } from "lucide-react";
+import { Briefcase, Users } from "lucide-react";
 import PageLayout from "../../components/page-layout.tsx";
 import EnquiryModal from "../../components/enquiry-modal.tsx";
-import { GoldButton, PageHero, Reveal, SectionHeading } from "../../components/hotel-page.tsx";
-import { EVENT_VENUES, HOTEL_IMAGES } from "../../lib/hotel-data.ts";
+import Img from "../../components/img.tsx";
+import { PageHero, Reveal, SectionHeading } from "../../components/hotel-page.tsx";
+import { HOTEL_IMAGES, VENUES } from "../../lib/hotel-data.ts";
+import { BTN } from "../../lib/styles.ts";
 
 const PACKAGES = [
-  { title: "Day Meeting", detail: "A focused setting with refreshments and attentive support." },
-  { title: "Residential Conference", detail: "Meeting spaces and comfortable stays, brought together seamlessly." },
-  { title: "Social Celebration", detail: "Thoughtful hospitality for the gatherings worth remembering." },
+  { title: "Day meeting", detail: "A focused setting with refreshments and attentive support." },
+  { title: "Residential conference", detail: "Meeting spaces and comfortable stays, brought together seamlessly." },
+  { title: "Social celebration", detail: "Thoughtful hospitality for the gatherings worth remembering." },
 ];
 
 export default function EventsPage() {
-  const [modalOpen, setModalOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   return (
-    <PageLayout>
-      <PageHero eyebrow="Gather with distinction" title="Events & Banquets" image={HOTEL_IMAGES.ballroom} subtitle="Versatile spaces, polished service, and the details that bring your gathering together." />
+    <PageLayout title="Events & Banquets | The Imperial Palace Rajkot" description="Ballrooms, meeting suites and open-air venues for corporate events and celebrations at The Imperial Palace, Rajkot.">
+      <PageHero eyebrow="Gather with distinction" title="Events & Banquets" image={HOTEL_IMAGES.ballroom} subtitle="Versatile spaces, polished service and the details that bring your gathering together." />
       <section className="px-5 py-16 md:py-24 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <Reveal><SectionHeading eyebrow="Spaces to gather" title="Find the right setting" description="An elegant ballroom, an open-air deck, or an intimate meeting suite: each venue has room for your event to feel entirely its own." align="center" /></Reveal>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {EVENT_VENUES.map((venue, index) => (
-              <Reveal key={venue.name} delay={index * 0.04}>
-                <article className="group h-full overflow-hidden border border-border transition-colors hover:border-[#c9a84c]/40">
-                  <div className="h-56 overflow-hidden"><img src={venue.image} alt={venue.name} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" /></div>
-                  <div className="p-6">
-                    <h3 className="font-serif text-2xl text-foreground">{venue.name}</h3>
-                    <p className="mt-3 text-xs uppercase tracking-wider text-[#9a7730]">{venue.types}</p>
-                    <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted-foreground">
-                      <span className="flex items-center gap-1.5"><UsersRound className="h-4 w-4 text-[#9a7730]" />{venue.capacity}</span>
-                      <span>{venue.size}</span>
-                    </div>
-                  </div>
+          <Reveal><SectionHeading eyebrow="Spaces to gather" title="Find the right setting" align="center" /></Reveal>
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {VENUES.map((v, i) => (
+              <Reveal key={v.name} delay={(i % 3) * 0.05}>
+                <article>
+                  <Img src={v.image} alt={v.name} width={800} height={600} className="aspect-[4/3] w-full object-cover" />
+                  <h3 className="mt-4 font-serif text-2xl text-foreground">{v.name}</h3>
+                  <p className="mt-2 text-[11px] uppercase tracking-[0.18em] text-[#6f5318]">{v.types}</p>
+                  <p className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground"><span className="flex items-center gap-1.5"><Users className="h-4 w-4 text-[#6f5318]" />{v.capacity}</span><span>{v.size}</span></p>
                 </article>
               </Reveal>
             ))}
           </div>
           <div className="mt-20">
-            <Reveal><SectionHeading eyebrow="For business and beyond" title="Considered corporate packages" description="Bring people together with flexible arrangements, gracious service, and spaces prepared around your plans." align="center" /></Reveal>
-            <div className="grid gap-5 md:grid-cols-3">
-              {PACKAGES.map((item) => (
-                <div key={item.title} className="border border-border p-7">
-                  <BriefcaseBusiness className="mb-5 h-5 w-5 text-[#9a7730]" />
-                  <h3 className="font-serif text-2xl text-foreground">{item.title}</h3>
-                  <p className="mt-3 text-sm leading-6 text-muted-foreground">{item.detail}</p>
+            <SectionHeading eyebrow="For business and beyond" title="Considered packages" align="center" />
+            <div className="grid gap-x-8 gap-y-8 md:grid-cols-3">
+              {PACKAGES.map((p) => (
+                <div key={p.title} className="border-t border-border pt-6">
+                  <Briefcase className="mb-4 h-5 w-5 text-[#6f5318]" />
+                  <h3 className="font-serif text-2xl text-foreground">{p.title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">{p.detail}</p>
                 </div>
               ))}
             </div>
           </div>
-          <div className="mt-14 text-center"><GoldButton onClick={() => setModalOpen(true)}>Enquire About an Event</GoldButton></div>
+          <div className="mt-14 text-center"><button type="button" onClick={() => setOpen(true)} className={BTN.gold}>Enquire about an event</button></div>
         </div>
       </section>
-      <EnquiryModal isOpen={modalOpen} onClose={() => setModalOpen(false)} title="Event Enquiry" subtitle="Tell us about your event and we will help bring it together." />
+      <EnquiryModal kind="event" open={open} onClose={() => setOpen(false)} />
     </PageLayout>
   );
 }
