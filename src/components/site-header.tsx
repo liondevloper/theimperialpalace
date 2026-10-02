@@ -2,9 +2,6 @@ import { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { Crown, Menu, X } from "lucide-react";
 import { NAV_LINKS } from "../lib/hotel-data.ts";
-import { BTN } from "../lib/styles.ts";
-
-const BOOK_TO = "/stay#book";
 
 export default function SiteHeader() {
   const [open, setOpen] = useState(false);
@@ -42,7 +39,6 @@ export default function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-2">
-          <Link to={BOOK_TO} className={`${BTN.gold} hidden !min-h-10 !px-5 !py-2 md:inline-flex`}>Book your stay</Link>
           <button type="button" aria-label="Open navigation" aria-expanded={open} onClick={() => setOpen(true)} className="flex h-11 w-11 cursor-pointer items-center justify-center text-white xl:hidden">
             <Menu className="h-6 w-6" />
           </button>
@@ -60,7 +56,6 @@ export default function SiteHeader() {
             {NAV_LINKS.map((link) => (
               <Link key={link.to} to={link.to} onClick={close} className="font-serif text-3xl text-white hover:text-[#c9a84c]">{link.label}</Link>
             ))}
-            <Link to={BOOK_TO} onClick={close} className={`${BTN.gold} mt-3`}>Book your stay</Link>
           </nav>
         </div>
       )}
