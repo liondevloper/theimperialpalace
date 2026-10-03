@@ -8,3 +8,14 @@ export default function InstagramIcon({ className }: { className?: string }) {
     </svg>
   );
 }
+
+// Default Instagram per restaurant slug. Admin > Dining "Instagram link" overrides it.
+// An empty admin field falls back to this default, because the admin saves untouched optional fields as empty.
+const DEFAULT_INSTAGRAM: Record<string, string> = {
+  delicacy: "https://www.instagram.com/delicacybakery",
+};
+
+export function instagramOf(r: { slug: string; instagram?: unknown }): string {
+  const saved = typeof r.instagram === "string" ? r.instagram.trim() : "";
+  return saved || (DEFAULT_INSTAGRAM[r.slug] ?? "");
+}
