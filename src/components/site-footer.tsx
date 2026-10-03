@@ -10,7 +10,7 @@ const headingClass = 'mb-5 text-[11px] uppercase tracking-[0.35em] text-primary'
 // Registered company address shown in the footer.
 const FOOTER_ADDRESS_LINES = [
   'City Organisers Private Limited',
-  'Unit: The Imperial Palace',
+  'The Imperial Palace',
   'Dr. Yagnik Road, Rajkot 360001 INDIA',
 ];
 
