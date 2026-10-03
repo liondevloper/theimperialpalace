@@ -86,18 +86,18 @@ export default function EnquiriesPanel() {
 
   return (
     <div>
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h2 className="font-serif text-3xl font-light text-foreground">Enquiries</h2>
-          <p className="mt-1 text-xs text-muted-foreground">All bookings and messages sent from the website. Times are in Indian time (IST).</p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <button type="button" onClick={() => void load()} className={`${BTN.outline} px-4`}><RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />Refresh</button>
-          <button type="button" disabled={!filtered?.length} onClick={() => filtered && exportCsv(filtered)} className={`${BTN.outline} px-4 disabled:opacity-50`}><Download className="h-4 w-4" />Download Excel</button>
-          <button type="button" disabled={!filtered?.length || pdfBusy !== null} onClick={() => filtered && void makePdf("all", () => exportPdf(filtered, filterText))} className={`${BTN.gold} px-4 disabled:opacity-50`}>
-            <FileText className="h-4 w-4" />{pdfBusy === "all" ? "Preparing PDF..." : "Download PDF"}
-          </button>
-        </div>
+      <div className="mb-5">
+        <h2 className="font-serif text-3xl font-light text-foreground">Enquiries</h2>
+        <p className="mt-1 text-xs text-muted-foreground">All bookings and messages sent from the website. Times are in Indian time (IST).</p>
+      </div>
+
+      {/* Refresh on the left, PDF in the centre, Excel on the right. */}
+      <div className="mb-6 grid grid-cols-1 items-center gap-2 sm:grid-cols-3">
+        <button type="button" onClick={() => void load()} className={`${BTN.outline} px-4 sm:justify-self-start`}><RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />Refresh</button>
+        <button type="button" disabled={!filtered?.length || pdfBusy !== null} onClick={() => filtered && void makePdf("all", () => exportPdf(filtered, filterText))} className={`${BTN.gold} px-4 disabled:opacity-50 sm:justify-self-center`}>
+          <FileText className="h-4 w-4" />{pdfBusy === "all" ? "Preparing PDF..." : "Download PDF"}
+        </button>
+        <button type="button" disabled={!filtered?.length} onClick={() => filtered && exportCsv(filtered)} className={`${BTN.outline} px-4 disabled:opacity-50 sm:justify-self-end`}><Download className="h-4 w-4" />Download Excel</button>
       </div>
 
       <div className="mb-5 grid gap-3 border border-[#e6d9b8] bg-white p-4 sm:grid-cols-[1fr_auto_auto]">
