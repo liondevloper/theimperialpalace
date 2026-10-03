@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import { CONTACT_INFORMATION, FOOTER_EXTRA_LINKS, NAV_LINKS } from '../lib/hotel-data.ts';
-import { whatsappUrl } from '../lib/site-config.ts';
 import { Logo } from './site-header.tsx';
 import { Reveal } from './hotel-page.tsx';
 
@@ -41,7 +40,6 @@ export default function SiteFooter() {
           <h3 className={headingClass}>Guest services</h3>
           <ul className="space-y-3">
             <li><Link to="/contact" className={linkClass}>Contact & enquiries</Link></li>
-            <li><a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" className={linkClass}>Chat on WhatsApp</a></li>
           </ul>
         </div>
         <div>
