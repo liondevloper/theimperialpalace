@@ -37,7 +37,8 @@ const startOfToday = () => {
   return d.toISOString();
 };
 
-export default function EnquiriesPanel() {
+// `onlyKind` turns this into a dedicated tab, for example "career" shows only job applications.
+export default function EnquiriesPanel({ onlyKind, title = "Enquiries" }: { onlyKind?: string; title?: string }) {
   const [rows, setRows] = useState<Enquiry[] | null>(null);
   const [kind, setKind] = useState("all");
   const [status, setStatusFilter] = useState("all");
@@ -49,18 +50,21 @@ export default function EnquiriesPanel() {
 
   // Without a search we show only today's enquiries; typing a search looks through all of them.
   const searching = query.trim() !== "";
+  const activeKind = onlyKind ?? kind;
 
   const load = useCallback(async () => {
     setLoading(true);
     let q = supabase.from("enquiries").select("*").order("created_at", { ascending: false }).limit(LIMIT);
     if (!searching) q = q.gte("created_at", startOfToday());
-    if (kind !== "all") q = q.eq("kind", kind);
+    if (onlyKind) q = q.eq("kind", onlyKind);
+    else if (kind !== "all") q = q.eq("kind", kind);
+    else q = q.neq("kind", "career");
     if (status !== "all") q = q.eq("status", status);
     const { data, error: err } = await q;
     setLoading(false);
     if (err) setError("Could not load enquiries.");
     else { setError(""); setRows(data as Enquiry[]); }
-  }, [kind, status, searching]);
+  }, [kind, status, searching, onlyKind]);
 
   useEffect(() => {
     void load();
@@ -98,15 +102,15 @@ export default function EnquiriesPanel() {
     }
   };
 
-  const filterText = [`Type: ${label(kind)}`, `Status: ${label(status)}`, searching ? `Search: "${query.trim()}"` : "Date: Today"].filter(Boolean).join(" | ");
+  const filterText = [`Type: ${label(activeKind)}`, `Status: ${label(status)}`, searching ? `Search: "${query.trim()}"` : "Date: Today"].filter(Boolean).join(" | ");
   const contactBtn = "inline-flex min-h-9 items-center gap-1.5 border border-[#e6d9b8] px-3 text-xs text-foreground transition-colors hover:border-[#c9a84c] hover:bg-[#faf6ec]";
 
   return (
     <div>
       <div className="mb-5">
-        <h2 className="font-serif text-3xl font-light text-foreground">Enquiries</h2>
+        <h2 className="font-serif text-3xl font-light text-foreground">{title}</h2>
         <p className="mt-1 text-xs text-muted-foreground">
-          {searching ? "Showing search results from all enquiries." : "Showing today's enquiries. Use search to find older ones."} Updates automatically. Times are in Indian time (IST).
+          {searching ? "Showing search results from all records." : "Showing today's records. Use search to find older ones."} Updates automatically. Times are in Indian time (IST).
         </p>
       </div>
 
@@ -119,16 +123,18 @@ export default function EnquiriesPanel() {
         <button type="button" disabled={!filtered?.length} onClick={() => filtered && exportCsv(filtered)} className={`${BTN.outline} px-4 disabled:opacity-50 sm:justify-self-end`}><Download className="h-4 w-4" />Download Excel</button>
       </div>
 
-      <div className="mb-5 grid gap-3 border border-[#e6d9b8] bg-white p-4 sm:grid-cols-[1fr_auto_auto]">
+      <div className={`mb-5 grid gap-3 border border-[#e6d9b8] bg-white p-4 ${onlyKind ? "sm:grid-cols-[1fr_auto]" : "sm:grid-cols-[1fr_auto_auto]"}`}>
         <div className="relative grid gap-1.5">
           <label htmlFor="enq-search" className={LABEL}>Search</label>
           <Search className="pointer-events-none absolute bottom-3.5 left-3 h-4 w-4 text-muted-foreground" />
           <input id="enq-search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Name, phone, email..." className={`${FIELD} pl-9`} />
         </div>
-        <div className="grid gap-1.5">
-          <label htmlFor="enq-kind" className={LABEL}>Type</label>
-          <select id="enq-kind" value={kind} onChange={(e) => setKind(e.target.value)} className={`${FIELD} sm:w-40`}>{KINDS.map((k) => <option key={k} value={k}>{label(k)}</option>)}</select>
-        </div>
+        {!onlyKind && (
+          <div className="grid gap-1.5">
+            <label htmlFor="enq-kind" className={LABEL}>Type</label>
+            <select id="enq-kind" value={kind} onChange={(e) => setKind(e.target.value)} className={`${FIELD} sm:w-40`}>{KINDS.map((k) => <option key={k} value={k}>{label(k)}</option>)}</select>
+          </div>
+        )}
         <div className="grid gap-1.5">
           <label htmlFor="enq-status" className={LABEL}>Status</label>
           <select id="enq-status" value={status} onChange={(e) => setStatusFilter(e.target.value)} className={`${FIELD} sm:w-40`}>{["all", ...STATUSES].map((s) => <option key={s} value={s}>{label(s)}</option>)}</select>
@@ -139,7 +145,7 @@ export default function EnquiriesPanel() {
       {filtered === null ? (
         <div className="space-y-3">{[0, 1, 2].map((i) => <div key={i} className="h-28 animate-pulse bg-[#efe6d2]" />)}</div>
       ) : filtered.length === 0 ? (
-        <p className="border border-dashed border-[#e6d9b8] bg-white p-10 text-center text-sm text-muted-foreground">{searching ? "No enquiries match your search." : "No enquiries today yet. New ones from the website will appear here."}</p>
+        <p className="border border-dashed border-[#e6d9b8] bg-white p-10 text-center text-sm text-muted-foreground">{searching ? "Nothing matches your search." : "Nothing today yet. New ones from the website will appear here."}</p>
       ) : (
         <ul className="space-y-3">
           {filtered.map((r) => {
@@ -178,7 +184,7 @@ export default function EnquiriesPanel() {
           })}
         </ul>
       )}
-      {rows && rows.length === LIMIT && <p className="mt-4 text-xs text-muted-foreground">Showing the latest {LIMIT} enquiries.</p>}
+      {rows && rows.length === LIMIT && <p className="mt-4 text-xs text-muted-foreground">Showing the latest {LIMIT} records.</p>}
     </div>
   );
 }
