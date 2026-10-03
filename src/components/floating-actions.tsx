@@ -10,9 +10,16 @@ const pill = "flex h-14 cursor-pointer items-center gap-2 rounded-full px-5 text
 export default function FloatingActions() {
   return (
     <div className="fixed bottom-4 right-4 z-40 flex flex-col items-end gap-3 sm:bottom-6 sm:right-6">
-      <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" aria-label="Chat with us on WhatsApp" className="flex h-14 min-w-14 items-center justify-center gap-2 rounded-full bg-[#25D366] px-3.5 text-sm font-medium text-white shadow-[0_10px_30px_-10px_rgba(37,211,102,0.8)] transition-transform hover:-translate-y-0.5 sm:px-5">
-        <WhatsappLogo weight="fill" className="h-7 w-7 shrink-0" />
-        <span className="hidden sm:inline">WhatsApp</span>
+      {/* Classic round WhatsApp button: green circle, white outlined logo. */}
+      <a
+        href={whatsappUrl()}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Chat with us on WhatsApp"
+        title="Chat on WhatsApp"
+        className="flex h-16 w-16 items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_10px_28px_-8px_rgba(37,211,102,0.75)] transition-transform duration-300 hover:scale-105 active:scale-95"
+      >
+        <WhatsappLogo weight="bold" className="h-9 w-9" />
       </a>
       <EnquiryButton className={`${pill} border border-[#c9a84c]/60 bg-[#111c33] text-[#e8d5a3] shadow-[0_10px_30px_-10px_rgba(11,20,38,0.6)]`}>
         <MessageSquareText className="h-5 w-5" />
