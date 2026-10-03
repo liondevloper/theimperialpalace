@@ -10,6 +10,7 @@ import ImagesField from "./images-field.tsx";
 const str = (value: unknown) => (typeof value === "string" ? value : "");
 const list = (value: unknown) => (Array.isArray(value) ? value.filter((v): v is string => typeof v === "string") : []);
 const isList = (f: AdminField) => f.type === "lines" || f.type === "images";
+const isMedia = (f: AdminField) => f.type === "image" || f.type === "video";
 
 function cleanRow(fields: AdminField[], row: Row): Row {
   const out: Row = { ...row };
@@ -17,7 +18,7 @@ function cleanRow(fields: AdminField[], row: Row): Row {
     const v = row[f.name];
     if (isList(f)) out[f.name] = list(v).map((x) => x.trim()).filter(Boolean);
     else if (f.type === "optionalText") out[f.name] = str(v).trim() || null;
-    else if (f.type === "text" || f.type === "textarea" || f.type === "image") out[f.name] = str(v).trim();
+    else if (f.type === "text" || f.type === "textarea" || isMedia(f)) out[f.name] = str(v).trim();
   }
   return out;
 }
@@ -38,6 +39,8 @@ function FieldInput({ field, id, value, onChange }: InputProps) {
       return <textarea id={id} rows={4} value={list(value).join("\n")} onChange={(e) => onChange(e.target.value.split("\n"))} className={`${FIELD} h-auto py-2`} />;
     case "image":
       return <ImageField id={id} value={str(value)} onChange={onChange} />;
+    case "video":
+      return <ImageField id={id} value={str(value)} onChange={onChange} kind="video" />;
     case "images":
       return <ImagesField id={id} value={list(value)} onChange={onChange} />;
     case "checkbox":
@@ -124,7 +127,7 @@ export default function ContentEditor({ def }: { def: SectionDef }) {
     <div className="grid gap-5 sm:grid-cols-2">
       {def.fields.map((f) => {
         const id = `${uid}-${index}-${f.name}`;
-        const wide = f.type === "textarea" || isList(f) || f.type === "image";
+        const wide = f.type === "textarea" || isList(f) || isMedia(f);
         return (
           <div key={f.name} className={`grid min-w-0 content-start gap-1.5 ${wide ? "sm:col-span-2" : ""}`}>
             <label htmlFor={id} className={LABEL}>{f.label}{f.required ? " *" : ""}</label>

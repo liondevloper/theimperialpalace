@@ -1,6 +1,6 @@
 import type { ContentKey, Row } from "../../../lib/content.ts";
 
-export type FieldType = "text" | "optionalText" | "textarea" | "image" | "images" | "lines" | "checkbox" | "select";
+export type FieldType = "text" | "optionalText" | "textarea" | "image" | "video" | "images" | "lines" | "checkbox" | "select";
 export type AdminField = { name: string; label: string; type: FieldType; required?: boolean; options?: string[]; help?: string };
 export type SectionDef = {
   key: ContentKey;
@@ -25,6 +25,7 @@ export const SECTIONS: SectionDef[] = [
       text("heroEyebrow", "Hero small heading"), text("heroTitle", "Hero title"), text("heroHighlight", "Hero highlighted word", true, "Shown in gold italics after the title"),
       area("heroSubtitle", "Hero subtitle"),
       { name: "heroImage", label: "Hero background photo (below the header)", type: "image", required: false, help: "Optional. Leave empty to show the navy and gold background." },
+      { name: "heroVideo", label: "Hero background video (below the header)", type: "video", required: false, help: "Optional. MP4 or WebM, under 50 MB. Plays silently on loop. If you add both, the video plays and the photo shows while it loads." },
       text("welcomeTitle", "Welcome heading"), area("welcomeText", "Welcome text"),
       { name: "facts", label: "Key numbers", type: "lines", required: true, help: "One per line, format: 200+ | Rooms & suites" },
       { name: "marquee", label: "Scrolling highlights ribbon", type: "lines", required: true, help: "One phrase per line" },
