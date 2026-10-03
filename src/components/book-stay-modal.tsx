@@ -31,7 +31,7 @@ function StepDots({ step }: { step: Step }) {
     <ol className="flex items-center gap-2 text-[10px] uppercase tracking-[0.25em] text-muted-foreground" aria-label="Booking steps">
       {["Your stay", "Guest details"].map((label, i) => (
         <li key={label} className="flex items-center gap-2" aria-current={i === index ? "step" : undefined}>
-          <span className={`flex h-6 w-6 items-center justify-center rounded-full border text-[10px] ${i <= index ? "border-[#b8933a] bg-[#b8933a] text-[#1e1810]" : "border-border"}`}>{i + 1}</span>
+          <span className={`flex h-6 w-6 items-center justify-center rounded-full border text-[10px] ${i <= index ? "border-[#b8933a] bg-[#b8933a] text-[#0f1a30]" : "border-border"}`}>{i + 1}</span>
           <span className={i === index ? "text-foreground" : ""}>{label}</span>
           {i === 0 && <span className="mx-1 h-px w-6 bg-border" />}
         </li>
@@ -108,7 +108,7 @@ function BookStayFlow({ defaultRoom }: { defaultRoom?: string }) {
   if (step === "done") {
     return (
       <div className="flex flex-col items-center py-8 text-center" role="status">
-        <span className="mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-[#c9a84c] text-[#14110c]"><Check className="h-7 w-7" /></span>
+        <span className="mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-[#c9a84c] text-[#0f1a30]"><Check className="h-7 w-7" /></span>
         <h2 className="font-serif text-3xl font-light text-foreground">{THANK_YOU}</h2>
         <p className="mt-3 max-w-sm text-sm leading-6 text-muted-foreground">
           Your booking request for {formatDate(stay.checkin)} to {formatDate(stay.checkout)} has been received. Our reservations team will confirm availability shortly.
@@ -127,7 +127,7 @@ function BookStayFlow({ defaultRoom }: { defaultRoom?: string }) {
   return (
     <div className="grid gap-6">
       <div className="pr-10">
-        <span className="text-[10px] uppercase tracking-[0.35em] text-primary">The Imperial Palace, Rajkot</span>
+        <span className="text-[10px] uppercase tracking-[0.35em] text-primary">The Imperial Palace, Rajkot · 5-Star Hotel</span>
         <h2 className="mt-2 font-serif text-3xl font-light text-foreground md:text-4xl">Book your stay</h2>
         <div className="mt-4"><StepDots step={step} /></div>
       </div>
@@ -201,13 +201,15 @@ export default function BookStayModal({ open, onClose, defaultRoom }: Props) {
   );
 }
 
-// Self-contained trigger: a button that opens its own booking popup.
-export function BookStayButton({ className, children, onOpen }: { className: string; children: ReactNode; onOpen?: () => void }) {
+type ButtonProps = { className: string; children: ReactNode; onOpen?: () => void; defaultRoom?: string };
+
+// Self-contained trigger: a button that opens its own booking popup (optionally with a room preselected).
+export function BookStayButton({ className, children, onOpen, defaultRoom }: ButtonProps) {
   const [open, setOpen] = useState(false);
   return (
     <>
       <button type="button" onClick={() => { onOpen?.(); setOpen(true); }} className={className}>{children}</button>
-      <BookStayModal open={open} onClose={() => setOpen(false)} />
+      <BookStayModal open={open} onClose={() => setOpen(false)} defaultRoom={defaultRoom} />
     </>
   );
 }
