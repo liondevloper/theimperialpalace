@@ -7,12 +7,13 @@ import { HEADER_LOGO_URL } from '../lib/logo.ts';
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-// The source image has wide white margins. This frame crops to just the artwork
-// (496x349 region at 501,172 of a 1536x658 image); multiply hides the white on ivory.
-function Logo({ alt, small = false }: { alt: string; small?: boolean }) {
+// The source image (1254x1254) has wide white margins. This frame crops to just the
+// artwork (1182x799 region at 23,251); multiply hides the white on ivory.
+export function Logo({ alt, small = false, className = '' }: { alt: string; small?: boolean; className?: string }) {
+  const size = className || (small ? 'h-12 md:h-14' : 'h-14 md:h-[72px]');
   return (
-    <span role="img" aria-label={alt} className={`relative block aspect-[496/349] shrink-0 overflow-hidden transition-all duration-500 ${small ? 'h-12 md:h-14' : 'h-14 md:h-[72px]'}`}>
-      <img src={HEADER_LOGO_URL} alt="" className="absolute max-w-none mix-blend-multiply" style={{ width: '309.7%', left: '-101%', top: '-49.3%' }} />
+    <span role="img" aria-label={alt} className={`relative block aspect-[1182/799] shrink-0 overflow-hidden transition-all duration-500 ${size}`}>
+      <img src={HEADER_LOGO_URL} alt="" className="absolute max-w-none mix-blend-multiply" style={{ width: '106.09%', left: '-1.95%', top: '-31.41%' }} />
     </span>
   );
 }

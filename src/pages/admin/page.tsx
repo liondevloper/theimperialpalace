@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { Link } from "react-router-dom";
-import { Crown, LogOut } from "lucide-react";
+import { LogOut } from "lucide-react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "../../lib/supabase.ts";
 import { BTN, FIELD, LABEL } from "../../lib/styles.ts";
+import { Logo } from "../../components/site-header.tsx";
 import ContentEditor from "./_components/content-editor.tsx";
 import EnquiriesPanel from "./_components/enquiries-panel.tsx";
 import { SECTIONS } from "./_lib/schema.ts";
@@ -70,6 +71,7 @@ export default function AdminPage() {
   if (access !== "admin") {
     return (
       <main className="flex min-h-dvh flex-col items-center justify-center gap-6 px-5 py-12">
+        <Link to="/" aria-label="The Imperial Palace, home"><Logo alt="The Imperial Palace" className="h-20 md:h-24" /></Link>
         {access === "loading" && <p className="text-sm text-muted-foreground">Loading...</p>}
         {access === "out" && <LoginForm />}
         {access === "denied" && (
@@ -88,7 +90,10 @@ export default function AdminPage() {
     <div className="min-h-dvh">
       <header className="border-b border-border">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-5 py-3">
-          <span className="flex items-center gap-2.5 font-serif text-sm uppercase tracking-[0.18em]"><Crown className="h-5 w-5 text-[#8a6a22]" />Admin panel</span>
+          <span className="flex items-center gap-3">
+            <Logo alt="The Imperial Palace" className="h-11" />
+            <span className="hidden border-l border-border pl-3 font-serif text-sm uppercase tracking-[0.18em] sm:inline">Admin panel</span>
+          </span>
           <div className="flex items-center gap-2">
             <Link to="/" target="_blank" className={`${BTN.outline} px-4`}>View website</Link>
             <button type="button" onClick={signOut} aria-label="Sign out" className="flex h-11 w-11 cursor-pointer items-center justify-center"><LogOut className="h-5 w-5" /></button>

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { CONTACT_INFORMATION, FOOTER_EXTRA_LINKS, NAV_LINKS } from '../lib/hotel-data.ts';
 import { whatsappUrl } from '../lib/site-config.ts';
-import { LOGO_URL } from '../lib/logo.ts';
+import { Logo } from './site-header.tsx';
 import { Reveal } from './hotel-page.tsx';
 
 const linkClass = 'text-sm text-[#5a4a35] transition-colors hover:text-[#8a6a22]';
@@ -15,9 +15,9 @@ export default function SiteFooter() {
       <div className="h-px w-full bg-gradient-to-r from-transparent via-[#c9a84c] to-transparent" />
       <Reveal className="mx-auto grid max-w-7xl gap-10 px-5 py-16 sm:grid-cols-2 lg:grid-cols-4 lg:px-8">
         <div>
-          <span className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-full bg-white shadow-[0_8px_24px_-10px_rgba(138,106,34,0.5)] ring-1 ring-[#c9a84c]/60">
-            <img src={LOGO_URL} alt="The Imperial Palace" className="h-full w-full scale-110 object-contain" />
-          </span>
+          <Link to="/" aria-label="The Imperial Palace, home" className="inline-block">
+            <Logo alt="The Imperial Palace" className="h-24 md:h-28" />
+          </Link>
           <p className="mt-5 text-sm leading-7 text-[#5a4a35]">A landmark of refined hospitality in the heart of Rajkot, Gujarat. 20 years of excellence.</p>
         </div>
         <div>
