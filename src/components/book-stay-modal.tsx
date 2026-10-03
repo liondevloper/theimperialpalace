@@ -218,7 +218,7 @@ export function BookStayButton({ className, children, onOpen, defaultRoom }: But
   const [open, setOpen] = useState(false);
   return (
     <>
-      <button type="button" onClick={() => setOpen(true)} className={className}>{children}</button>
+      <button type="button" onClick={() => { onOpen?.(); setOpen(true); }} className={className}>{children}</button>
       <BookStayModal open={open} onClose={() => setOpen(false)} defaultRoom={defaultRoom} />
     </>
   );
