@@ -7,6 +7,8 @@ const HOTEL = { lat: 22.2950232, lng: 70.7908472 };
 const PIN_TOP = 42;
 const COLS = [-3, -2, -1, 0, 1, 2, 3];
 const ROWS = [-2, -1, 0, 1, 2];
+// OpenStreetMap tiles need no API key. The filter turns the light map into a dark navy one.
+const DARK_FILTER = "invert(1) hue-rotate(195deg) saturate(0.7) brightness(0.95) contrast(0.9)";
 
 // Standard web-mercator maths: lat/lng -> fractional tile coordinates.
 function project(lat: number, lng: number, zoom: number) {
@@ -16,7 +18,7 @@ function project(lat: number, lng: number, zoom: number) {
   return { x, y };
 }
 
-// Static, non-interactive map built from CARTO dark tiles (OpenStreetMap data) tinted with the hotel's gold.
+// Static, non-interactive map built from OpenStreetMap tiles, tinted navy and gold.
 export default function PremiumMap({ className = "", children }: { className?: string; children?: ReactNode }) {
   const { x, y } = project(HOTEL.lat, HOTEL.lng, ZOOM);
   const tx = Math.floor(x);
@@ -27,14 +29,15 @@ export default function PremiumMap({ className = "", children }: { className?: s
         COLS.map((dx) => (
           <img
             key={`${dx}-${dy}`}
-            src={`https://basemaps.cartocdn.com/dark_all/${ZOOM}/${tx + dx}/${ty + dy}@2x.png`}
+            src={`https://tile.openstreetmap.org/${ZOOM}/${tx + dx}/${ty + dy}.png`}
             alt=""
             width={TILE}
             height={TILE}
             loading="lazy"
             draggable={false}
+            referrerPolicy="origin"
             className="absolute max-w-none select-none"
-            style={{ width: TILE, height: TILE, left: `calc(50% + ${(tx + dx - x) * TILE}px)`, top: `calc(${PIN_TOP}% + ${(ty + dy - y) * TILE}px)` }}
+            style={{ width: TILE, height: TILE, filter: DARK_FILTER, left: `calc(50% + ${(tx + dx - x) * TILE}px)`, top: `calc(${PIN_TOP}% + ${(ty + dy - y) * TILE}px)` }}
           />
         )),
       )}
@@ -45,7 +48,7 @@ export default function PremiumMap({ className = "", children }: { className?: s
         <span className="absolute inset-0 m-auto h-14 w-14 animate-ping rounded-full bg-[#d9bc6a]/35" />
         <span className="relative flex h-5 w-5 items-center justify-center rounded-full border-2 border-white bg-gradient-to-br from-[#b8933a] to-[#ecd594] shadow-[0_0_0_6px_rgba(217,188,106,0.25)]" />
       </div>
-      <p className="absolute bottom-1.5 right-2 text-[10px] text-white/50">&copy; OpenStreetMap &copy; CARTO</p>
+      <p className="absolute right-2 top-1.5 text-[10px] text-white/50">&copy; OpenStreetMap contributors</p>
       {children}
     </div>
   );
