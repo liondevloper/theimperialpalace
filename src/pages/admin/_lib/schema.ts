@@ -23,7 +23,8 @@ export const SECTIONS: SectionDef[] = [
     blank: {},
     fields: [
       text("heroEyebrow", "Hero small heading"), text("heroTitle", "Hero title"), text("heroHighlight", "Hero highlighted word", true, "Shown in gold italics after the title"),
-      area("heroSubtitle", "Hero subtitle"), image("heroImage", "Hero background photo"),
+      area("heroSubtitle", "Hero subtitle"),
+      { name: "heroImage", label: "Hero background photo (below the header)", type: "image", required: false, help: "Optional. Leave empty to show the navy and gold background." },
       text("welcomeTitle", "Welcome heading"), area("welcomeText", "Welcome text"),
       { name: "facts", label: "Key numbers", type: "lines", required: true, help: "One per line, format: 200+ | Rooms & suites" },
       { name: "marquee", label: "Scrolling highlights ribbon", type: "lines", required: true, help: "One phrase per line" },
