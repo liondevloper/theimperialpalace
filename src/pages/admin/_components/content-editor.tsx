@@ -145,8 +145,8 @@ export default function ContentEditor({ def }: { def: SectionDef }) {
 
   return (
     <div>
-      {/* Title on the left, Save & publish in the centre, View page and Restore on the right. */}
-      <div className="sticky top-0 z-[5] -mx-5 mb-6 grid items-center gap-3 border-b border-[#e6d9b8] bg-[#faf6ec]/95 px-5 py-4 backdrop-blur md:grid-cols-[1fr_auto_1fr]">
+      {/* Title on the left; Save & publish with View page and Restore stacked underneath it on the right. */}
+      <div className="sticky top-0 z-[5] -mx-5 mb-6 grid items-start gap-3 border-b border-[#e6d9b8] bg-[#faf6ec]/95 px-5 py-4 backdrop-blur md:grid-cols-[1fr_auto]">
         <div className="min-w-0">
           <h2 className="font-serif text-3xl font-light text-foreground">{def.label}</h2>
           <p className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
@@ -155,10 +155,12 @@ export default function ContentEditor({ def }: { def: SectionDef }) {
             {Array.isArray(data) && <span>· {items.length} {def.noun}{items.length === 1 ? "" : "s"}</span>}
           </p>
         </div>
-        <button type="button" disabled={busy || !dirty} onClick={() => void save()} className={`${BTN.gold} justify-self-center px-8 disabled:opacity-50`}>{busy ? "Saving..." : "Save & publish"}</button>
-        <div className="flex flex-wrap justify-center gap-2 md:justify-end">
-          {def.page && <a href={def.page} target="_blank" rel="noopener noreferrer" className={`${BTN.outline} px-4`}><ExternalLink className="h-4 w-4" />View page</a>}
-          <button type="button" disabled={busy} onClick={() => void reset()} className={`${BTN.outline} px-4`}><RotateCcw className="h-4 w-4" />Restore</button>
+        <div className="flex flex-col gap-2 md:items-stretch">
+          <button type="button" disabled={busy || !dirty} onClick={() => void save()} className={`${BTN.gold} px-8 disabled:opacity-50`}>{busy ? "Saving..." : "Save & publish"}</button>
+          <div className="flex flex-wrap gap-2 md:flex-nowrap">
+            {def.page && <a href={def.page} target="_blank" rel="noopener noreferrer" className={`${BTN.outline} flex-1 px-4`}><ExternalLink className="h-4 w-4" />View page</a>}
+            <button type="button" disabled={busy} onClick={() => void reset()} className={`${BTN.outline} flex-1 px-4`}><RotateCcw className="h-4 w-4" />Restore</button>
+          </div>
         </div>
       </div>
       {status && <p role="status" className={`mb-4 border px-4 py-3 text-sm ${status.ok ? "border-emerald-600/40 bg-emerald-50 text-emerald-900" : "border-destructive bg-red-50 text-destructive"}`}>{status.text}</p>}
