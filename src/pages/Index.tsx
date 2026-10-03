@@ -7,6 +7,7 @@ import PageLayout from "../components/page-layout.tsx";
 import Img from "../components/img.tsx";
 import { HeroText, Reveal, SectionHeading } from "../components/hotel-page.tsx";
 import { EnquiryButton } from "../components/enquiry-modal.tsx";
+import { BookStayButton } from "../components/book-stay-modal.tsx";
 import { CONTACT_INFORMATION, EXPERIENCES, GALLERY, HOME, HOTEL_IMAGES, RESTAURANTS, ROOMS } from "../lib/hotel-data.ts";
 import { introDelay } from "../lib/intro.ts";
 import { SITE } from "../lib/site-config.ts";
@@ -58,16 +59,25 @@ function Hero() {
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "25%"]);
   const fade = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
   const delay = introDelay();
+  // Hero photo is optional: it is added from the admin panel (Home > Hero image).
+  const heroImage = HOME.heroImage.trim();
   return (
     <section ref={ref} className="relative flex min-h-[600px] items-end overflow-hidden bg-[#0b1426] md:min-h-[92vh]">
-      <motion.div style={{ y }} initial={{ scale: 1.2 }} animate={{ scale: 1.04 }} transition={{ duration: 3, delay, ease: EASE }} className="absolute inset-0">
-        <Img src={HOME.heroImage} alt="The grand lobby of The Imperial Palace, Rajkot" priority width={1920} height={1080} sizes="100vw" className="h-full w-full object-cover" />
-      </motion.div>
-      <div className="absolute inset-0 bg-gradient-to-t from-[#0b1426] via-[#0b1426]/45 to-[#0b1426]/20" />
+      {heroImage ? (
+        <>
+          <motion.div style={{ y }} initial={{ scale: 1.2 }} animate={{ scale: 1.04 }} transition={{ duration: 3, delay, ease: EASE }} className="absolute inset-0">
+            <Img src={heroImage} alt="The Imperial Palace, Rajkot" priority width={1920} height={1080} sizes="100vw" className="h-full w-full object-cover" />
+          </motion.div>
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0b1426] via-[#0b1426]/45 to-[#0b1426]/20" />
+        </>
+      ) : (
+        // No photo yet: royal navy backdrop with soft gold glow.
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_20%,rgba(201,168,76,0.22),transparent_55%),radial-gradient(ellipse_at_10%_90%,rgba(201,168,76,0.12),transparent_50%),linear-gradient(180deg,#152245_0%,#0b1426_100%)]" />
+      )}
       <motion.div style={{ opacity: fade }} className="relative z-10 mx-auto w-full max-w-7xl px-5 pb-16 pt-28 lg:px-8 lg:pb-24">
         <HeroText delay={delay} eyebrow={HOME.heroEyebrow} title={<>{HOME.heroTitle} <em className="bg-gradient-to-r from-[#f1e2b8] via-[#d9bc6a] to-[#f1e2b8] bg-clip-text italic text-transparent">{HOME.heroHighlight}</em></>} subtitle={HOME.heroSubtitle}>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Link to="/stay#book" className={BTN.gold}>Book your stay</Link>
+            <BookStayButton className={BTN.gold}>Book your stay</BookStayButton>
             <EnquiryButton className={BTN.light}><MessageSquareText className="h-4 w-4" />Send an enquiry</EnquiryButton>
           </div>
         </HeroText>
@@ -306,7 +316,7 @@ export default function Index() {
           <p className="text-[11px] uppercase tracking-[0.35em] text-primary">Visit us</p>
           <h2 className="mx-auto mt-4 max-w-2xl font-serif text-3xl font-light text-foreground text-balance sm:text-5xl">{CONTACT_INFORMATION.addressLines.join(", ")}</h2>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-            <Link to="/stay#book" className={BTN.gold}>Reserve now</Link>
+            <BookStayButton className={BTN.gold}>Reserve now</BookStayButton>
             <EnquiryButton className={BTN.outline}><MessageSquareText className="h-4 w-4" />Send an enquiry</EnquiryButton>
           </div>
         </Reveal>
