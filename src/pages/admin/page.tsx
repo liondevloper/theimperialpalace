@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { Link } from "react-router-dom";
-import { BedDouble, CalendarHeart, Contact, ExternalLink, Home, Images, Inbox, LayoutDashboard, LogOut, Map, Sparkles, UtensilsCrossed, Waves } from "lucide-react";
+import { BedDouble, Briefcase, CalendarHeart, Contact, ExternalLink, Home, Images, Inbox, LayoutDashboard, LogOut, Map, Sparkles, UtensilsCrossed, Waves } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "../../lib/supabase.ts";
@@ -15,14 +15,16 @@ import { SECTIONS } from "./_lib/schema.ts";
 type Access = "loading" | "out" | "denied" | "admin";
 
 const ICONS: Record<string, LucideIcon> = {
-  dashboard: LayoutDashboard, enquiries: Inbox, home: Home, rooms: BedDouble, restaurants: UtensilsCrossed, venues: CalendarHeart,
+  dashboard: LayoutDashboard, enquiries: Inbox, career: Briefcase, home: Home, rooms: BedDouble, restaurants: UtensilsCrossed, venues: CalendarHeart,
   amenities: Waves, experiences: Sparkles, gallery: Images, tour: Map, contact: Contact,
 };
 
 const GROUPS = [
-  { title: "Overview", keys: ["dashboard", "enquiries"] },
+  { title: "Overview", keys: ["dashboard", "enquiries", "career"] },
   { title: "Website content", keys: SECTIONS.map((s) => s.key as string) },
 ];
+
+const FIXED_LABELS: Record<string, string> = { dashboard: "Dashboard", enquiries: "Enquiries", career: "Career enquiries" };
 
 // Sign in only. New admin accounts cannot be created from the website.
 function LoginForm() {
@@ -80,7 +82,7 @@ export default function AdminPage() {
   const signOut = () => void supabase.auth.signOut();
   const go = (key: string) => { setTab(key); window.scrollTo({ top: 0 }); };
   const section = SECTIONS.find((s) => s.key === tab);
-  const labelOf = (key: string) => (key === "dashboard" ? "Dashboard" : key === "enquiries" ? "Enquiries" : SECTIONS.find((s) => s.key === key)?.label ?? key);
+  const labelOf = (key: string) => FIXED_LABELS[key] ?? SECTIONS.find((s) => s.key === key)?.label ?? key;
   const allKeys = GROUPS.flatMap((g) => g.keys);
 
   if (access !== "admin") {
@@ -143,7 +145,7 @@ export default function AdminPage() {
           </nav>
         </header>
         <main className="mx-auto max-w-5xl px-5 py-8 lg:py-12">
-          {section ? <ContentEditor key={section.key} def={section} /> : tab === "enquiries" ? <EnquiriesPanel /> : <DashboardPanel go={go} />}
+          {section ? <ContentEditor key={section.key} def={section} /> : tab === "enquiries" ? <EnquiriesPanel /> : tab === "career" ? <EnquiriesPanel key="career" onlyKind="career" title="Career enquiries" /> : <DashboardPanel go={go} />}
         </main>
       </div>
     </div>
