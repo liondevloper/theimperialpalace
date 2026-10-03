@@ -16,9 +16,9 @@ export default function ExperiencesPage() {
             {EXPERIENCES.map((e, i) => (
               <Reveal key={e.title} delay={(i % 3) * 0.05}>
                 <Link to={e.to} className="group block">
-                  <Img src={e.image} alt={e.title} width={800} height={600} className="aspect-[4/3] w-full object-cover transition-transform duration-700 group-hover:scale-[1.02]" />
-                  <p className="mt-4 text-[11px] uppercase tracking-[0.25em] text-[#6f5318]">{e.label}</p>
-                  <h2 className="mt-1 flex items-center justify-between font-serif text-2xl text-foreground">{e.title}<ArrowUpRight className="h-5 w-5 text-[#6f5318]" /></h2>
+                  <div className="overflow-hidden ring-1 ring-border"><Img src={e.image} alt={e.title} width={800} height={600} sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" className="aspect-[4/3] w-full object-cover transition-transform duration-700 group-hover:scale-105" /></div>
+                  <p className="mt-4 text-[11px] uppercase tracking-[0.25em] text-primary">{e.label}</p>
+                  <h2 className="mt-1 flex items-center justify-between font-serif text-2xl text-foreground transition-colors group-hover:text-primary">{e.title}<ArrowUpRight className="h-5 w-5 text-primary" /></h2>
                   <p className="mt-2 text-sm leading-6 text-muted-foreground">{e.text}</p>
                 </Link>
               </Reveal>

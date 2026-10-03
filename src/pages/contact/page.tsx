@@ -19,10 +19,10 @@ export default function ContactPage() {
           <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr]">
             <aside>
               <h2 className="font-serif text-2xl text-foreground">{C.name}</h2>
-              <address className="mt-4 flex gap-3 text-sm not-italic leading-6 text-muted-foreground"><MapPin className="mt-1 h-4 w-4 shrink-0 text-[#6f5318]" /><span>{C.addressLines.join(", ")}</span></address>
+              <address className="mt-4 flex gap-3 text-sm not-italic leading-6 text-muted-foreground"><MapPin className="mt-1 h-4 w-4 shrink-0 text-primary" /><span>{C.addressLines.join(", ")}</span></address>
               <div className="mt-5 space-y-3">
-                <a href={C.phoneHref} className="flex min-h-11 items-center gap-3 text-sm text-muted-foreground hover:text-foreground"><Phone className="h-4 w-4 text-[#6f5318]" />{C.phone}</a>
-                <a href={`mailto:${CONTACT_EMAIL}`} className="flex min-h-11 items-center gap-3 break-all text-sm text-muted-foreground hover:text-foreground"><Mail className="h-4 w-4 shrink-0 text-[#6f5318]" />{CONTACT_EMAIL}</a>
+                <a href={C.phoneHref} className="flex min-h-11 items-center gap-3 text-sm text-muted-foreground hover:text-foreground"><Phone className="h-4 w-4 text-primary" />{C.phone}</a>
+                <a href={`mailto:${CONTACT_EMAIL}`} className="flex min-h-11 items-center gap-3 break-all text-sm text-muted-foreground hover:text-foreground"><Mail className="h-4 w-4 shrink-0 text-primary" />{CONTACT_EMAIL}</a>
               </div>
               <p className="mt-4 text-sm text-muted-foreground">Reception {C.reception}. Check-in {C.checkIn}, check-out {C.checkOut}.</p>
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
@@ -33,7 +33,7 @@ export default function ContactPage() {
                 {C.distances.map((d) => (<div key={d.label} className="flex justify-between py-3 text-sm"><dt className="text-foreground">{d.label} <span className="text-muted-foreground">({d.note})</span></dt><dd className="text-muted-foreground">{d.distance}</dd></div>))}
               </dl>
             </aside>
-            <div className="border border-border p-5 md:p-8"><EnquiryForm kind="contact" /></div>
+            <div className="border border-border bg-card p-5 md:p-8"><EnquiryForm kind="contact" /></div>
           </div>
         </div>
       </section>

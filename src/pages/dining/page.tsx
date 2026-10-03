@@ -19,12 +19,12 @@ export default function DiningPage() {
             {RESTAURANTS.map((r, index) => (
               <Reveal key={r.slug}>
                 <article id={r.slug} className="grid scroll-mt-24 items-center gap-8 md:grid-cols-2 md:gap-14">
-                  <Img src={r.image} alt={`${r.name}, ${r.category}`} width={1000} height={750} className={`aspect-[4/3] w-full object-cover ${index % 2 ? "md:order-2" : ""}`} />
+                  <Img src={r.image} alt={`${r.name}, ${r.category}`} width={1000} height={750} sizes="(min-width: 768px) 50vw, 100vw" className={`aspect-[4/3] w-full object-cover ring-1 ring-border ${index % 2 ? "md:order-2" : ""}`} />
                   <div>
-                    <p className="text-[11px] uppercase tracking-[0.25em] text-[#6f5318]">{r.category}</p>
+                    <p className="text-[11px] uppercase tracking-[0.25em] text-primary">{r.category}</p>
                     <h2 className="mt-3 font-serif text-3xl font-light text-foreground md:text-4xl">{r.name}</h2>
                     <p className="mt-5 text-sm leading-7 text-muted-foreground">{r.description}</p>
-                    <p className="mt-5 flex items-center gap-2 text-sm text-muted-foreground"><Clock3 className="h-4 w-4 text-[#6f5318]" />{r.timing}</p>
+                    <p className="mt-5 flex items-center gap-2 text-sm text-muted-foreground"><Clock3 className="h-4 w-4 text-primary" />{r.timing}</p>
                     <button type="button" onClick={() => setVenue(r.name)} className={`${BTN.outline} mt-7`}>Make a reservation</button>
                   </div>
                 </article>
