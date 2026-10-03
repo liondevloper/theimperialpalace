@@ -6,8 +6,10 @@ import type { EnquiryKind, FormField } from "../lib/forms.ts";
 import { submitEnquiry } from "../lib/enquiries.ts";
 import { THANK_YOU } from "../lib/site-config.ts";
 import { BTN, FIELD, LABEL } from "../lib/styles.ts";
+import WhatsappField, { whatsappError } from "./whatsapp-field.tsx";
 
-type Props = { kind: EnquiryKind; defaults?: Record<string, string>; showHeading?: boolean };
+// `stickySubmit` keeps the send button pinned at the bottom of a popup so it never needs scrolling to.
+type Props = { kind: EnquiryKind; defaults?: Record<string, string>; showHeading?: boolean; stickySubmit?: boolean };
 
 function initialValues(fields: FormField[], defaults: Record<string, string>) {
   const values: Record<string, string> = {};
@@ -15,10 +17,12 @@ function initialValues(fields: FormField[], defaults: Record<string, string>) {
   return values;
 }
 
-export default function EnquiryForm({ kind, defaults = {}, showHeading = true }: Props) {
+export default function EnquiryForm({ kind, defaults = {}, showHeading = true, stickySubmit = false }: Props) {
   const config = FORM_CONFIGS[kind];
   const uid = useId();
   const [values, setValues] = useState(() => initialValues(config.fields, defaults));
+  const [whatsapp, setWhatsapp] = useState("");
+  const [sameWhatsapp, setSameWhatsapp] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
@@ -34,15 +38,19 @@ export default function EnquiryForm({ kind, defaults = {}, showHeading = true }:
   const onSubmit = async (event: FormEvent) => {
     event.preventDefault();
     const found = validate(config.fields, values);
+    const finalWhatsapp = (sameWhatsapp ? values.phone : whatsapp).trim();
+    const waError = sameWhatsapp ? "" : whatsappError(finalWhatsapp);
+    if (waError) found.whatsapp = waError;
     setErrors(found);
     const firstInvalid = config.fields.find((f) => found[f.name]);
     if (firstInvalid) {
       document.getElementById(fieldId(firstInvalid.name))?.focus();
       return;
     }
+    if (waError) return;
     setSending(true);
     setSubmitError("");
-    const result = await submitEnquiry(kind, values);
+    const result = await submitEnquiry(kind, { ...values, whatsapp: finalWhatsapp });
     setSending(false);
     if (result.ok) setSent(true);
     else setSubmitError(result.message);
@@ -71,21 +79,28 @@ export default function EnquiryForm({ kind, defaults = {}, showHeading = true }:
         const error = errors[field.name];
         const shared = { id, name: field.name, value: values[field.name], onChange, "aria-invalid": error ? true : undefined, "aria-describedby": error ? `${id}-error` : undefined };
         return (
-          <div key={field.name} className={`grid min-w-0 content-start gap-1.5 ${field.wide || field.type === "textarea" ? "sm:col-span-2" : ""}`}>
-            <label htmlFor={id} className={LABEL}>{field.label}{field.required ? " *" : ""}</label>
-            {field.type === "textarea" ? (
-              <textarea {...shared} rows={4} placeholder={field.placeholder} className={`${FIELD} h-auto py-2`} />
-            ) : field.type === "select" ? (
-              <select {...shared} className={FIELD}>{field.options?.map((option) => <option key={option}>{option}</option>)}</select>
-            ) : (
-              <input {...shared} type={field.type} min={field.type === "date" ? todayIso() : field.min} placeholder={field.placeholder} className={FIELD} />
+          <>
+            <div key={field.name} className={`grid min-w-0 content-start gap-1.5 ${field.wide || field.type === "textarea" ? "sm:col-span-2" : ""}`}>
+              <label htmlFor={id} className={LABEL}>{field.label}{field.required ? " *" : ""}</label>
+              {field.type === "textarea" ? (
+                <textarea {...shared} rows={3} placeholder={field.placeholder} className={`${FIELD} h-auto py-2`} />
+              ) : field.type === "select" ? (
+                <select {...shared} className={FIELD}>{field.options?.map((option) => <option key={option}>{option}</option>)}</select>
+              ) : (
+                <input {...shared} type={field.type} min={field.type === "date" ? todayIso() : field.min} placeholder={field.placeholder} className={FIELD} />
+              )}
+              {error && <p id={`${id}-error`} className="text-xs text-destructive">{error}</p>}
+            </div>
+            {field.name === "phone" && (
+              <WhatsappField phone={values.phone ?? ""} value={whatsapp} same={sameWhatsapp} onSameChange={setSameWhatsapp} onChange={(v) => { setWhatsapp(v); setErrors((p) => ({ ...p, whatsapp: "" })); }} error={errors.whatsapp} />
             )}
-            {error && <p id={`${id}-error`} className="text-xs text-destructive">{error}</p>}
-          </div>
+          </>
         );
       })}
       {submitError && <p role="alert" className="text-sm text-destructive sm:col-span-2">{submitError}</p>}
-      <button type="submit" disabled={sending} className={`${BTN.gold} sm:col-span-2 disabled:opacity-60`}>{sending ? "Sending..." : config.submitLabel}</button>
+      <div className={`sm:col-span-2 ${stickySubmit ? "sticky bottom-0 z-10 -mx-5 -mb-5 border-t border-border bg-white px-5 py-3 sm:-mx-8 sm:-mb-8 sm:px-8" : ""}`}>
+        <button type="submit" disabled={sending} className={`${BTN.gold} w-full disabled:opacity-60`}>{sending ? "Sending..." : config.submitLabel}</button>
+      </div>
     </form>
   );
 }
