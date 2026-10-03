@@ -1,12 +1,26 @@
 import { Link } from 'react-router-dom';
 import { MapPin, Navigation, Star } from 'lucide-react';
-import { CONTACT_INFORMATION, FOOTER_EXTRA_LINKS, NAV_LINKS, contactPhones, mailEmailList, reservationEmailList } from '../lib/hotel-data.ts';
+import { CONTACT_INFORMATION, FOOTER_EXTRA_LINKS, NAV_LINKS, contactPhones, mailEmailList, mapEmbedUrl, reservationEmailList } from '../lib/hotel-data.ts';
 import { Logo } from './site-header.tsx';
 import { Reveal } from './hotel-page.tsx';
 import PremiumMap from './premium-map.tsx';
 
 const linkClass = 'text-sm text-muted-foreground transition-colors hover:text-primary';
 const headingClass = 'mb-5 text-[11px] uppercase tracking-[0.35em] text-primary';
+const DIRECTIONS_CLASS = 'inline-flex min-h-10 cursor-pointer items-center justify-center gap-2 bg-gradient-to-r from-[#b8933a] to-[#ecd594] px-4 text-[11px] font-medium uppercase tracking-[0.2em] text-[#0b1426] shadow-lg transition-opacity hover:opacity-90';
+// The Google embed draws its own "open in Maps" card in the top-left corner. The iframe is made taller
+// and shifted up inside a clipping box so that card is cut off, while the pin stays centred.
+const GOOGLE_CROP = 90;
+
+type MapStyle = 'premium' | 'google' | 'both';
+
+// Admin > Contact details > "Map style" decides which map(s) visitors see. Premium is the default.
+function mapStyle(): MapStyle {
+  const value = Reflect.get(CONTACT_INFORMATION, 'mapStyle');
+  if (value === 'Google map') return 'google';
+  if (value === 'Both maps') return 'both';
+  return 'premium';
+}
 
 // Registered company address shown in the footer. The hotel name comes first.
 const FOOTER_ADDRESS_LINES = [
@@ -15,26 +29,61 @@ const FOOTER_ADDRESS_LINES = [
   'Dr. Yagnik Road, Rajkot 360001 INDIA',
 ];
 
-// Premium map card: a dark navy and gold map with the hotel address and a directions button on top.
-function FooterMap() {
+const FRAME_CLASS = 'relative overflow-hidden border border-[#c9a84c]/40 shadow-[0_30px_60px_-35px_rgba(0,0,0,0.8)]';
+const HEIGHT_CLASS = 'h-[280px] md:h-[340px]';
+
+function DirectionsButton() {
+  return (
+    <a href={CONTACT_INFORMATION.mapsUrl} target="_blank" rel="noopener noreferrer" className={DIRECTIONS_CLASS}>
+      <Navigation className="h-4 w-4" />Get directions
+    </a>
+  );
+}
+
+// Dark navy and gold map with the hotel address and a directions button floating on top.
+function PremiumMapCard() {
   const info = CONTACT_INFORMATION;
   return (
-    <div className="relative mx-auto max-w-7xl px-5 pb-12 lg:px-8">
-      <div className="relative overflow-hidden border border-[#c9a84c]/40 shadow-[0_30px_60px_-35px_rgba(0,0,0,0.8)]">
-        <PremiumMap className="h-[280px] w-full md:h-[340px]">
-          <div className="absolute bottom-4 left-4 right-4 flex flex-col gap-3 border border-[#c9a84c]/40 bg-[#0b1426]/90 p-4 shadow-lg backdrop-blur sm:right-auto sm:max-w-sm">
-            <div className="flex gap-3">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#b8933a] to-[#ecd594] text-[#0b1426]"><MapPin className="h-5 w-5" /></span>
-              <div className="min-w-0">
-                <p className="font-serif text-lg leading-tight text-[#e8d5a3]">{info.name}</p>
-                <p className="mt-0.5 text-xs leading-5 text-white/75">{info.addressLines.join(', ')}</p>
-              </div>
+    <div className={FRAME_CLASS}>
+      <PremiumMap className={`${HEIGHT_CLASS} w-full`}>
+        <div className="absolute bottom-4 left-4 right-4 flex flex-col gap-3 border border-[#c9a84c]/40 bg-[#0b1426]/90 p-4 shadow-lg backdrop-blur sm:right-auto sm:max-w-sm">
+          <div className="flex gap-3">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#b8933a] to-[#ecd594] text-[#0b1426]"><MapPin className="h-5 w-5" /></span>
+            <div className="min-w-0">
+              <p className="font-serif text-lg leading-tight text-[#e8d5a3]">{info.name}</p>
+              <p className="mt-0.5 text-xs leading-5 text-white/75">{info.addressLines.join(', ')}</p>
             </div>
-            <a href={info.mapsUrl} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-10 cursor-pointer items-center justify-center gap-2 bg-gradient-to-r from-[#b8933a] to-[#ecd594] px-4 text-[11px] font-medium uppercase tracking-[0.2em] text-[#0b1426] transition-opacity hover:opacity-90">
-              <Navigation className="h-4 w-4" />Get directions
-            </a>
           </div>
-        </PremiumMap>
+          <DirectionsButton />
+        </div>
+      </PremiumMap>
+    </div>
+  );
+}
+
+function GoogleMapCard() {
+  return (
+    <div className={`${FRAME_CLASS} ${HEIGHT_CLASS}`}>
+      <iframe
+        title="Google map of The Imperial Palace, Rajkot"
+        src={mapEmbedUrl()}
+        loading="lazy"
+        referrerPolicy="no-referrer-when-downgrade"
+        className="absolute left-0 w-full border-0"
+        style={{ top: -GOOGLE_CROP, height: `calc(100% + ${GOOGLE_CROP * 2}px)` }}
+      />
+      <div className="absolute right-3 top-3"><DirectionsButton /></div>
+    </div>
+  );
+}
+
+function FooterMap() {
+  const style = mapStyle();
+  return (
+    <div className="relative mx-auto max-w-7xl px-5 pb-12 lg:px-8">
+      <div className={style === 'both' ? 'grid gap-6 md:grid-cols-2' : ''}>
+        {style !== 'google' && <PremiumMapCard />}
+        {style !== 'premium' && <GoogleMapCard />}
       </div>
     </div>
   );
