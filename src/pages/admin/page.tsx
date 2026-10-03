@@ -24,8 +24,8 @@ const GROUPS = [
   { title: "Website content", keys: SECTIONS.map((s) => s.key as string) },
 ];
 
+// Sign in only. New admin accounts cannot be created from the website.
 function LoginForm() {
-  const [mode, setMode] = useState<"in" | "up">("in");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
@@ -35,23 +35,19 @@ function LoginForm() {
     event.preventDefault();
     setBusy(true);
     setMessage("");
-    const creds = { email: email.trim(), password };
-    const { data, error } = mode === "in" ? await supabase.auth.signInWithPassword(creds) : await supabase.auth.signUp(creds);
+    const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
     setBusy(false);
     if (error) setMessage(error.message);
-    else if (mode === "up" && !data.session) setMessage("Account created. Check your email to confirm it, then sign in.");
   };
 
   return (
     <form onSubmit={(e) => void submit(e)} className="mx-auto grid w-full max-w-sm gap-4 border border-[#e6d9b8] bg-white p-8 shadow-[0_30px_80px_-40px_rgba(90,70,30,0.5)]">
       <p className="text-[10px] uppercase tracking-[0.35em] text-[#8a6a22]">Control room</p>
-      <h1 className="font-serif text-3xl font-light text-foreground">{mode === "in" ? "Admin sign in" : "Create admin account"}</h1>
+      <h1 className="font-serif text-3xl font-light text-foreground">Admin sign in</h1>
       <div className="grid gap-1.5"><label htmlFor="a-email" className={LABEL}>Email</label><input id="a-email" type="email" required autoComplete="email" placeholder="example@gmail.com" value={email} onChange={(e) => setEmail(e.target.value)} className={FIELD} /></div>
-      <div className="grid gap-1.5"><label htmlFor="a-pass" className={LABEL}>Password</label><input id="a-pass" type="password" required minLength={8} autoComplete={mode === "in" ? "current-password" : "new-password"} value={password} onChange={(e) => setPassword(e.target.value)} className={FIELD} /></div>
+      <div className="grid gap-1.5"><label htmlFor="a-pass" className={LABEL}>Password</label><input id="a-pass" type="password" required autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} className={FIELD} /></div>
       {message && <p role="alert" className="text-sm text-destructive">{message}</p>}
-      <button type="submit" disabled={busy} className={BTN.gold}>{busy ? "Please wait..." : mode === "in" ? "Sign in" : "Create account"}</button>
-      <button type="button" onClick={() => { setMode(mode === "in" ? "up" : "in"); setMessage(""); }} className="min-h-11 cursor-pointer text-xs text-muted-foreground underline">{mode === "in" ? "First time? Create the admin account" : "Already have an account? Sign in"}</button>
-      {mode === "up" && <p className="text-xs leading-5 text-muted-foreground">The first account created becomes the only admin. Others cannot be added later from this page.</p>}
+      <button type="submit" disabled={busy} className={BTN.gold}>{busy ? "Please wait..." : "Sign in"}</button>
     </form>
   );
 }

@@ -87,7 +87,10 @@ export const SECTIONS: SectionDef[] = [
     fields: [
       text("name", "Hotel name"), { name: "addressLines", label: "Address", type: "lines", required: true, help: "One line per row" },
       text("phone", "Phone (as shown)"), text("phoneHref", "Phone link", true, "For example tel:+912812480000"),
-      text("email", "Email"), text("reception", "Reception hours"), text("checkIn", "Check-in time"), text("checkOut", "Check-out time"), text("mapsUrl", "Google Maps link"),
+      text("email", "Main email", true, "Used for booking pop-ups and quick links"),
+      { name: "reservationEmails", label: "Reservations emails", type: "lines", help: "Shown in the footer under Reservations. One email per line" },
+      { name: "mailEmails", label: "Mail emails", type: "lines", help: "Shown in the footer under Mail and on the contact page. One email per line" },
+      text("reception", "Reception hours"), text("checkIn", "Check-in time"), text("checkOut", "Check-out time"), text("mapsUrl", "Google Maps link"),
     ],
   },
 ];
