@@ -7,10 +7,10 @@ import { Reveal } from './hotel-page.tsx';
 const linkClass = 'text-sm text-muted-foreground transition-colors hover:text-primary';
 const headingClass = 'mb-5 text-[11px] uppercase tracking-[0.35em] text-primary';
 
-// Registered company address shown in the footer.
+// Registered company address shown in the footer. The hotel name comes first.
 const FOOTER_ADDRESS_LINES = [
-  'City Organisers Private Limited',
   'The Imperial Palace',
+  'City Organisers Private Limited',
   'Dr. Yagnik Road, Rajkot 360001 INDIA',
 ];
 
