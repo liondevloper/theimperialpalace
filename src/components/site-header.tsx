@@ -7,14 +7,13 @@ import { HEADER_LOGO_URL } from '../lib/logo.ts';
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-// Wide cropped logo; fixed height keeps it inside the header, multiply hides its white background.
+// The source image has wide white margins. This frame crops to just the artwork
+// (496x349 region at 501,172 of a 1536x658 image); multiply hides the white on ivory.
 function Logo({ alt, small = false }: { alt: string; small?: boolean }) {
   return (
-    <img
-      src={HEADER_LOGO_URL}
-      alt={alt}
-      className={`block w-auto max-w-[62vw] shrink-0 object-contain mix-blend-multiply transition-all duration-500 ${small ? 'h-12 md:h-14' : 'h-14 md:h-16'}`}
-    />
+    <span role="img" aria-label={alt} className={`relative block aspect-[496/349] shrink-0 overflow-hidden transition-all duration-500 ${small ? 'h-12 md:h-14' : 'h-14 md:h-[72px]'}`}>
+      <img src={HEADER_LOGO_URL} alt="" className="absolute max-w-none mix-blend-multiply" style={{ width: '309.7%', left: '-101%', top: '-49.3%' }} />
+    </span>
   );
 }
 
@@ -46,7 +45,7 @@ export default function SiteHeader() {
       transition={{ duration: 0.8, ease: EASE }}
       className={`sticky top-0 z-50 border-b transition-all duration-500 ${scrolled ? 'border-[#e6d9b8] bg-[#fbf8f1]/90 shadow-[0_8px_30px_-18px_rgba(90,70,30,0.35)] backdrop-blur-xl' : 'border-transparent bg-[#fbf8f1]'}`}
     >
-      <div className={`mx-auto flex max-w-7xl items-center justify-between gap-4 overflow-hidden px-5 transition-all duration-500 lg:px-8 ${scrolled ? 'h-[70px] md:h-[76px]' : 'h-[80px] md:h-[88px]'}`}>
+      <div className={`mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 transition-all duration-500 lg:px-8 ${scrolled ? 'h-[68px] md:h-[76px]' : 'h-[80px] md:h-[92px]'}`}>
         <Link to="/" className="flex min-w-0 items-center transition-transform duration-500 hover:scale-[1.03]" aria-label="The Imperial Palace Rajkot, home">
           <Logo alt="The Imperial Palace logo" small={scrolled} />
         </Link>
