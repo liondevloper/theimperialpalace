@@ -5,10 +5,12 @@ import { animate, motion, useInView, useMotionValue, useScroll, useTransform } f
 import type { MotionValue } from "motion/react";
 import PageLayout from "../components/page-layout.tsx";
 import Img from "../components/img.tsx";
+import InstagramIcon from "../components/instagram-icon.tsx";
 import { Reveal, SectionHeading } from "../components/hotel-page.tsx";
 import { EnquiryButton } from "../components/enquiry-modal.tsx";
 import { BookStayButton } from "../components/book-stay-modal.tsx";
 import { CONTACT_INFORMATION, EXPERIENCES, GALLERY, HOME, HOTEL_IMAGES, RESTAURANTS, ROOMS, contactPhones, reservationEmailList } from "../lib/hotel-data.ts";
+import type { Restaurant } from "../lib/hotel-data.ts";
 import { introDelay } from "../lib/intro.ts";
 import { SITE } from "../lib/site-config.ts";
 import { BTN } from "../lib/styles.ts";
@@ -22,6 +24,16 @@ const imageCard = "overflow-hidden bg-card shadow-[0_24px_50px_-28px_rgba(6,12,2
 const zoom = "h-full w-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-110";
 
 const PERK_ICONS = [Clock, CalendarHeart, Sparkles];
+
+// Default Instagram for Delicacy. Admin > Dining can change it; clearing the field there hides the icon.
+const DEFAULT_INSTAGRAM: Record<string, string> = {
+  delicacy: "https://www.instagram.com/delicacybakery",
+};
+const instagramOf = (r: Restaurant & { instagram?: string | null }): string => {
+  if (r.instagram === null) return "";
+  if (typeof r.instagram === "string") return r.instagram.trim();
+  return DEFAULT_INSTAGRAM[r.slug] ?? "";
+};
 
 // "Title | text" or "200+ | Rooms & suites" -> [left, right]
 const splitPipe = (line: string): [string, string] => {
@@ -294,16 +306,34 @@ export default function Index() {
         <div className="mx-auto max-w-7xl">
           <Reveal><SectionHeading eyebrow="Dining" title={str(HOME.diningTitle)} /></Reveal>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {RESTAURANTS.map((r, i) => (
-              <Reveal key={r.slug} delay={i * 0.1}>
-                <Link to="/dining" className="group block transition-transform duration-700 hover:-translate-y-2">
-                  <div className={`aspect-[4/3] ${imageCard}`}><Img src={r.image} alt={`${r.name}, ${r.category}`} width={800} height={600} sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" className={zoom} /></div>
-                  <p className="mt-4 text-[10px] uppercase tracking-[0.25em] text-primary">{r.category}</p>
-                  <h3 className="mt-1 font-serif text-2xl text-foreground transition-colors group-hover:text-primary">{r.name}</h3>
-                  <p className="text-sm text-muted-foreground">{r.timing}</p>
-                </Link>
-              </Reveal>
-            ))}
+            {RESTAURANTS.map((r, i) => {
+              const instagram = instagramOf(r);
+              return (
+                <Reveal key={r.slug} delay={i * 0.1}>
+                  {/* Instagram sits outside the card link so the two links are never nested. */}
+                  <div className="group relative transition-transform duration-700 hover:-translate-y-2">
+                    <Link to="/dining" className="block">
+                      <div className={`aspect-[4/3] ${imageCard}`}><Img src={r.image} alt={`${r.name}, ${r.category}`} width={800} height={600} sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" className={zoom} /></div>
+                      <p className="mt-4 text-[10px] uppercase tracking-[0.25em] text-primary">{r.category}</p>
+                      <h3 className="mt-1 font-serif text-2xl text-foreground transition-colors group-hover:text-primary">{r.name}</h3>
+                      <p className="text-sm text-muted-foreground">{r.timing}</p>
+                    </Link>
+                    {instagram && (
+                      <a
+                        href={instagram}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`${r.name} on Instagram`}
+                        title={`Follow ${r.name} on Instagram`}
+                        className="absolute right-3 top-3 z-10 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-gradient-to-br from-[#feda75] via-[#d62976] to-[#4f5bd5] text-white shadow-[0_8px_20px_-6px_rgba(0,0,0,0.6)] ring-2 ring-white/80 transition-transform duration-300 hover:scale-110"
+                      >
+                        <InstagramIcon className="h-5 w-5" />
+                      </a>
+                    )}
+                  </div>
+                </Reveal>
+              );
+            })}
           </div>
         </div>
       </section>
