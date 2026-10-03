@@ -7,9 +7,19 @@ import { CONTACT_INFORMATION as C, HOTEL_IMAGES } from "../../lib/hotel-data.ts"
 import { whatsappUrl } from "../../lib/site-config.ts";
 import { BTN } from "../../lib/styles.ts";
 
+const cleanEmails = (list: unknown): string[] =>
+  Array.isArray(list) ? list.filter((e): e is string => typeof e === "string").map((e) => e.trim()).filter(Boolean) : [];
+
 export default function ContactPage() {
-  // General enquiries address (editable in admin under Contact details > Mail emails).
-  const contactEmail = C.mailEmails[0] ?? C.email;
+  // Read at render time so every email added in admin (Contact details) shows here, not just the first.
+  const reservationEmails = cleanEmails(C.reservationEmails);
+  const mailEmails = cleanEmails(C.mailEmails);
+  const emailGroups = [
+    { label: "Reservations", emails: reservationEmails },
+    { label: "Mail", emails: mailEmails },
+  ].filter((g) => g.emails.length > 0);
+  if (emailGroups.length === 0 && C.email) emailGroups.push({ label: "Email", emails: [C.email] });
+
   return (
     <PageLayout title="Contact | The Imperial Palace Rajkot" description="Contact The Imperial Palace, a 5-star hotel on Dr. Yagnik Road, Rajkot. Reservations, weddings, events and general enquiries.">
       <PageHero eyebrow="We are here to help" title="A warm welcome begins here" image={HOTEL_IMAGES.lobby} />
@@ -22,7 +32,14 @@ export default function ContactPage() {
               <address className="mt-4 flex gap-3 text-sm not-italic leading-6 text-muted-foreground"><MapPin className="mt-1 h-4 w-4 shrink-0 text-primary" /><span>{C.addressLines.join(", ")}</span></address>
               <div className="mt-5 space-y-3">
                 <a href={C.phoneHref} className="flex min-h-11 items-center gap-3 text-sm text-muted-foreground hover:text-foreground"><Phone className="h-4 w-4 text-primary" />{C.phone}</a>
-                <a href={`mailto:${contactEmail}`} className="flex min-h-11 items-center gap-3 break-all text-sm text-muted-foreground hover:text-foreground"><Mail className="h-4 w-4 shrink-0 text-primary" />{contactEmail}</a>
+                {emailGroups.map((group) => (
+                  <div key={group.label}>
+                    <span className="block text-[10px] uppercase tracking-[0.25em] text-primary">{group.label}</span>
+                    {group.emails.map((email) => (
+                      <a key={email} href={`mailto:${email}`} className="flex min-h-11 items-center gap-3 break-all text-sm text-muted-foreground hover:text-foreground"><Mail className="h-4 w-4 shrink-0 text-primary" />{email}</a>
+                    ))}
+                  </div>
+                ))}
               </div>
               <p className="mt-4 text-sm text-muted-foreground">Reception {C.reception}. Check-in {C.checkIn}, check-out {C.checkOut}.</p>
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
