@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
-import { Trash2 } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Download, Mail, Phone, RefreshCw, Search, Trash2 } from "lucide-react";
+import { WhatsappLogo } from "@phosphor-icons/react";
 import { supabase } from "../../../lib/supabase.ts";
 import { BTN, FIELD, LABEL } from "../../../lib/styles.ts";
 
-type Enquiry = {
+export type Enquiry = {
   id: string;
   kind: string;
   name: string;
@@ -16,27 +17,61 @@ type Enquiry = {
 
 const STATUSES = ["new", "contacted", "closed"];
 const KINDS = ["all", "booking", "wedding", "event", "contact", "dining", "wellness"];
-const LIMIT = 100;
+const LIMIT = 200;
+
+export const STATUS_STYLE: Record<string, string> = {
+  new: "bg-amber-100 text-amber-900",
+  contacted: "bg-sky-100 text-sky-900",
+  closed: "bg-emerald-100 text-emerald-900",
+};
+
+const label = (key: string) => key.replace(/([A-Z])/g, " $1").replace(/^./, (c) => c.toUpperCase());
+const waLink = (phone: string) => `https://wa.me/${phone.replace(/\D/g, "").replace(/^0/, "91")}`;
+const csvCell = (v: unknown) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+
+function exportCsv(rows: Enquiry[]) {
+  const keys = Array.from(new Set(rows.flatMap((r) => Object.keys(r.details))));
+  const head = ["Date", "Type", "Status", "Name", "Email", "Phone", ...keys.map(label)];
+  const body = rows.map((r) => [new Date(r.created_at).toLocaleString("en-IN"), r.kind, r.status, r.name, r.email, r.phone, ...keys.map((k) => r.details[k])]);
+  const csv = "\uFEFF" + [head, ...body].map((line) => line.map(csvCell).join(",")).join("\r\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+  a.download = `enquiries-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
 
 export default function EnquiriesPanel() {
   const [rows, setRows] = useState<Enquiry[] | null>(null);
   const [kind, setKind] = useState("all");
+  const [status, setStatusFilter] = useState("all");
+  const [query, setQuery] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const load = useCallback(async () => {
-    let query = supabase.from("enquiries").select("*").order("created_at", { ascending: false }).limit(LIMIT);
-    if (kind !== "all") query = query.eq("kind", kind);
-    const { data, error: err } = await query;
+    setLoading(true);
+    let q = supabase.from("enquiries").select("*").order("created_at", { ascending: false }).limit(LIMIT);
+    if (kind !== "all") q = q.eq("kind", kind);
+    if (status !== "all") q = q.eq("status", status);
+    const { data, error: err } = await q;
+    setLoading(false);
     if (err) setError("Could not load enquiries.");
     else { setError(""); setRows(data as Enquiry[]); }
-  }, [kind]);
+  }, [kind, status]);
 
   useEffect(() => { void load(); }, [load]);
 
-  const setStatus = async (id: string, status: string) => {
-    const { error: err } = await supabase.from("enquiries").update({ status }).eq("id", id);
+  const filtered = useMemo(() => {
+    const s = query.trim().toLowerCase();
+    if (!rows || !s) return rows;
+    return rows.filter((r) => [r.name, r.email, r.phone, JSON.stringify(r.details)].some((v) => (v ?? "").toLowerCase().includes(s)));
+  }, [rows, query]);
+
+  const setStatus = async (id: string, next: string) => {
+    const { error: err } = await supabase.from("enquiries").update({ status: next }).eq("id", id);
     if (err) setError("Could not update status.");
-    else setRows((prev) => prev?.map((r) => (r.id === id ? { ...r, status } : r)) ?? null);
+    else setRows((prev) => prev?.map((r) => (r.id === id ? { ...r, status: next } : r)) ?? null);
   };
 
   const remove = async (id: string) => {
@@ -46,45 +81,75 @@ export default function EnquiriesPanel() {
     else setRows((prev) => prev?.filter((r) => r.id !== id) ?? null);
   };
 
+  const contactBtn = "inline-flex min-h-9 items-center gap-1.5 border border-[#e6d9b8] px-3 text-xs text-foreground transition-colors hover:border-[#c9a84c] hover:bg-[#faf6ec]";
+
   return (
     <div>
-      <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
-        <h2 className="font-serif text-3xl font-light text-foreground">Enquiries</h2>
-        <div className="grid gap-1.5">
-          <label htmlFor="enq-kind" className={LABEL}>Type</label>
-          <select id="enq-kind" value={kind} onChange={(e) => setKind(e.target.value)} className={`${FIELD} w-44`}>{KINDS.map((k) => <option key={k} value={k}>{k}</option>)}</select>
+      <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h2 className="font-serif text-3xl font-light text-foreground">Enquiries</h2>
+          <p className="mt-1 text-xs text-muted-foreground">All bookings and messages sent from the website.</p>
+        </div>
+        <div className="flex gap-2">
+          <button type="button" onClick={() => void load()} className={`${BTN.outline} px-4`}><RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />Refresh</button>
+          <button type="button" disabled={!filtered?.length} onClick={() => filtered && exportCsv(filtered)} className={`${BTN.gold} px-4 disabled:opacity-50`}><Download className="h-4 w-4" />Download Excel</button>
         </div>
       </div>
+
+      <div className="mb-5 grid gap-3 border border-[#e6d9b8] bg-white p-4 sm:grid-cols-[1fr_auto_auto]">
+        <div className="relative grid gap-1.5">
+          <label htmlFor="enq-search" className={LABEL}>Search</label>
+          <Search className="pointer-events-none absolute bottom-3.5 left-3 h-4 w-4 text-muted-foreground" />
+          <input id="enq-search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Name, phone, email..." className={`${FIELD} pl-9`} />
+        </div>
+        <div className="grid gap-1.5">
+          <label htmlFor="enq-kind" className={LABEL}>Type</label>
+          <select id="enq-kind" value={kind} onChange={(e) => setKind(e.target.value)} className={`${FIELD} sm:w-40`}>{KINDS.map((k) => <option key={k} value={k}>{label(k)}</option>)}</select>
+        </div>
+        <div className="grid gap-1.5">
+          <label htmlFor="enq-status" className={LABEL}>Status</label>
+          <select id="enq-status" value={status} onChange={(e) => setStatusFilter(e.target.value)} className={`${FIELD} sm:w-40`}>{["all", ...STATUSES].map((s) => <option key={s} value={s}>{label(s)}</option>)}</select>
+        </div>
+      </div>
+
       {error && <p role="alert" className="mb-4 text-sm text-destructive">{error}</p>}
-      {rows === null ? <p className="text-sm text-muted-foreground">Loading...</p> : rows.length === 0 ? (
-        <p className="border border-border p-8 text-center text-sm text-muted-foreground">No enquiries yet. New ones from the website will appear here.</p>
+      {filtered === null ? (
+        <div className="space-y-3">{[0, 1, 2].map((i) => <div key={i} className="h-28 animate-pulse bg-[#efe6d2]" />)}</div>
+      ) : filtered.length === 0 ? (
+        <p className="border border-dashed border-[#e6d9b8] bg-white p-10 text-center text-sm text-muted-foreground">No enquiries found. New ones from the website will appear here.</p>
       ) : (
         <ul className="space-y-3">
-          {rows.map((r) => (
-            <li key={r.id} className="border border-border p-4 md:p-5">
+          {filtered.map((r) => (
+            <li key={r.id} className={`border-l-4 bg-white p-4 shadow-sm md:p-5 ${r.status === "new" ? "border-l-[#c9a84c]" : "border-l-transparent"}`}>
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="text-[11px] uppercase tracking-[0.2em] text-[#6f5318]">{r.kind} · {new Date(r.created_at).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}</p>
-                  <p className="mt-1 font-serif text-2xl text-foreground">{r.name}</p>
-                  <p className="mt-1 flex flex-wrap gap-x-4 text-sm text-muted-foreground">
-                    {r.email && <a href={`mailto:${r.email}`} className="break-all underline">{r.email}</a>}
-                    {r.phone && <a href={`tel:${r.phone}`} className="underline">{r.phone}</a>}
+                  <p className="flex flex-wrap items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-[#6f5318]">
+                    <span className="bg-[#1a140c] px-2 py-0.5 text-[#e8d5a3]">{r.kind}</span>
+                    <span className={`px-2 py-0.5 ${STATUS_STYLE[r.status] ?? "bg-muted"}`}>{r.status}</span>
+                    {new Date(r.created_at).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}
                   </p>
+                  <p className="mt-2 font-serif text-2xl text-foreground">{r.name}</p>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {r.phone && <a href={`tel:${r.phone}`} className={contactBtn}><Phone className="h-3.5 w-3.5" />{r.phone}</a>}
+                    {r.phone && <a href={waLink(r.phone)} target="_blank" rel="noopener noreferrer" className={`${contactBtn} text-[#128C7E]`}><WhatsappLogo weight="fill" className="h-4 w-4" />WhatsApp</a>}
+                    {r.email && <a href={`mailto:${r.email}`} className={`${contactBtn} break-all`}><Mail className="h-3.5 w-3.5" />{r.email}</a>}
+                  </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <select aria-label="Status" value={r.status} onChange={(e) => void setStatus(r.id, e.target.value)} className={`${FIELD} w-36`}>{STATUSES.map((s) => <option key={s}>{s}</option>)}</select>
+                  <select aria-label="Status" value={r.status} onChange={(e) => void setStatus(r.id, e.target.value)} className={`${FIELD} w-36`}>{STATUSES.map((s) => <option key={s} value={s}>{label(s)}</option>)}</select>
                   <button type="button" onClick={() => void remove(r.id)} aria-label="Delete enquiry" className="flex h-11 w-11 cursor-pointer items-center justify-center text-destructive"><Trash2 className="h-4 w-4" /></button>
                 </div>
               </div>
-              <dl className="mt-4 grid gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
-                {Object.entries(r.details).map(([k, v]) => (<div key={k}><dt className={LABEL}>{k}</dt><dd className="break-words text-foreground">{String(v)}</dd></div>))}
-              </dl>
+              {Object.keys(r.details).length > 0 && (
+                <dl className="mt-4 grid gap-x-6 gap-y-3 border-t border-[#efe6d2] pt-4 text-sm sm:grid-cols-2 lg:grid-cols-3">
+                  {Object.entries(r.details).map(([k, v]) => (<div key={k} className={k === "message" ? "sm:col-span-2 lg:col-span-3" : ""}><dt className={LABEL}>{label(k)}</dt><dd className="break-words text-foreground">{String(v)}</dd></div>))}
+                </dl>
+              )}
             </li>
           ))}
         </ul>
       )}
       {rows && rows.length === LIMIT && <p className="mt-4 text-xs text-muted-foreground">Showing the latest {LIMIT} enquiries.</p>}
-      <button type="button" onClick={() => void load()} className={`${BTN.outline} mt-5`}>Refresh</button>
     </div>
   );
 }
