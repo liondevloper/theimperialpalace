@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Check } from "lucide-react";
 import PageLayout from "../../components/page-layout.tsx";
-import EnquiryModal from "../../components/enquiry-modal.tsx";
+import { BookStayButton } from "../../components/book-stay-modal.tsx";
 import Img from "../../components/img.tsx";
 import { Reveal, SectionHeading } from "../../components/hotel-page.tsx";
 import { ROOMS } from "../../lib/hotel-data.ts";
@@ -13,7 +13,6 @@ export default function RoomDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const room = ROOMS.find((item) => item.slug === slug);
   const [activeImage, setActiveImage] = useState(0);
-  const [modalOpen, setModalOpen] = useState(false);
 
   if (!room) {
     return (
@@ -51,7 +50,7 @@ export default function RoomDetailPage() {
             <ul className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-2">
               {room.amenities.map((amenity) => <li key={amenity} className="flex items-center gap-2.5 text-sm text-muted-foreground"><Check className="h-4 w-4 shrink-0 text-primary" />{amenity}</li>)}
             </ul>
-            <button type="button" onClick={() => setModalOpen(true)} className={`${BTN.gold} mt-8 w-full sm:w-auto`}>Request booking</button>
+            <BookStayButton defaultRoom={room.name} className={`${BTN.gold} mt-8 w-full sm:w-auto`}>Book this room</BookStayButton>
           </div>
         </div>
       </section>
@@ -61,7 +60,6 @@ export default function RoomDetailPage() {
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">{suggestions.map((s) => <RoomCard key={s.slug} room={s} />)}</div>
         </div>
       </section>
-      <EnquiryModal kind="booking" open={modalOpen} onClose={() => setModalOpen(false)} defaults={{ roomType: room.name }} />
     </PageLayout>
   );
 }

@@ -1,6 +1,7 @@
-import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
+import { Mail, MapPin, MessageSquareText, Phone } from "lucide-react";
 import PageLayout from "../../components/page-layout.tsx";
-import EnquiryForm from "../../components/enquiry-form.tsx";
+import { EnquiryButton } from "../../components/enquiry-modal.tsx";
+import WhatsappIcon from "../../components/whatsapp-icon.tsx";
 import { PageHero, Reveal, SectionHeading } from "../../components/hotel-page.tsx";
 import { CONTACT_INFORMATION as C, HOTEL_IMAGES } from "../../lib/hotel-data.ts";
 import { whatsappUrl } from "../../lib/site-config.ts";
@@ -10,7 +11,7 @@ export default function ContactPage() {
   // General enquiries address (editable in admin under Contact details > Mail emails).
   const contactEmail = C.mailEmails[0] ?? C.email;
   return (
-    <PageLayout title="Contact | The Imperial Palace Rajkot" description="Contact The Imperial Palace, Dr. Yagnik Road, Rajkot. Reservations, weddings, events and general enquiries.">
+    <PageLayout title="Contact | The Imperial Palace Rajkot" description="Contact The Imperial Palace, a 5-star hotel on Dr. Yagnik Road, Rajkot. Reservations, weddings, events and general enquiries.">
       <PageHero eyebrow="We are here to help" title="A warm welcome begins here" image={HOTEL_IMAGES.lobby} />
       <section className="px-5 py-16 md:py-24 lg:px-8">
         <div className="mx-auto max-w-7xl">
@@ -25,14 +26,20 @@ export default function ContactPage() {
               </div>
               <p className="mt-4 text-sm text-muted-foreground">Reception {C.reception}. Check-in {C.checkIn}, check-out {C.checkOut}.</p>
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" className={BTN.outline}><MessageCircle className="h-4 w-4" />WhatsApp</a>
+                <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" className={BTN.outline}><WhatsappIcon className="h-4 w-4" />WhatsApp</a>
                 <a href={C.mapsUrl} target="_blank" rel="noopener noreferrer" className={BTN.outline}><MapPin className="h-4 w-4" />Open in Maps</a>
               </div>
               <dl className="mt-10 divide-y divide-border border-y border-border">
                 {C.distances.map((d) => (<div key={d.label} className="flex justify-between py-3 text-sm"><dt className="text-foreground">{d.label} <span className="text-muted-foreground">({d.note})</span></dt><dd className="text-muted-foreground">{d.distance}</dd></div>))}
               </dl>
             </aside>
-            <div className="border border-border bg-card p-5 md:p-8"><EnquiryForm kind="contact" /></div>
+            {/* Enquiry form opens as a pop-up. */}
+            <div className="flex flex-col items-start justify-center border border-border bg-card p-6 md:p-10">
+              <p className="text-[10px] uppercase tracking-[0.35em] text-primary">Enquiries</p>
+              <h2 className="mt-3 font-serif text-3xl font-light text-foreground md:text-4xl">Send us a message</h2>
+              <p className="mt-3 max-w-md text-sm leading-6 text-muted-foreground">Stays, weddings, events or dining. Share a few details and our team will reply within hours.</p>
+              <EnquiryButton className={`${BTN.gold} mt-7`}><MessageSquareText className="h-4 w-4" />Send an enquiry</EnquiryButton>
+            </div>
           </div>
         </div>
       </section>

@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import Img from "../../../components/img.tsx";
+import { BookStayButton } from "../../../components/book-stay-modal.tsx";
 import type { Room } from "../../../lib/hotel-data.ts";
 import { BTN } from "../../../lib/styles.ts";
 
@@ -16,7 +17,10 @@ export default function RoomCard({ room }: { room: Room }) {
           <span className="shrink-0 text-xs text-muted-foreground">{room.size}</span>
         </div>
         <p className="mt-3 flex-1 text-sm leading-6 text-muted-foreground">{room.desc}</p>
-        <Link to={`/stay/${room.slug}`} className={`${BTN.outline} mt-6 w-fit`}>View details</Link>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <BookStayButton defaultRoom={room.name} className={BTN.gold}>Book now</BookStayButton>
+          <Link to={`/stay/${room.slug}`} className={BTN.outline}>View details</Link>
+        </div>
       </div>
     </article>
   );
