@@ -107,8 +107,8 @@ export const SECTIONS: SectionDef[] = [
       { name: "reservationEmails", label: "Reservations emails", type: "lines", help: "Shown in the footer, home page reservations desk and contact page. One email per line" },
       { name: "mailEmails", label: "Mail emails", type: "lines", help: "Shown in the footer and on the contact page. One email per line" },
       text("reception", "Reception hours"), text("checkIn", "Check-in time"), text("checkOut", "Check-out time"), text("mapsUrl", "Google Maps link"),
-      // Not required: until the admin picks one, the website shows the premium map.
-      { name: "mapStyle", label: "Footer map (Premium map, Google map or Both maps)", type: "text", required: false, help: "Type exactly one of: Premium map, Google map, Both maps. Empty shows the Premium map." },
+      { name: "showPremiumMap", label: "Show premium map in the website footer", type: "checkbox", help: "Dark navy and gold map. Switch on or off." },
+      { name: "showGoogleMap", label: "Show Google map in the website footer", type: "checkbox", help: "Switch both on to show both maps. If both are off, the premium map is shown." },
     ],
   },
 ];
