@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { motion, useScroll, useTransform } from "motion/react";
 import PageLayout from "../components/page-layout.tsx";
-import BookingWidget from "../components/booking-widget.tsx";
 import Img from "../components/img.tsx";
 import { HeroText, Reveal, SectionHeading } from "../components/hotel-page.tsx";
 import { CONTACT_INFORMATION, GALLERY, HOTEL_IMAGES, RESTAURANTS, ROOMS } from "../lib/hotel-data.ts";
@@ -54,12 +53,6 @@ export default function Index() {
   return (
     <PageLayout title="The Imperial Palace Rajkot | 5-Star Luxury Hotel in Gujarat" description={SITE.description}>
       <Hero />
-
-      <section className="relative z-10 mx-auto -mt-12 max-w-7xl px-5 lg:px-8" aria-label="Check availability">
-        <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.9, ease: EASE }} className="bg-white p-2 shadow-[0_30px_70px_-30px_rgba(90,70,30,0.5)] ring-1 ring-[#e6d9b8]">
-          <BookingWidget />
-        </motion.div>
-      </section>
 
       <section className="px-5 py-20 md:py-28 lg:px-8">
         <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-2">

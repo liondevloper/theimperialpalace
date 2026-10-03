@@ -1,4 +1,5 @@
-import { CalendarCheck, MessageCircle } from "lucide-react";
+import { CalendarCheck } from "lucide-react";
+import { WhatsappLogo } from "@phosphor-icons/react";
 import { whatsappUrl } from "../lib/site-config.ts";
 import { BookStayButton } from "./book-stay-modal.tsx";
 
@@ -10,8 +11,8 @@ export default function FloatingActions() {
         <CalendarCheck className="h-5 w-5" />
         Book stay
       </BookStayButton>
-      <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" aria-label="Chat with us on WhatsApp" className="flex h-14 items-center gap-2 rounded-full bg-[#1f8f4e] px-4 text-sm font-medium text-white transition-colors hover:bg-[#187a41]">
-        <MessageCircle className="h-6 w-6" />
+      <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" aria-label="Chat with us on WhatsApp" className="flex h-14 min-w-14 items-center justify-center gap-2 rounded-full bg-[#25D366] px-3.5 text-sm font-medium text-white shadow-[0_10px_30px_-10px_rgba(37,211,102,0.8)] transition-transform hover:-translate-y-0.5 sm:px-5">
+        <WhatsappLogo weight="fill" className="h-7 w-7 shrink-0" />
         <span className="hidden sm:inline">WhatsApp</span>
       </a>
     </div>
