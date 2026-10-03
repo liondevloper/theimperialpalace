@@ -11,7 +11,7 @@ const MAX_ZOOM = 2.6;
 const START_ZOOM = 1.3;
 const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
 
-const ctrl = "flex h-11 w-11 cursor-pointer items-center justify-center bg-[#14110c]/85 text-white transition-colors hover:bg-[#c9a84c] hover:text-[#14110c] disabled:cursor-not-allowed disabled:opacity-40";
+const ctrl = "flex h-11 w-11 cursor-pointer items-center justify-center bg-[#0f1a30]/85 text-white transition-colors hover:bg-[#c9a84c] hover:text-[#0f1a30] disabled:cursor-not-allowed disabled:opacity-40";
 
 export default function TourPage() {
   const [index, setIndex] = useState(0);
@@ -66,29 +66,29 @@ export default function TourPage() {
 
   return (
     <PageLayout title="360° Virtual Tour Demo | The Imperial Palace Rajkot" description="Explore the lobby, suites, ballrooms, pool and courtyard of The Imperial Palace, Rajkot in an interactive 360 degree tour demo.">
-      <section className="bg-[#0e0c09] px-5 py-10 text-white md:py-16 lg:px-8">
+      <section className="bg-[#0f1a30] px-5 py-10 text-white md:py-16 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <span className="inline-block border border-[#c9a84c] px-3 py-1.5 text-[11px] font-medium uppercase tracking-[0.3em] text-[#c9a84c]">360° Tour Demo</span>
           <h1 className="mt-5 max-w-3xl font-serif text-4xl font-light leading-tight text-balance md:text-6xl">Experience the palace before you arrive</h1>
           <p className="mt-4 max-w-2xl text-sm leading-7 text-white/75">Drag to look around, use the controls to zoom, and tap a glowing marker to walk into the next space.</p>
 
           <div className="mt-8 grid gap-4 lg:grid-cols-[1fr_260px]">
-            <div ref={stage} className="relative aspect-[4/5] w-full select-none overflow-hidden bg-black sm:aspect-[16/10] lg:aspect-auto lg:h-[600px]">
+            <div ref={stage} className="relative aspect-[4/5] w-full select-none overflow-hidden bg-[#0b1426] sm:aspect-[16/10] lg:aspect-auto lg:h-[600px]">
               <div onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp} className="absolute inset-0 cursor-grab touch-none active:cursor-grabbing" aria-label={`Panorama of ${location.label}. Drag to look around.`} role="application">
                 <div className="absolute inset-0 will-change-transform" style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})` }}>
                   <Img key={location.id} src={location.image} alt={`${location.label} at The Imperial Palace`} priority width={1600} height={1000} className="pointer-events-none h-full w-full object-cover" />
                   {location.hotspots.map((h) => (
                     <button key={h.to} type="button" onPointerDown={(e) => e.stopPropagation()} onClick={() => goToId(h.to)} aria-label={`Go to ${h.label}`} className="group absolute flex -translate-x-1/2 -translate-y-1/2 cursor-pointer flex-col items-center gap-2" style={{ left: `${h.x}%`, top: `${h.y}%`, transform: `translate(-50%, -50%) scale(${1 / zoom})` }}>
-                      <span className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-white bg-[#c9a84c]/90 text-[#14110c] group-hover:bg-white"><ChevronRight className="h-5 w-5" /></span>
-                      <span className="whitespace-nowrap bg-[#14110c]/90 px-2.5 py-1 text-[11px] uppercase tracking-[0.18em] text-white">{h.label}</span>
+                      <span className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-white bg-[#c9a84c]/90 text-[#0f1a30] group-hover:bg-white"><ChevronRight className="h-5 w-5" /></span>
+                      <span className="whitespace-nowrap bg-[#0f1a30]/90 px-2.5 py-1 text-[11px] uppercase tracking-[0.18em] text-white">{h.label}</span>
                     </button>
                   ))}
                 </div>
               </div>
 
               <div className="pointer-events-none absolute left-3 top-3 flex flex-col gap-2 sm:left-4 sm:top-4">
-                <span className="bg-[#14110c]/90 px-3 py-1.5 text-[10px] font-medium uppercase tracking-[0.25em] text-[#c9a84c]">360° Tour Demo</span>
-                <span className="bg-[#14110c]/90 px-3 py-2 text-xs uppercase tracking-[0.18em]">{location.label} <span className="text-white/60">· {location.area}</span></span>
+                <span className="bg-[#0f1a30]/90 px-3 py-1.5 text-[10px] font-medium uppercase tracking-[0.25em] text-[#c9a84c]">360° Tour Demo</span>
+                <span className="bg-[#0f1a30]/90 px-3 py-2 text-xs uppercase tracking-[0.18em]">{location.label} <span className="text-white/60">· {location.area}</span></span>
               </div>
               <div className="absolute right-3 top-3 flex flex-col gap-2 sm:right-4 sm:top-4">
                 <button type="button" onClick={toggleFull} aria-label={full ? "Exit fullscreen" : "Enter fullscreen"} className={ctrl}>{full ? <Minimize2 className="h-5 w-5" /> : <Maximize2 className="h-5 w-5" />}</button>
@@ -97,7 +97,7 @@ export default function TourPage() {
               </div>
               <button type="button" onClick={() => goTo(index - 1)} aria-label="Previous location" className={`${ctrl} absolute left-3 top-1/2 -translate-y-1/2 sm:left-4`}><ChevronLeft className="h-5 w-5" /></button>
               <button type="button" onClick={() => goTo(index + 1)} aria-label="Next location" className={`${ctrl} absolute right-3 top-1/2 -translate-y-1/2 sm:right-4`}><ChevronRight className="h-5 w-5" /></button>
-              <p className="pointer-events-none absolute bottom-3 left-3 right-3 flex items-center justify-center gap-2 bg-[#14110c]/85 px-3 py-2 text-[11px] uppercase tracking-[0.15em] text-white/85 sm:left-auto sm:right-auto sm:bottom-4 sm:left-1/2 sm:-translate-x-1/2"><Hand className="h-4 w-4 shrink-0 text-[#c9a84c]" />Drag to look around</p>
+              <p className="pointer-events-none absolute bottom-3 left-3 right-3 flex items-center justify-center gap-2 bg-[#0f1a30]/85 px-3 py-2 text-[11px] uppercase tracking-[0.15em] text-white/85 sm:left-auto sm:right-auto sm:bottom-4 sm:left-1/2 sm:-translate-x-1/2"><Hand className="h-4 w-4 shrink-0 text-[#c9a84c]" />Drag to look around</p>
             </div>
 
             <nav aria-label="Tour locations" className="grid grid-cols-2 gap-2 lg:grid-cols-1 lg:content-start">

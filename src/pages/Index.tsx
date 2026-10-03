@@ -17,7 +17,7 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 // Compact vertical rhythm for every home section.
 const SECTION = "px-5 py-14 md:py-20 lg:px-8";
 const textLink = "group inline-flex min-h-11 items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-primary transition-all hover:gap-4";
-const imageCard = "overflow-hidden bg-card shadow-[0_24px_50px_-28px_rgba(0,0,0,0.9)] ring-1 ring-border";
+const imageCard = "overflow-hidden bg-card shadow-[0_24px_50px_-28px_rgba(6,12,26,0.9)] ring-1 ring-border";
 const zoom = "h-full w-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-110";
 
 const ENQUIRY_PERKS = [
@@ -59,11 +59,11 @@ function Hero() {
   const fade = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
   const delay = introDelay();
   return (
-    <section ref={ref} className="relative flex min-h-[600px] items-end overflow-hidden bg-[#0d0b08] md:min-h-[92vh]">
+    <section ref={ref} className="relative flex min-h-[600px] items-end overflow-hidden bg-[#0b1426] md:min-h-[92vh]">
       <motion.div style={{ y }} initial={{ scale: 1.2 }} animate={{ scale: 1.04 }} transition={{ duration: 3, delay, ease: EASE }} className="absolute inset-0">
         <Img src={HOME.heroImage} alt="The grand lobby of The Imperial Palace, Rajkot" priority width={1920} height={1080} sizes="100vw" className="h-full w-full object-cover" />
       </motion.div>
-      <div className="absolute inset-0 bg-gradient-to-t from-[#0d0b08] via-[#0d0b08]/45 to-[#0d0b08]/20" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0b1426] via-[#0b1426]/45 to-[#0b1426]/20" />
       <motion.div style={{ opacity: fade }} className="relative z-10 mx-auto w-full max-w-7xl px-5 pb-16 pt-28 lg:px-8 lg:pb-24">
         <HeroText delay={delay} eyebrow={HOME.heroEyebrow} title={<>{HOME.heroTitle} <em className="bg-gradient-to-r from-[#f1e2b8] via-[#d9bc6a] to-[#f1e2b8] bg-clip-text italic text-transparent">{HOME.heroHighlight}</em></>} subtitle={HOME.heroSubtitle}>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -108,9 +108,9 @@ function WeddingBand() {
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   return (
-    <section ref={ref} className="relative overflow-hidden bg-[#0d0b08]">
+    <section ref={ref} className="relative overflow-hidden bg-[#0b1426]">
       <ParallaxImage src={HOTEL_IMAGES.wedding} alt="A wedding celebration at The Imperial Palace" progress={scrollYProgress} />
-      <div className="absolute inset-0 bg-gradient-to-r from-[#0d0b08]/90 via-[#0d0b08]/60 to-[#0d0b08]/10" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[#0b1426]/90 via-[#0b1426]/60 to-[#0b1426]/10" />
       <div className="relative mx-auto max-w-7xl px-5 py-20 md:py-28 lg:px-8">
         <Reveal>
           <SectionHeading eyebrow="Weddings & events" title="Celebrate your most memorable moments" description="Grand ballrooms, an open-air pool deck and a planning team that handles every detail." tone="dark" />
@@ -154,9 +154,9 @@ function EnquiryBand() {
         <Reveal delay={0.2} className="relative">
           <div className="relative aspect-[4/5] overflow-hidden ring-1 ring-primary/40">
             <Img src={HOTEL_IMAGES.exterior} alt="The Imperial Palace at dusk" width={900} height={1125} sizes="(min-width: 1024px) 50vw, 100vw" className="h-full w-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0d0b08]/70 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0b1426]/70 to-transparent" />
           </div>
-          <motion.div animate={{ y: [0, -10, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }} className="absolute -bottom-6 left-4 right-4 border border-primary/40 bg-background/95 p-5 shadow-[0_30px_60px_-20px_rgba(0,0,0,0.8)] backdrop-blur sm:left-auto sm:right-[-1.5rem] sm:w-72">
+          <motion.div animate={{ y: [0, -10, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }} className="absolute -bottom-6 left-4 right-4 border border-primary/40 bg-background/95 p-5 shadow-[0_30px_60px_-20px_rgba(6,12,26,0.8)] backdrop-blur sm:left-auto sm:right-[-1.5rem] sm:w-72">
             <p className="text-[10px] uppercase tracking-[0.3em] text-primary">Reservations desk</p>
             <p className="mt-2 font-serif text-2xl text-foreground">Open {CONTACT_INFORMATION.reception}</p>
             <p className="mt-1 break-all text-sm text-muted-foreground">{CONTACT_INFORMATION.email}</p>
@@ -206,8 +206,8 @@ export default function Index() {
                 <Link to={`/stay/${room.slug}`} className="group block">
                   <div className={`relative aspect-[4/5] ${imageCard}`}>
                     <Img src={room.images[0]} alt={`${room.name} at The Imperial Palace`} width={800} height={1000} sizes="(min-width: 768px) 33vw, 100vw" className={zoom} />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0d0b08]/70 via-transparent to-transparent opacity-0 transition-opacity duration-700 group-hover:opacity-100" />
-                    {room.badge && <span className="absolute left-4 top-4 bg-[#0d0b08]/70 px-3 py-1.5 text-[10px] uppercase tracking-[0.25em] text-[#e8d5a3] backdrop-blur">{room.badge}</span>}
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0b1426]/70 via-transparent to-transparent opacity-0 transition-opacity duration-700 group-hover:opacity-100" />
+                    {room.badge && <span className="absolute left-4 top-4 bg-[#0b1426]/70 px-3 py-1.5 text-[10px] uppercase tracking-[0.25em] text-[#e8d5a3] backdrop-blur">{room.badge}</span>}
                     <span className="absolute bottom-5 left-5 flex translate-y-4 items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-white opacity-0 transition-all duration-700 group-hover:translate-y-0 group-hover:opacity-100">Discover <ArrowRight className="h-4 w-4" /></span>
                   </div>
                   <h3 className="mt-4 font-serif text-2xl text-foreground transition-colors group-hover:text-primary">{room.name}</h3>
@@ -247,7 +247,7 @@ export default function Index() {
               <Reveal key={e.title} delay={i * 0.08} className={i < 2 ? "md:col-span-3" : "md:col-span-2"}>
                 <Link to={e.to} className={`group relative block ${i < 2 ? "aspect-[16/10]" : "aspect-[4/5]"} ${imageCard}`}>
                   <Img src={e.image} alt={e.title} width={1000} height={700} sizes={i < 2 ? "(min-width: 768px) 50vw, 100vw" : "(min-width: 768px) 33vw, 100vw"} className={zoom} />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0d0b08]/85 via-[#0d0b08]/20 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0b1426]/85 via-[#0b1426]/20 to-transparent" />
                   <div className="absolute inset-x-0 bottom-0 p-6">
                     <p className="text-[10px] uppercase tracking-[0.3em] text-[#e8d5a3]">{e.label}</p>
                     <h3 className="mt-2 font-serif text-2xl text-white md:text-3xl">{e.title}</h3>
