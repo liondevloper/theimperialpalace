@@ -56,8 +56,11 @@ export const SECTIONS: SectionDef[] = [
   },
   {
     key: "restaurants", label: "Dining", titleField: "name", noun: "restaurant", page: "/dining",
-    blank: { name: "New restaurant", slug: "", category: "", description: "", timing: "", image: "" },
-    fields: [text("name", "Name"), text("category", "Type of dining"), area("description", "Description"), text("timing", "Timings"), image()],
+    blank: { name: "New restaurant", slug: "", category: "", description: "", timing: "", image: "", instagram: null },
+    fields: [
+      text("name", "Name"), text("category", "Type of dining"), area("description", "Description"), text("timing", "Timings"), image(),
+      { name: "instagram", label: "Instagram link (optional)", type: "optionalText", help: "Shows an Instagram icon on this restaurant's card on the home page. Leave empty to hide." },
+    ],
   },
   {
     key: "venues", label: "Venues", titleField: "name", noun: "venue", page: "/events",
