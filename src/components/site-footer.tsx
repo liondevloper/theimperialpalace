@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { MapPin, Star } from 'lucide-react';
+import { MapPin, Navigation, Star } from 'lucide-react';
 import { CONTACT_INFORMATION, FOOTER_EXTRA_LINKS, NAV_LINKS, contactPhones, mailEmailList, reservationEmailList } from '../lib/hotel-data.ts';
 import { Logo } from './site-header.tsx';
 import { Reveal } from './hotel-page.tsx';
@@ -15,19 +15,24 @@ const FOOTER_ADDRESS_LINES = [
   'Dr. Yagnik Road, Rajkot 360001 INDIA',
 ];
 
-// Premium map card: a dark navy and gold map with the hotel address floating on top.
+// Premium map card: a dark navy and gold map with the hotel address and a directions button on top.
 function FooterMap() {
   const info = CONTACT_INFORMATION;
   return (
     <div className="relative mx-auto max-w-7xl px-5 pb-12 lg:px-8">
       <div className="relative overflow-hidden border border-[#c9a84c]/40 shadow-[0_30px_60px_-35px_rgba(0,0,0,0.8)]">
         <PremiumMap className="h-[280px] w-full md:h-[340px]">
-          <div className="absolute bottom-4 left-4 right-4 flex gap-3 border border-[#c9a84c]/40 bg-[#0b1426]/90 p-4 shadow-lg backdrop-blur sm:right-auto sm:max-w-sm">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#b8933a] to-[#ecd594] text-[#0b1426]"><MapPin className="h-5 w-5" /></span>
-            <div className="min-w-0">
-              <p className="font-serif text-lg leading-tight text-[#e8d5a3]">{info.name}</p>
-              <p className="mt-0.5 text-xs leading-5 text-white/75">{info.addressLines.join(', ')}</p>
+          <div className="absolute bottom-4 left-4 right-4 flex flex-col gap-3 border border-[#c9a84c]/40 bg-[#0b1426]/90 p-4 shadow-lg backdrop-blur sm:right-auto sm:max-w-sm">
+            <div className="flex gap-3">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#b8933a] to-[#ecd594] text-[#0b1426]"><MapPin className="h-5 w-5" /></span>
+              <div className="min-w-0">
+                <p className="font-serif text-lg leading-tight text-[#e8d5a3]">{info.name}</p>
+                <p className="mt-0.5 text-xs leading-5 text-white/75">{info.addressLines.join(', ')}</p>
+              </div>
             </div>
+            <a href={info.mapsUrl} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-10 cursor-pointer items-center justify-center gap-2 bg-gradient-to-r from-[#b8933a] to-[#ecd594] px-4 text-[11px] font-medium uppercase tracking-[0.2em] text-[#0b1426] transition-opacity hover:opacity-90">
+              <Navigation className="h-4 w-4" />Get directions
+            </a>
           </div>
         </PremiumMap>
       </div>
