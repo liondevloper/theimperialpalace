@@ -1,19 +1,17 @@
-import { Mail, MapPin, MessageSquareText, Phone } from "lucide-react";
+import { Mail, MapPin, MessageSquareText, Phone, Printer } from "lucide-react";
 import PageLayout from "../../components/page-layout.tsx";
 import { EnquiryButton } from "../../components/enquiry-modal.tsx";
 import WhatsappIcon from "../../components/whatsapp-icon.tsx";
 import { PageHero, Reveal, SectionHeading } from "../../components/hotel-page.tsx";
-import { CONTACT_INFORMATION as C, HOTEL_IMAGES, contactPhones, mailEmailList, reservationEmailList } from "../../lib/hotel-data.ts";
+import { CONTACT_INFORMATION as C, HOTEL_IMAGES, contactPhones } from "../../lib/hotel-data.ts";
+import { FAX, emailGroups } from "../../lib/emails.ts";
 import { whatsappUrl } from "../../lib/site-config.ts";
 import { BTN } from "../../lib/styles.ts";
 
 export default function ContactPage() {
   // Read at render time so every phone and email saved in admin (Contact details) shows here.
   const phones = contactPhones();
-  const emailGroups = [
-    { label: "Reservations", emails: reservationEmailList() },
-    { label: "Mail", emails: mailEmailList() },
-  ].filter((g) => g.emails.length > 0);
+  const groups = emailGroups();
 
   return (
     <PageLayout title="Contact | The Imperial Palace Rajkot" description="Contact The Imperial Palace, a 5-star hotel on Dr. Yagnik Road, Rajkot. Reservations, weddings, events and general enquiries.">
@@ -29,7 +27,8 @@ export default function ContactPage() {
                 {phones.map((p) => (
                   <a key={p.href} href={p.href} className="flex min-h-11 items-center gap-3 text-sm text-muted-foreground hover:text-foreground"><Phone className="h-4 w-4 text-primary" />{p.label}</a>
                 ))}
-                {emailGroups.map((group) => (
+                <a href={FAX.href} className="flex min-h-11 items-center gap-3 text-sm text-muted-foreground hover:text-foreground"><Printer className="h-4 w-4 text-primary" />Fax: {FAX.label}</a>
+                {groups.map((group) => (
                   <div key={group.label}>
                     <span className="block text-[10px] uppercase tracking-[0.25em] text-primary">{group.label}</span>
                     {group.emails.map((email) => (
