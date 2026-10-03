@@ -7,12 +7,14 @@ import { LOGO_URL } from '../lib/logo.ts';
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-// White circle stays the same size; the artwork inside fills it.
-function LogoBadge({ alt }: { alt: string }) {
+// No circle: mix-blend-multiply makes the artwork's white background disappear on the ivory header.
+function Logo({ alt, small = false }: { alt: string; small?: boolean }) {
   return (
-    <span className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white shadow-[0_4px_18px_-6px_rgba(138,106,34,0.45)] ring-1 ring-[#c9a84c]/60">
-      <img src={LOGO_URL} alt={alt} className="h-full w-full scale-110 object-contain" />
-    </span>
+    <img
+      src={LOGO_URL}
+      alt={alt}
+      className={`w-auto shrink-0 object-contain mix-blend-multiply transition-all duration-500 ${small ? 'h-20' : 'h-24 md:h-28'}`}
+    />
   );
 }
 
@@ -42,11 +44,11 @@ export default function SiteHeader() {
       initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.8, ease: EASE }}
-      className={`sticky top-0 z-50 border-b transition-all duration-500 ${scrolled ? 'border-[#e6d9b8] bg-[#fbf8f1]/85 shadow-[0_8px_30px_-18px_rgba(90,70,30,0.35)] backdrop-blur-xl' : 'border-transparent bg-[#fbf8f1]'}`}
+      className={`sticky top-0 z-50 border-b transition-all duration-500 ${scrolled ? 'border-[#e6d9b8] bg-[#fbf8f1]/90 shadow-[0_8px_30px_-18px_rgba(90,70,30,0.35)] backdrop-blur-xl' : 'border-transparent bg-[#fbf8f1]'}`}
     >
-      <div className={`mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 transition-all duration-500 lg:px-8 ${scrolled ? 'h-[66px]' : 'h-[78px]'}`}>
-        <Link to="/" className="flex min-w-0 items-center gap-3 transition-transform duration-500 hover:scale-105" aria-label="The Imperial Palace Rajkot, home">
-          <LogoBadge alt="The Imperial Palace logo" />
+      <div className={`mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 transition-all duration-500 lg:px-8 ${scrolled ? 'h-[88px]' : 'h-[104px] md:h-[120px]'}`}>
+        <Link to="/" className="flex min-w-0 items-center transition-transform duration-500 hover:scale-105" aria-label="The Imperial Palace Rajkot, home">
+          <Logo alt="The Imperial Palace logo" small={scrolled} />
         </Link>
 
         <nav aria-label="Primary" className="hidden items-center gap-7 xl:flex">
@@ -79,8 +81,8 @@ export default function SiteHeader() {
             transition={{ duration: 0.4, ease: EASE }}
             className="fixed inset-0 z-[100] overflow-y-auto bg-[#fbf8f1]"
           >
-            <div className="flex h-[78px] items-center justify-between px-5">
-              <LogoBadge alt="The Imperial Palace" />
+            <div className="flex h-[104px] items-center justify-between px-5">
+              <Logo alt="The Imperial Palace" />
               <button type="button" aria-label="Close navigation" onClick={close} className="flex h-11 w-11 cursor-pointer items-center justify-center text-[#3a3024]"><X className="h-6 w-6" /></button>
             </div>
             <nav aria-label="Mobile" className="flex flex-col items-center gap-5 px-5 py-8">
