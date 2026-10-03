@@ -1,16 +1,17 @@
 import { supabase } from "./supabase.ts";
 import { FORM_CONFIGS } from "./forms.ts";
 import type { EnquiryKind } from "./forms.ts";
-import { AMENITIES, CONTACT_INFORMATION, EXPERIENCES, GALLERY, RESTAURANTS, ROOMS, TOUR_LOCATIONS, VENUES } from "./hotel-data.ts";
+import { AMENITIES, CONTACT_INFORMATION, EXPERIENCES, GALLERY, HOME, RESTAURANTS, ROOMS, TOUR_LOCATIONS, VENUES } from "./hotel-data.ts";
 
 // Website content can be edited from /admin. Edits are stored in Supabase (table site_content)
 // and applied on top of the built-in defaults in hotel-data.ts when the site loads.
 
 export type Row = Record<string, unknown>;
-export const CONTENT_KEYS = ["rooms", "restaurants", "venues", "amenities", "experiences", "gallery", "tour", "contact"] as const;
+export const CONTENT_KEYS = ["home", "rooms", "restaurants", "venues", "amenities", "experiences", "gallery", "tour", "contact"] as const;
 export type ContentKey = (typeof CONTENT_KEYS)[number];
 
 const TARGETS: Record<ContentKey, Row[] | Row> = {
+  home: HOME,
   rooms: ROOMS,
   restaurants: RESTAURANTS,
   venues: VENUES,

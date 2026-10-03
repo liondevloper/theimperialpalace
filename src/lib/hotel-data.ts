@@ -1,33 +1,48 @@
 // All website content lives here in plain, typed structures.
-// Later, each export can be replaced by data fetched from an admin panel / API
-// without touching any page or component.
+// Each export is overridden at runtime by edits saved from /admin (see content.ts).
 
 export const withWidth = (url: string, width: number) => url.replace(/w=\d+/, `w=${width}`);
 
-// Local photos in /public/images/ folder
-const L = (name: string) => `/images/${name}`;
+const CDN = (id: string) => `https://hercules-cdn.com/${id}`;
 
 export const HOTEL_IMAGES = {
-  lobby:          L('hotel_lobby.jpg'),
-  standard:       L('hotel_room.jpg'),
-  superior:       L('hotel_room.jpg'),
-  clubSelect:     L('hotel_room.jpg'),
-  clubDeluxe:     L('hotel_room.jpg'),
-  executive:      L('hotel_room.jpg'),
-  presidential:   L('hotel_building.jpg'),
-  imperial:       L('hotel_building.jpg'),
-  diningCourtyard:L('dining_courtyard.jpg'),
-  diningSenso:    L('dining_senso.jpg'),
-  diningInRoom:   L('dining_thali.jpg'),
-  delicacy:       L('dining_delicacy.jpg'),
-  wedding:        L('hotel_ballroom.jpg'),
-  ballroom:       L('hotel_ballroom.jpg'),
-  eventHall:      L('hotel_ballroom.jpg'),
-  pool:           L('hotel_exterior.jpg'),
-  spa:            L('hotel_exterior.jpg'),
-  gym:            L('hotel_exterior.jpg'),
-  massage:        L('hotel_exterior.jpg'),
+  lobby: CDN('file_1BGzTSo6b4vnjhLtI5w4wN9E'),
+  exterior: CDN('file_p7fCF9eI1qF30cIcKbPaw6zR'),
+  standard: CDN('file_Ri9ELqRvqpOU5I7MD9fZXD0t'),
+  superior: CDN('file_Ri9ELqRvqpOU5I7MD9fZXD0t'),
+  clubSelect: CDN('file_Ri9ELqRvqpOU5I7MD9fZXD0t'),
+  clubDeluxe: CDN('file_Ri9ELqRvqpOU5I7MD9fZXD0t'),
+  executive: CDN('file_ytsm3P6dWbdx7ZiyOwhHravm'),
+  presidential: CDN('file_ytsm3P6dWbdx7ZiyOwhHravm'),
+  imperial: CDN('file_1BGzTSo6b4vnjhLtI5w4wN9E'),
+  diningCourtyard: CDN('file_1APO2Al1Ba0fq8YyIAWXOM85'),
+  diningSenso: CDN('file_NEK2FnaaDIpbYaG1509O4ENJ'),
+  diningInRoom: CDN('file_Wskx7gP2AWmPy20HnW7AYmra'),
+  delicacy: CDN('file_xAo7kUBUGtFGu94RIfqlVIET'),
+  wedding: CDN('file_og2VhLIgQEtSNpptloh6cPLz'),
+  ballroom: CDN('file_og2VhLIgQEtSNpptloh6cPLz'),
+  eventHall: CDN('file_GYpoUJ0Aq1bTeydrNNpcVDmq'),
+  pool: CDN('file_w4Uwfr69RjLXjmEyZ6baqheB'),
+  spa: CDN('file_WSY4Y383PZT1Nn5bmGXk2i0U'),
+  gym: CDN('file_yXl1UP6malu93ffSuxnpZ8p8'),
+  massage: CDN('file_WSY4Y383PZT1Nn5bmGXk2i0U'),
 } as const;
+
+/* ---------------------------------- Homepage --------------------------------- */
+
+export const HOME = {
+  heroEyebrow: 'Rajkot, Gujarat · Since 2004',
+  heroTitle: 'Where elegance meets',
+  heroHighlight: 'Rajkot',
+  heroSubtitle: 'An iconic address for refined stays, grand celebrations and warm Gujarati hospitality.',
+  heroImage: HOTEL_IMAGES.lobby,
+  welcomeTitle: 'A landmark of unhurried luxury',
+  welcomeText: 'In the heart of Rajkot, The Imperial Palace pairs palatial proportions with quietly attentive service. Rooms are calm, tables are generous, and every celebration is treated as a once-only occasion.',
+  facts: ['200+ | Rooms & suites', '4 | Dining venues', '8,000 | Sq.ft. ballroom', '24h | Reception'],
+  marquee: ['Luxury Stays', 'Grand Weddings', 'Gujarati Thali', 'Poolside Evenings', 'Corporate Galas', 'Spa & Wellness'],
+  quote: 'Two decades of hosting Rajkot\'s finest moments, one guest at a time.',
+  quoteAuthor: 'The Imperial Palace family',
+};
 
 /* ---------------------------------- Navigation --------------------------------- */
 
@@ -61,11 +76,11 @@ export type Room = {
 };
 
 export const ROOMS: Room[] = [
-  { name: 'Superior Room', slug: 'superior-room', size: '~320 sq.ft', desc: 'Thoughtfully appointed with contemporary comforts, ideal for the discerning business or leisure traveller.', longDesc: 'A calm, considered retreat with thoughtful details and contemporary comforts. Warmly decorated with free Internet access, flat-screen TVs and minibars.', badge: null, featured: false, amenities: ['King bed', 'Complimentary Wi-Fi', 'Air conditioning', 'Flat-screen TV', 'Minibar', 'In-room safe'], images: [HOTEL_IMAGES.standard, HOTEL_IMAGES.superior, HOTEL_IMAGES.clubSelect] },
-  { name: 'Club Deluxe Room', slug: 'club-deluxe-room', size: '~400 sq.ft', desc: 'Elevated in space and refined in detail, offering a generous retreat after a day of exploration.', longDesc: 'Upgraded rooms with sitting areas. Extra room to stretch out, premium furnishings, and Club access come together in a contemporary sanctuary designed for an unhurried stay.', badge: null, featured: false, amenities: ['King bed', 'Sitting area', 'Complimentary Wi-Fi', 'Air conditioning', 'Flat-screen TV', 'Minibar', 'In-room safe'], images: [HOTEL_IMAGES.clubDeluxe, HOTEL_IMAGES.standard, HOTEL_IMAGES.executive] },
-  { name: 'Executive Suite', slug: 'executive-suite', size: '~650 sq.ft', desc: 'Dedicated living and dining areas with bespoke furnishings for extended stays.', longDesc: 'Suites add features such as separate living rooms and whirlpool baths. The Executive Suite pairs a gracious bedroom with a separate living area.', badge: 'Suite', featured: true, amenities: ['King bed', 'Separate living room', 'Whirlpool bath', 'Complimentary Wi-Fi', 'Air conditioning', 'Smart TV', 'Minibar', 'Room service'], images: [HOTEL_IMAGES.executive, HOTEL_IMAGES.presidential, HOTEL_IMAGES.imperial] },
-  { name: 'Presidential Suite', slug: 'presidential-suite', size: '~1,200 sq.ft', desc: 'An exceptional expression of elegance with panoramic city views.', longDesc: 'A remarkable suite with expansive living spaces, considered service. The Presidential Suite makes room for both quiet moments and gracious entertaining.', badge: 'Premium', featured: true, amenities: ['King bed', 'Separate living room', 'Complimentary Wi-Fi', 'Smart TV', 'Minibar', 'Whirlpool bath', 'Room service'], images: [HOTEL_IMAGES.presidential, HOTEL_IMAGES.executive, HOTEL_IMAGES.imperial] },
-  { name: 'Imperial Suite', slug: 'imperial-suite', size: '~2,000 sq.ft', desc: 'The pinnacle of palatial living: bespoke luxury, dedicated service, and timeless grandeur.', longDesc: 'A private world of palatial proportions, the Imperial Suite brings together bespoke details, generous entertaining spaces, and attentive service for a truly signature stay.', badge: 'Signature', featured: true, amenities: ['King bed', 'Butler service', 'Separate living room', 'Complimentary Wi-Fi', 'Smart TV', 'Minibar', 'Whirlpool bath', 'Room service'], images: [HOTEL_IMAGES.imperial, HOTEL_IMAGES.presidential, HOTEL_IMAGES.executive] },
+  { name: 'Superior Room', slug: 'superior-room', size: '~320 sq.ft', desc: 'Thoughtfully appointed with contemporary comforts, ideal for the discerning business or leisure traveller.', longDesc: 'A calm, considered retreat with thoughtful details and contemporary comforts. Warmly decorated with free Internet access, flat-screen TVs and minibars.', badge: null, featured: false, amenities: ['King bed', 'Complimentary Wi-Fi', 'Air conditioning', 'Flat-screen TV', 'Minibar', 'In-room safe'], images: [HOTEL_IMAGES.standard, HOTEL_IMAGES.executive, HOTEL_IMAGES.lobby] },
+  { name: 'Club Deluxe Room', slug: 'club-deluxe-room', size: '~400 sq.ft', desc: 'Elevated in space and refined in detail, offering a generous retreat after a day of exploration.', longDesc: 'Upgraded rooms with sitting areas. Extra room to stretch out, premium furnishings, and Club access come together in a contemporary sanctuary designed for an unhurried stay.', badge: null, featured: false, amenities: ['King bed', 'Sitting area', 'Complimentary Wi-Fi', 'Air conditioning', 'Flat-screen TV', 'Minibar', 'In-room safe'], images: [HOTEL_IMAGES.clubDeluxe, HOTEL_IMAGES.executive, HOTEL_IMAGES.lobby] },
+  { name: 'Executive Suite', slug: 'executive-suite', size: '~650 sq.ft', desc: 'Dedicated living and dining areas with bespoke furnishings for extended stays.', longDesc: 'Suites add features such as separate living rooms and whirlpool baths. The Executive Suite pairs a gracious bedroom with a separate living area.', badge: 'Suite', featured: true, amenities: ['King bed', 'Separate living room', 'Whirlpool bath', 'Complimentary Wi-Fi', 'Air conditioning', 'Smart TV', 'Minibar', 'Room service'], images: [HOTEL_IMAGES.standard, HOTEL_IMAGES.executive, HOTEL_IMAGES.lobby] },
+  { name: 'Presidential Suite', slug: 'presidential-suite', size: '~1,200 sq.ft', desc: 'An exceptional expression of elegance with panoramic city views.', longDesc: 'A remarkable suite with expansive living spaces, considered service. The Presidential Suite makes room for both quiet moments and gracious entertaining.', badge: 'Premium', featured: true, amenities: ['King bed', 'Separate living room', 'Complimentary Wi-Fi', 'Smart TV', 'Minibar', 'Whirlpool bath', 'Room service'], images: [HOTEL_IMAGES.presidential, HOTEL_IMAGES.standard, HOTEL_IMAGES.lobby] },
+  { name: 'Imperial Suite', slug: 'imperial-suite', size: '~2,000 sq.ft', desc: 'The pinnacle of palatial living: bespoke luxury, dedicated service, and timeless grandeur.', longDesc: 'A private world of palatial proportions, the Imperial Suite brings together bespoke details, generous entertaining spaces, and attentive service for a truly signature stay.', badge: 'Signature', featured: true, amenities: ['King bed', 'Butler service', 'Separate living room', 'Complimentary Wi-Fi', 'Smart TV', 'Minibar', 'Whirlpool bath', 'Room service'], images: [HOTEL_IMAGES.imperial, HOTEL_IMAGES.presidential, HOTEL_IMAGES.standard] },
 ];
 
 /* ---------------------------------- Restaurants --------------------------------- */
@@ -88,7 +103,7 @@ export const VENUES: Venue[] = [
   { name: 'Regal Room', size: '4,500 sq.ft', capacity: 'Up to 450 guests', types: 'Receptions · Social celebrations · Birthday parties', image: HOTEL_IMAGES.eventHall, forWeddings: true },
   { name: 'Pool Deck', size: 'Open-air setting', capacity: 'Up to 250 guests', types: 'Cocktail evenings · Celebrations', image: HOTEL_IMAGES.pool, forWeddings: true },
   { name: 'The Courtyard', size: '3,200 sq.ft', capacity: 'Up to 300 guests', types: 'Private dining · Family gatherings', image: HOTEL_IMAGES.diningCourtyard, forWeddings: false },
-  { name: 'Meeting Suite', size: '1,200 sq.ft', capacity: 'Up to 100 guests', types: 'Board meetings · Workshops · Corporate meetings', image: HOTEL_IMAGES.lobby, forWeddings: false },
+  { name: 'Meeting Suite', size: '1,200 sq.ft', capacity: 'Up to 100 guests', types: 'Board meetings · Workshops · Corporate meetings', image: HOTEL_IMAGES.eventHall, forWeddings: false },
 ];
 
 /* ----------------------------------- Amenities ---------------------------------- */
@@ -113,7 +128,7 @@ export const EXPERIENCES: Experience[] = [
   { title: 'The Courtyard', label: 'A table for every hour', text: 'Indulge in a multi-cuisine feast at The Courtyard — from Gujarati Thali to global flavours.', image: HOTEL_IMAGES.diningCourtyard, to: '/dining' },
   { title: 'Poolside Retreat', label: 'A refreshing escape', text: 'Take a dip, bask in the sun, and enjoy a quieter side of the city by our outdoor pool.', image: HOTEL_IMAGES.pool, to: '/wellness' },
   { title: 'Celebrity Visits', label: 'The art of occasion', text: 'A landmark address for celebrated guests. The Imperial Palace has hosted cricket stars, Bollywood celebrities and more.', image: HOTEL_IMAGES.lobby, to: '/gallery' },
-  { title: '20 Years of Excellence', label: '15 November 2004 – 2024', text: 'Celebrating two decades of outstanding hospitality, exceptional cuisine, and timeless elegance in the heart of Rajkot.', image: HOTEL_IMAGES.exterior ?? HOTEL_IMAGES.lobby, to: '/gallery' },
+  { title: '20 Years of Excellence', label: '15 November 2004 – 2024', text: 'Celebrating two decades of outstanding hospitality, exceptional cuisine, and timeless elegance in the heart of Rajkot.', image: HOTEL_IMAGES.exterior, to: '/gallery' },
 ];
 
 /* ------------------------------------ Gallery ----------------------------------- */
@@ -124,23 +139,18 @@ export type GalleryItem = { category: Exclude<GalleryCategory, 'All'>; image: st
 
 export const GALLERY: GalleryItem[] = [
   { category: 'Hotel', image: HOTEL_IMAGES.lobby, title: 'The Grand Lobby' },
-  { category: 'Hotel', image: L('hotel_exterior.jpg'), title: 'Hotel Exterior' },
+  { category: 'Hotel', image: HOTEL_IMAGES.exterior, title: 'Hotel Exterior' },
   { category: 'Rooms', image: HOTEL_IMAGES.standard, title: 'Superior Room' },
-  { category: 'Rooms', image: HOTEL_IMAGES.executive, title: 'Executive Suite' },
-  { category: 'Dining', image: L('dining_courtyard.jpg'), title: 'Chole Puri' },
-  { category: 'Dining', image: L('dining_senso.jpg'), title: 'Mexican Burger – Senso' },
-  { category: 'Dining', image: L('dining_thali.jpg'), title: 'Gujarati Thali' },
-  { category: 'Dining', image: L('dining_delicacy.jpg'), title: 'Birthday Cake – Delicacy' },
-  { category: 'Dining', image: L('food_biryani.jpg'), title: 'Hyderabadi Biryani' },
-  { category: 'Dining', image: L('food_sizzler.jpg'), title: 'Classic Veg Sizzler' },
-  { category: 'Dining', image: L('food_kabab.jpg'), title: 'Hara Bhara Kabab' },
-  { category: 'Dining', image: L('food_noodles.jpg'), title: 'Exotic Hakka Noodles' },
-  { category: 'Dining', image: L('food_dragon_roll.jpg'), title: 'Dragon Roll' },
-  { category: 'Dining', image: L('food_paneer.jpg'), title: 'Paneer Sabji & Naan' },
-  { category: 'Weddings', image: HOTEL_IMAGES.ballroom, title: 'Grand Ballroom' },
-  { category: 'Events', image: HOTEL_IMAGES.eventHall, title: 'Corporate Event' },
-  { category: 'Events', image: L('celebrity_01.jpg'), title: 'Celebrity Visit' },
-  { category: 'Wellness', image: HOTEL_IMAGES.pool, title: 'Poolside' },
+  { category: 'Rooms', image: HOTEL_IMAGES.presidential, title: 'Presidential Suite' },
+  { category: 'Dining', image: HOTEL_IMAGES.diningCourtyard, title: 'The Courtyard' },
+  { category: 'Dining', image: HOTEL_IMAGES.diningSenso, title: 'Senso Coffee Shop' },
+  { category: 'Dining', image: HOTEL_IMAGES.diningInRoom, title: 'Gujarati Thali' },
+  { category: 'Dining', image: HOTEL_IMAGES.delicacy, title: 'Delicacy Cake Shop' },
+  { category: 'Weddings', image: HOTEL_IMAGES.ballroom, title: 'Grand Ballroom Wedding' },
+  { category: 'Events', image: HOTEL_IMAGES.eventHall, title: 'Corporate Gala' },
+  { category: 'Wellness', image: HOTEL_IMAGES.pool, title: 'Poolside at Dusk' },
+  { category: 'Wellness', image: HOTEL_IMAGES.spa, title: 'Spa Sanctuary' },
+  { category: 'Wellness', image: HOTEL_IMAGES.gym, title: 'Fitness Studio' },
 ];
 
 /* ---------------------------------- 360° tour ----------------------------------- */
@@ -150,7 +160,7 @@ export type TourLocation = { id: string; label: string; area: string; descriptio
 
 export const TOUR_LOCATIONS: TourLocation[] = [
   { id: 'lobby', label: 'Grand Lobby', area: 'Arrival', description: 'The first impression: a warm, high-ceilinged welcome.', image: HOTEL_IMAGES.lobby, hotspots: [{ to: 'courtyard', label: 'The Courtyard', x: 26, y: 60 }, { to: 'guest-rooms', label: 'Guest Rooms', x: 56, y: 46 }, { to: 'regent-room', label: 'Regent Room', x: 82, y: 62 }] },
-  { id: 'guest-rooms', label: 'Guest Rooms', area: 'Stay', description: 'A private, quiet retreat above the city.', image: HOTEL_IMAGES.executive, hotspots: [{ to: 'lobby', label: 'Lobby', x: 22, y: 56 }, { to: 'pool', label: 'Pool Deck', x: 72, y: 44 }] },
+  { id: 'guest-rooms', label: 'Guest Rooms', area: 'Stay', description: 'A private, quiet retreat above the city.', image: HOTEL_IMAGES.standard, hotspots: [{ to: 'lobby', label: 'Lobby', x: 22, y: 56 }, { to: 'pool', label: 'Pool Deck', x: 72, y: 44 }] },
   { id: 'regent-room', label: 'Regent Room', area: 'Weddings & events', description: 'Our grand ballroom for celebrations and galas.', image: HOTEL_IMAGES.ballroom, hotspots: [{ to: 'lobby', label: 'Lobby', x: 20, y: 58 }, { to: 'regal-room', label: 'Regal Room', x: 76, y: 52 }] },
   { id: 'regal-room', label: 'Regal Room', area: 'Weddings & events', description: 'An elegant hall for receptions and gatherings.', image: HOTEL_IMAGES.eventHall, hotspots: [{ to: 'regent-room', label: 'Regent Room', x: 24, y: 54 }, { to: 'courtyard', label: 'The Courtyard', x: 74, y: 60 }] },
   { id: 'pool', label: 'Pool Deck', area: 'Wellness', description: 'Open-air calm, poolside.', image: HOTEL_IMAGES.pool, hotspots: [{ to: 'guest-rooms', label: 'Guest Rooms', x: 30, y: 46 }, { to: 'lobby', label: 'Lobby', x: 78, y: 58 }] },
@@ -174,4 +184,4 @@ export const CONTACT_INFORMATION = {
     { label: 'Railway Station', distance: '2.8 kms', note: '5 mins · Rajkot Junction' },
     { label: 'Bus Station', distance: '1.9 kms', note: '4 mins' },
   ],
-} as const;
+};

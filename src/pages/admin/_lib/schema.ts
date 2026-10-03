@@ -1,4 +1,4 @@
-import type { ContentKey, Row } from "../../lib/content.ts";
+import type { ContentKey, Row } from "../../../lib/content.ts";
 
 export type FieldType = "text" | "optionalText" | "textarea" | "image" | "lines" | "checkbox" | "select";
 export type AdminField = { name: string; label: string; type: FieldType; required?: boolean; options?: string[]; help?: string };
@@ -17,6 +17,18 @@ const area = (name: string, label: string): AdminField => ({ name, label, type: 
 const image = (name = "image", label = "Photo"): AdminField => ({ name, label, type: "image", required: true });
 
 export const SECTIONS: SectionDef[] = [
+  {
+    key: "home", label: "Homepage", single: true, titleField: "heroTitle", noun: "homepage",
+    blank: {},
+    fields: [
+      text("heroEyebrow", "Hero small heading"), text("heroTitle", "Hero title"), text("heroHighlight", "Hero highlighted word", true, "Shown in gold italics after the title"),
+      area("heroSubtitle", "Hero subtitle"), image("heroImage", "Hero background photo"),
+      text("welcomeTitle", "Welcome heading"), area("welcomeText", "Welcome text"),
+      { name: "facts", label: "Key numbers", type: "lines", required: true, help: "One per line, format: 200+ | Rooms & suites" },
+      { name: "marquee", label: "Scrolling highlights ribbon", type: "lines", required: true, help: "One phrase per line" },
+      area("quote", "Signature quote"), text("quoteAuthor", "Quote by"),
+    ],
+  },
   {
     key: "rooms", label: "Rooms & suites", titleField: "name", noun: "room",
     blank: { name: "New room", slug: "", size: "", desc: "", longDesc: "", badge: null, featured: false, amenities: [], images: [] },

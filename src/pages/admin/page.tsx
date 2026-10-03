@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { Link } from "react-router-dom";
-import { LogOut } from "lucide-react";
+import { BedDouble, CalendarHeart, Contact, ExternalLink, Home, Images, Inbox, LogOut, Map, Sparkles, UtensilsCrossed, Waves } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "../../lib/supabase.ts";
 import { BTN, FIELD, LABEL } from "../../lib/styles.ts";
@@ -11,6 +12,11 @@ import EnquiriesPanel from "./_components/enquiries-panel.tsx";
 import { SECTIONS } from "./_lib/schema.ts";
 
 type Access = "loading" | "out" | "denied" | "admin";
+
+const ICONS: Record<string, LucideIcon> = {
+  enquiries: Inbox, home: Home, rooms: BedDouble, restaurants: UtensilsCrossed, venues: CalendarHeart,
+  amenities: Waves, experiences: Sparkles, gallery: Images, tour: Map, contact: Contact,
+};
 
 function LoginForm() {
   const [mode, setMode] = useState<"in" | "up">("in");
@@ -31,9 +37,10 @@ function LoginForm() {
   };
 
   return (
-    <form onSubmit={(e) => void submit(e)} className="mx-auto grid w-full max-w-sm gap-4 border border-border p-6">
+    <form onSubmit={(e) => void submit(e)} className="mx-auto grid w-full max-w-sm gap-4 border border-[#e6d9b8] bg-white p-8 shadow-[0_30px_80px_-40px_rgba(90,70,30,0.5)]">
+      <p className="text-[10px] uppercase tracking-[0.35em] text-[#8a6a22]">Control room</p>
       <h1 className="font-serif text-3xl font-light text-foreground">{mode === "in" ? "Admin sign in" : "Create admin account"}</h1>
-      <div className="grid gap-1.5"><label htmlFor="a-email" className={LABEL}>Email</label><input id="a-email" type="email" required autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} className={FIELD} /></div>
+      <div className="grid gap-1.5"><label htmlFor="a-email" className={LABEL}>Email</label><input id="a-email" type="email" required autoComplete="email" placeholder="example@gmail.com" value={email} onChange={(e) => setEmail(e.target.value)} className={FIELD} /></div>
       <div className="grid gap-1.5"><label htmlFor="a-pass" className={LABEL}>Password</label><input id="a-pass" type="password" required minLength={8} autoComplete={mode === "in" ? "current-password" : "new-password"} value={password} onChange={(e) => setPassword(e.target.value)} className={FIELD} /></div>
       {message && <p role="alert" className="text-sm text-destructive">{message}</p>}
       <button type="submit" disabled={busy} className={BTN.gold}>{busy ? "Please wait..." : mode === "in" ? "Sign in" : "Create account"}</button>
@@ -65,12 +72,12 @@ export default function AdminPage() {
   }, []);
 
   const signOut = () => void supabase.auth.signOut();
-  const tabClass = (active: boolean) => `min-h-11 shrink-0 cursor-pointer border-b-2 px-4 text-[11px] uppercase tracking-[0.16em] ${active ? "border-[#c9a84c] text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`;
   const section = SECTIONS.find((s) => s.key === tab);
+  const tabs = [{ key: "enquiries", label: "Enquiries" }, ...SECTIONS.map((s) => ({ key: s.key, label: s.label }))];
 
   if (access !== "admin") {
     return (
-      <main className="flex min-h-dvh flex-col items-center justify-center gap-6 px-5 py-12">
+      <main className="flex min-h-dvh flex-col items-center justify-center gap-6 bg-gradient-to-b from-[#f6efe0] to-background px-5 py-12">
         <Link to="/" aria-label="The Imperial Palace, home"><Logo alt="The Imperial Palace" className="h-20 md:h-24" /></Link>
         {access === "loading" && <p className="text-sm text-muted-foreground">Loading...</p>}
         {access === "out" && <LoginForm />}
@@ -86,27 +93,45 @@ export default function AdminPage() {
     );
   }
 
+  const navBtn = (active: boolean) => `flex min-h-11 w-full cursor-pointer items-center gap-3 px-4 text-left text-[12px] uppercase tracking-[0.14em] transition-colors ${active ? "bg-[#2a2218] text-[#e8d5a3]" : "text-[#e8d5a3]/60 hover:bg-[#2a2218]/60 hover:text-[#e8d5a3]"}`;
+
   return (
-    <div className="min-h-dvh">
-      <header className="border-b border-border">
-        <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-5 py-3">
-          <span className="flex items-center gap-3">
-            <Logo alt="The Imperial Palace" className="h-11" />
-            <span className="hidden border-l border-border pl-3 font-serif text-sm uppercase tracking-[0.18em] sm:inline">Admin panel</span>
-          </span>
-          <div className="flex items-center gap-2">
-            <Link to="/" target="_blank" className={`${BTN.outline} px-4`}>View website</Link>
-            <button type="button" onClick={signOut} aria-label="Sign out" className="flex h-11 w-11 cursor-pointer items-center justify-center"><LogOut className="h-5 w-5" /></button>
-          </div>
+    <div className="flex min-h-dvh bg-[#faf6ec]">
+      <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col bg-[#1a140c] lg:flex">
+        <div className="border-b border-[#3a2e1c] p-5">
+          <p className="font-serif text-xl text-[#f6efe0]">The Imperial Palace</p>
+          <p className="mt-1 text-[10px] uppercase tracking-[0.3em] text-[#b8933a]">Admin control room</p>
         </div>
-        <nav aria-label="Admin sections" className="mx-auto flex max-w-5xl overflow-x-auto px-3">
-          <button type="button" onClick={() => setTab("enquiries")} className={tabClass(tab === "enquiries")}>Enquiries</button>
-          {SECTIONS.map((s) => <button key={s.key} type="button" onClick={() => setTab(s.key)} className={tabClass(tab === s.key)}>{s.label}</button>)}
+        <nav aria-label="Admin sections" className="flex-1 overflow-y-auto py-3">
+          {tabs.map((t) => {
+            const Icon = ICONS[t.key] ?? Sparkles;
+            return <button key={t.key} type="button" onClick={() => setTab(t.key)} className={navBtn(tab === t.key)}><Icon className="h-4 w-4" />{t.label}</button>;
+          })}
         </nav>
-      </header>
-      <main className="mx-auto max-w-5xl px-5 py-8">
-        {section ? <ContentEditor key={section.key} def={section} /> : <EnquiriesPanel />}
-      </main>
+        <div className="space-y-1 border-t border-[#3a2e1c] p-3">
+          <Link to="/" target="_blank" className={navBtn(false)}><ExternalLink className="h-4 w-4" />View website</Link>
+          <button type="button" onClick={signOut} className={navBtn(false)}><LogOut className="h-4 w-4" />Sign out</button>
+        </div>
+      </aside>
+
+      <div className="min-w-0 flex-1">
+        <header className="sticky top-0 z-10 border-b border-[#e6d9b8] bg-[#faf6ec]/90 backdrop-blur lg:hidden">
+          <div className="flex items-center justify-between px-4 py-2">
+            <Logo alt="The Imperial Palace" className="h-10" />
+            <div className="flex">
+              <Link to="/" target="_blank" aria-label="View website" className="flex h-11 w-11 items-center justify-center"><ExternalLink className="h-5 w-5" /></Link>
+              <button type="button" onClick={signOut} aria-label="Sign out" className="flex h-11 w-11 cursor-pointer items-center justify-center"><LogOut className="h-5 w-5" /></button>
+            </div>
+          </div>
+          <nav aria-label="Admin sections" className="flex overflow-x-auto px-2">
+            {tabs.map((t) => <button key={t.key} type="button" onClick={() => setTab(t.key)} className={`min-h-11 shrink-0 cursor-pointer border-b-2 px-3 text-[11px] uppercase tracking-[0.14em] ${tab === t.key ? "border-[#c9a84c] text-foreground" : "border-transparent text-muted-foreground"}`}>{t.label}</button>)}
+          </nav>
+        </header>
+        <main className="mx-auto max-w-5xl px-5 py-8 lg:py-12">
+          <p className="mb-6 border-l-2 border-[#c9a84c] bg-white px-4 py-3 text-sm text-muted-foreground">Every change you save here appears on the live website instantly.</p>
+          {section ? <ContentEditor key={section.key} def={section} /> : <EnquiriesPanel />}
+        </main>
+      </div>
     </div>
   );
 }
