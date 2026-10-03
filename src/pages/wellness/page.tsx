@@ -18,8 +18,8 @@ export default function WellnessPage() {
             {AMENITIES.map((a, i) => (
               <Reveal key={a.name} delay={(i % 3) * 0.05}>
                 <article>
-                  <Img src={a.image} alt={a.name} width={800} height={600} className="aspect-[4/3] w-full object-cover" />
-                  <p className="mt-4 text-[11px] uppercase tracking-[0.25em] text-[#6f5318]">{a.category}</p>
+                  <Img src={a.image} alt={a.name} width={800} height={600} sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" className="aspect-[4/3] w-full object-cover ring-1 ring-border" />
+                  <p className="mt-4 text-[11px] uppercase tracking-[0.25em] text-primary">{a.category}</p>
                   <h2 className="mt-1 font-serif text-2xl text-foreground">{a.name}</h2>
                   <p className="mt-2 text-sm leading-6 text-muted-foreground">{a.description}</p>
                   <button type="button" onClick={() => setService(a.name)} className={`${BTN.outline} mt-5`}>Book a session</button>

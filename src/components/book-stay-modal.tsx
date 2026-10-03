@@ -127,7 +127,7 @@ function BookStayFlow({ defaultRoom }: { defaultRoom?: string }) {
   return (
     <div className="grid gap-6">
       <div className="pr-10">
-        <span className="text-[10px] uppercase tracking-[0.35em] text-[#8a6a22]">The Imperial Palace, Rajkot</span>
+        <span className="text-[10px] uppercase tracking-[0.35em] text-primary">The Imperial Palace, Rajkot</span>
         <h2 className="mt-2 font-serif text-3xl font-light text-foreground md:text-4xl">Book your stay</h2>
         <div className="mt-4"><StepDots step={step} /></div>
       </div>
@@ -157,10 +157,10 @@ function BookStayFlow({ defaultRoom }: { defaultRoom?: string }) {
         </>
       ) : (
         <>
-          <dl className="grid grid-cols-2 gap-4 border border-[#e6d9b8] bg-[#f6efe0]/60 p-4 text-sm">
+          <dl className="grid grid-cols-2 gap-4 border border-border bg-secondary/60 p-4 text-sm">
             {summary.map(({ icon: Icon, label, value }) => (
               <div key={label} className="flex min-w-0 gap-2.5">
-                <Icon className="mt-0.5 h-4 w-4 shrink-0 text-[#8a6a22]" />
+                <Icon className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                 <div className="min-w-0"><dt className={LABEL}>{label}</dt><dd className="mt-0.5 break-words text-foreground">{value}</dd></div>
               </div>
             ))}

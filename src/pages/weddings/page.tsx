@@ -30,7 +30,7 @@ export default function WeddingsPage() {
             {venues.map((v, i) => (
               <Reveal key={v.name} delay={i * 0.08}>
                 <article className="group">
-                  <div className="aspect-[4/3] overflow-hidden"><Img src={v.image} alt={v.name} width={800} height={600} className="h-full w-full object-cover transition-transform duration-[1400ms] group-hover:scale-110" /></div>
+                  <div className="aspect-[4/3] overflow-hidden ring-1 ring-border"><Img src={v.image} alt={v.name} width={800} height={600} sizes="(min-width: 768px) 33vw, 100vw" className="h-full w-full object-cover transition-transform duration-[1400ms] group-hover:scale-110" /></div>
                   <h3 className="mt-4 font-serif text-2xl text-foreground">{v.name}</h3>
                   <p className="mt-1 text-sm text-muted-foreground">{v.size} · {v.capacity}</p>
                   <button type="button" onClick={() => setVenue(v.name)} className={`${BTN.outline} mt-5`}>Enquire for this venue</button>
@@ -42,14 +42,14 @@ export default function WeddingsPage() {
           <div className="grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
             {SERVICES.map(({ title, icon: Icon, text }) => (
               <div key={title} className="border-t border-border pt-6">
-                <Icon className="mb-4 h-5 w-5 text-[#6f5318]" />
+                <Icon className="mb-4 h-5 w-5 text-primary" />
                 <h3 className="font-serif text-xl text-foreground">{title}</h3>
                 <p className="mt-2 text-sm leading-6 text-muted-foreground">{text}</p>
               </div>
             ))}
           </div>
-          <div className="mt-16 bg-[#14110c] px-6 py-12 text-center">
-            <h2 className="font-serif text-3xl font-light text-white">Ready to begin planning?</h2>
+          <div className="mt-16 border border-primary/30 bg-card px-6 py-12 text-center">
+            <h2 className="font-serif text-3xl font-light text-foreground">Ready to begin planning?</h2>
             <button type="button" onClick={() => setVenue("")} className={`${BTN.gold} mt-6`}>Request wedding proposal</button>
           </div>
         </div>

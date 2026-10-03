@@ -26,10 +26,10 @@ export default function EventsPage() {
             {VENUES.map((v, i) => (
               <Reveal key={v.name} delay={(i % 3) * 0.05}>
                 <article className="group">
-                  <div className="aspect-[4/3] overflow-hidden"><Img src={v.image} alt={v.name} width={800} height={600} className="h-full w-full object-cover transition-transform duration-[1400ms] group-hover:scale-110" /></div>
+                  <div className="aspect-[4/3] overflow-hidden ring-1 ring-border"><Img src={v.image} alt={v.name} width={800} height={600} sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" className="h-full w-full object-cover transition-transform duration-[1400ms] group-hover:scale-110" /></div>
                   <h3 className="mt-4 font-serif text-2xl text-foreground">{v.name}</h3>
-                  <p className="mt-2 text-[11px] uppercase tracking-[0.18em] text-[#6f5318]">{v.types}</p>
-                  <p className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground"><span className="flex items-center gap-1.5"><Users className="h-4 w-4 text-[#6f5318]" />{v.capacity}</span><span>{v.size}</span></p>
+                  <p className="mt-2 text-[11px] uppercase tracking-[0.18em] text-primary">{v.types}</p>
+                  <p className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground"><span className="flex items-center gap-1.5"><Users className="h-4 w-4 text-primary" />{v.capacity}</span><span>{v.size}</span></p>
                   <button type="button" onClick={() => setPrefill({ venue: v.name })} className={`${BTN.outline} mt-5`}>Book this venue</button>
                 </article>
               </Reveal>
@@ -40,10 +40,10 @@ export default function EventsPage() {
             <div className="grid gap-x-8 gap-y-8 md:grid-cols-3">
               {PACKAGES.map((p) => (
                 <div key={p.title} className="border-t border-border pt-6">
-                  <Briefcase className="mb-4 h-5 w-5 text-[#6f5318]" />
+                  <Briefcase className="mb-4 h-5 w-5 text-primary" />
                   <h3 className="font-serif text-2xl text-foreground">{p.title}</h3>
                   <p className="mt-2 text-sm leading-6 text-muted-foreground">{p.detail}</p>
-                  <button type="button" onClick={() => setPrefill({ eventType: p.type })} className="mt-4 min-h-11 cursor-pointer text-[11px] uppercase tracking-[0.2em] text-[#7a5c1c] underline-offset-4 hover:underline">Enquire about this package</button>
+                  <button type="button" onClick={() => setPrefill({ eventType: p.type })} className="mt-4 min-h-11 cursor-pointer text-[11px] uppercase tracking-[0.2em] text-primary underline-offset-4 hover:underline">Enquire about this package</button>
                 </div>
               ))}
             </div>
