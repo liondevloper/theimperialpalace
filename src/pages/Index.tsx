@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, CalendarHeart, Clock, MessageSquareText, Phone, Quote, Sparkles } from "lucide-react";
 import { animate, motion, useInView, useMotionValue, useScroll, useTransform } from "motion/react";
@@ -9,7 +9,6 @@ import { HeroText, Reveal, SectionHeading } from "../components/hotel-page.tsx";
 import { EnquiryButton } from "../components/enquiry-modal.tsx";
 import { BookStayButton } from "../components/book-stay-modal.tsx";
 import { CONTACT_INFORMATION, EXPERIENCES, GALLERY, HOME, HOTEL_IMAGES, RESTAURANTS, ROOMS } from "../lib/hotel-data.ts";
-import { cdnImage } from "../lib/image.ts";
 import { introDelay } from "../lib/intro.ts";
 import { SITE } from "../lib/site-config.ts";
 import { BTN } from "../lib/styles.ts";
@@ -56,6 +55,32 @@ function CountUp({ value }: { value: string }) {
 
 const str = (value: unknown) => (typeof value === "string" ? value.trim() : "");
 
+// Visitors with "data saver" turned on get the photo only, so the page stays fast for them.
+const prefersSaveData = () => {
+  const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+  return connection?.saveData === true;
+};
+
+// Starts downloading right away (preload="auto") and fades in only once frames are actually playing,
+// so visitors never see a black box: the photo (or navy backdrop) stays visible until then.
+function HeroVideo({ src }: { src: string }) {
+  const [playing, setPlaying] = useState(false);
+  return (
+    <video
+      src={src}
+      autoPlay
+      muted
+      loop
+      playsInline
+      preload="auto"
+      disablePictureInPicture
+      aria-hidden="true"
+      onPlaying={() => setPlaying(true)}
+      className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${playing ? "opacity-100" : "opacity-0"}`}
+    />
+  );
+}
+
 function Hero() {
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
@@ -64,19 +89,16 @@ function Hero() {
   const delay = introDelay();
   // Hero photo and video are both optional and added from the admin panel (Homepage).
   const heroImage = str(HOME.heroImage);
-  const heroVideo = str(HOME.heroVideo);
+  const heroVideo = prefersSaveData() ? "" : str(HOME.heroVideo);
   const hasMedia = Boolean(heroImage || heroVideo);
   return (
     <section ref={ref} className="relative flex min-h-[600px] items-end overflow-hidden bg-[#0b1426] md:min-h-[92vh]">
       {hasMedia ? (
         <>
           <motion.div style={{ y }} initial={{ scale: 1.2 }} animate={{ scale: 1.04 }} transition={{ duration: 3, delay, ease: EASE }} className="absolute inset-0">
-            {heroVideo ? (
-              // Muted + playsInline is required for autoplay on phones. The photo (if any) shows while the video loads.
-              <video src={heroVideo} poster={heroImage ? cdnImage(heroImage, 1920) : undefined} autoPlay muted loop playsInline preload="metadata" aria-label="The Imperial Palace, Rajkot" className="h-full w-full object-cover" />
-            ) : (
-              <Img src={heroImage} alt="The Imperial Palace, Rajkot" priority width={1920} height={1080} sizes="100vw" className="h-full w-full object-cover" />
-            )}
+            {/* Photo loads first with high priority and shows instantly; the video fades in on top once ready. */}
+            {heroImage && <Img src={heroImage} alt="The Imperial Palace, Rajkot" priority width={1920} height={1080} sizes="100vw" className="absolute inset-0 h-full w-full object-cover" />}
+            {heroVideo && <HeroVideo src={heroVideo} />}
           </motion.div>
           <div className="absolute inset-0 bg-gradient-to-t from-[#0b1426] via-[#0b1426]/45 to-[#0b1426]/20" />
         </>
