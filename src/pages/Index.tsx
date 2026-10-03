@@ -5,7 +5,7 @@ import { animate, motion, useInView, useMotionValue, useScroll, useTransform } f
 import type { MotionValue } from "motion/react";
 import PageLayout from "../components/page-layout.tsx";
 import Img from "../components/img.tsx";
-import { HeroText, Reveal, SectionHeading } from "../components/hotel-page.tsx";
+import { Reveal, SectionHeading } from "../components/hotel-page.tsx";
 import { EnquiryButton } from "../components/enquiry-modal.tsx";
 import { BookStayButton } from "../components/book-stay-modal.tsx";
 import { CONTACT_INFORMATION, EXPERIENCES, GALLERY, HOME, HOTEL_IMAGES, RESTAURANTS, ROOMS } from "../lib/hotel-data.ts";
@@ -81,6 +81,13 @@ function HeroVideo({ src }: { src: string }) {
   );
 }
 
+// Staggered blur-up entrance used by the hero copy.
+const heroItem = (delay: number) => ({
+  initial: { opacity: 0, y: 28, filter: "blur(6px)" },
+  animate: { opacity: 1, y: 0, filter: "blur(0px)" },
+  transition: { duration: 1, delay, ease: EASE },
+});
+
 function Hero() {
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
@@ -92,7 +99,7 @@ function Hero() {
   const heroVideo = prefersSaveData() ? "" : str(HOME.heroVideo);
   const hasMedia = Boolean(heroImage || heroVideo);
   return (
-    <section ref={ref} className="relative flex min-h-[600px] items-end overflow-hidden bg-[#0b1426] md:min-h-[92vh]">
+    <section ref={ref} className="relative flex min-h-[600px] flex-col overflow-hidden bg-[#0b1426] md:min-h-screen">
       {hasMedia ? (
         <>
           <motion.div style={{ y }} initial={{ scale: 1.2 }} animate={{ scale: 1.04 }} transition={{ duration: 3, delay, ease: EASE }} className="absolute inset-0">
@@ -100,19 +107,24 @@ function Hero() {
             {heroImage && <Img src={heroImage} alt="The Imperial Palace, Rajkot" priority width={1920} height={1080} sizes="100vw" className="absolute inset-0 h-full w-full object-cover" />}
             {heroVideo && <HeroVideo src={heroVideo} />}
           </motion.div>
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0b1426] via-[#0b1426]/45 to-[#0b1426]/20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0b1426] via-[#0b1426]/35 to-[#0b1426]/30" />
         </>
       ) : (
         // No photo or video yet: royal navy backdrop with soft gold glow.
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_20%,rgba(201,168,76,0.22),transparent_55%),radial-gradient(ellipse_at_10%_90%,rgba(201,168,76,0.12),transparent_50%),linear-gradient(180deg,#152245_0%,#0b1426_100%)]" />
       )}
-      <motion.div style={{ opacity: fade }} className="relative z-10 mx-auto w-full max-w-7xl px-5 pb-16 pt-28 lg:px-8 lg:pb-24">
-        <HeroText delay={delay} eyebrow={HOME.heroEyebrow} title={<>{HOME.heroTitle} <em className="bg-gradient-to-r from-[#f1e2b8] via-[#d9bc6a] to-[#f1e2b8] bg-clip-text italic text-transparent">{HOME.heroHighlight}</em></>} subtitle={HOME.heroSubtitle}>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <BookStayButton className={BTN.gold}>Book your stay</BookStayButton>
-            <EnquiryButton className={BTN.light}><MessageSquareText className="h-4 w-4" />Send an enquiry</EnquiryButton>
-          </div>
-        </HeroText>
+      {/* Layout: eyebrow sits just below the fixed header; title + subtitle sit at the bottom. */}
+      <motion.div style={{ opacity: fade }} className="relative z-10 mx-auto flex w-full max-w-7xl flex-1 flex-col justify-between px-5 pb-16 pt-[96px] md:pt-[108px] lg:px-8 lg:pb-24">
+        <motion.div {...heroItem(delay + 0.2)} className="flex items-start gap-4">
+          <motion.span initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 1, delay: delay + 0.3, ease: EASE }} className="mt-2 h-px w-12 shrink-0 origin-left bg-[#d9bc6a]" />
+          <span className="max-w-md text-[11px] uppercase leading-6 tracking-[0.4em] text-[#e8d5a3] [text-shadow:0_1px_8px_rgba(0,0,0,0.5)]">{HOME.heroEyebrow}</span>
+        </motion.div>
+        <div className="pt-16">
+          <motion.h1 {...heroItem(delay + 0.35)} className="max-w-4xl font-serif text-4xl font-light leading-[1.04] text-white text-balance sm:text-6xl md:text-7xl">
+            {HOME.heroTitle} <em className="bg-gradient-to-r from-[#f1e2b8] via-[#d9bc6a] to-[#f1e2b8] bg-clip-text italic text-transparent">{HOME.heroHighlight}</em>
+          </motion.h1>
+          {HOME.heroSubtitle && <motion.p {...heroItem(delay + 0.55)} className="mt-6 max-w-xl text-sm leading-7 text-white/85 md:text-base">{HOME.heroSubtitle}</motion.p>}
+        </div>
       </motion.div>
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: delay + 1.6, duration: 1 }} className="absolute bottom-6 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-3 md:flex">
         <span className="text-[10px] uppercase tracking-[0.4em] text-[#e8d5a3]/80">Scroll</span>
