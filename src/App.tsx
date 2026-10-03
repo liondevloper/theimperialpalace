@@ -11,6 +11,8 @@ import ExperiencesPage from "./pages/experiences/page.tsx";
 import TourPage from "./pages/tour/page.tsx";
 import GalleryPage from "./pages/gallery/page.tsx";
 import ContactPage from "./pages/contact/page.tsx";
+import CareerPage from "./pages/career/page.tsx";
+import PrivacyPage from "./pages/privacy/page.tsx";
 import AdminPage from "./pages/admin/page.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
@@ -30,6 +32,8 @@ export default function App() {
         <Route path="/tour" element={<TourPage />} />
         <Route path="/gallery" element={<GalleryPage />} />
         <Route path="/contact" element={<ContactPage />} />
+        <Route path="/career" element={<CareerPage />} />
+        <Route path="/privacy-policy" element={<PrivacyPage />} />
         <Route path="/admin" element={<AdminPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
