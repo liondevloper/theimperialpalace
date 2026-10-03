@@ -59,7 +59,7 @@ export const FORM_CONFIGS: Record<EnquiryKind, FormConfig> = {
     subtitle: "Whether you are planning a stay or simply have a question, we would love to hear from you.",
     submitLabel: "Send message",
     fields: [NAME, EMAIL, PHONE,
-      { name: "subject", label: "Subject", type: "select", options: ["Room reservation", "Dining reservation", "Wedding or event", "Wellness appointment", "General enquiry"] },
+      { name: "subject", label: "Subject", type: "select", options: ["Room reservation", "Banquet", "Dining reservation", "Wedding or event", "Wellness appointment", "General enquiry"] },
       { ...message("How can we help you?"), required: true }],
   },
   dining: {
