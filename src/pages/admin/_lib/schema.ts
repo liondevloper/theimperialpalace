@@ -107,6 +107,7 @@ export const SECTIONS: SectionDef[] = [
       { name: "reservationEmails", label: "Reservations emails", type: "lines", help: "Shown in the footer, home page reservations desk and contact page. One email per line" },
       { name: "mailEmails", label: "Mail emails", type: "lines", help: "Shown in the footer and on the contact page. One email per line" },
       text("reception", "Reception hours"), text("checkIn", "Check-in time"), text("checkOut", "Check-out time"), text("mapsUrl", "Google Maps link"),
+      { name: "mapStyle", label: "Footer map", type: "select", required: true, options: ["Premium map", "Google map", "Both maps"], help: "Choose which map visitors see in the website footer." },
     ],
   },
 ];
