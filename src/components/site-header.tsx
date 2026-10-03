@@ -8,7 +8,7 @@ import { LOGO_IMAGE } from '../lib/logo.ts';
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 // The source image (1254x1254) has wide empty margins. This frame crops to just the
-// artwork (1182x799 region at 23,251). On the dark site the black wordmark is inverted to
+// artwork (1182x799 region at 23,251). On dark backgrounds the black wordmark is inverted to
 // ivory while hue-rotate keeps the flower gold; tone="light" keeps the original colours.
 export function Logo({ alt, small = false, className = '', tone = 'dark' }: { alt: string; small?: boolean; className?: string; tone?: 'dark' | 'light' }) {
   const size = className || (small ? 'h-12 md:h-14' : 'h-14 md:h-[72px]');
@@ -41,38 +41,40 @@ export default function SiteHeader() {
 
   const close = () => setOpen(false);
 
+  // The header uses the light ivory palette so the logo shows in its true colours
+  // (black wordmark, gold flower). No backdrop-blur: it would trap the fixed mobile menu.
   return (
     <motion.header
       initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.8, ease: EASE }}
-      className={`sticky top-0 z-50 border-b transition-all duration-500 ${scrolled ? 'border-border bg-background/85 shadow-[0_10px_30px_-18px_rgba(0,0,0,0.9)] backdrop-blur-xl' : 'border-transparent bg-background'}`}
+      className={`theme-ivory sticky top-0 z-50 border-b border-[#e6d9b8] bg-[#f8f2e4] text-foreground transition-shadow duration-500 ${scrolled ? 'shadow-[0_12px_30px_-18px_rgba(0,0,0,0.6)]' : ''}`}
     >
       <div className={`mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 transition-all duration-500 lg:px-8 ${scrolled ? 'h-[66px] md:h-[72px]' : 'h-[76px] md:h-[88px]'}`}>
         <Link to="/" className="flex min-w-0 items-center transition-transform duration-500 hover:scale-[1.03]" aria-label="The Imperial Palace Rajkot, home">
-          <Logo alt="The Imperial Palace logo" small={scrolled} />
+          <Logo alt="The Imperial Palace logo" tone="light" small={scrolled} />
         </Link>
 
         <nav aria-label="Primary" className="hidden items-center gap-7 xl:flex">
           {NAV_LINKS.map((link) => (
-            <NavLink key={link.to} to={link.to} className={({ isActive }) => `group relative py-2 text-[11px] uppercase tracking-[0.18em] transition-colors hover:text-primary ${isActive ? 'text-primary' : 'text-foreground/75'}`}>
+            <NavLink key={link.to} to={link.to} className={({ isActive }) => `group relative py-2 text-[11px] font-medium uppercase tracking-[0.18em] transition-colors hover:text-[#8a6a22] ${isActive ? 'text-[#8a6a22]' : 'text-[#2a2218]/80'}`}>
               {({ isActive }) => (
                 <>
                   {link.label}
-                  <span className={`absolute -bottom-0.5 left-0 h-px w-full origin-left bg-primary transition-transform duration-500 ${isActive ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`} />
+                  <span className={`absolute -bottom-0.5 left-0 h-px w-full origin-left bg-[#b8933a] transition-transform duration-500 ${isActive ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}`} />
                 </>
               )}
             </NavLink>
           ))}
         </nav>
 
-        <button type="button" aria-label="Open navigation" aria-expanded={open} onClick={() => setOpen(true)} className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center text-foreground xl:hidden">
+        <button type="button" aria-label="Open navigation" aria-expanded={open} onClick={() => setOpen(true)} className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center text-[#2a2218] xl:hidden">
           <Menu className="h-6 w-6" />
         </button>
       </div>
 
       {/* Gold reading-progress line */}
-      <motion.div style={{ scaleX: scrollYProgress }} className="absolute inset-x-0 bottom-0 h-px origin-left bg-gradient-to-r from-[#b8933a] via-[#f1e2b8] to-[#b8933a]" />
+      <motion.div style={{ scaleX: scrollYProgress }} className="absolute inset-x-0 bottom-0 h-0.5 origin-left bg-gradient-to-r from-[#b8933a] via-[#d9bc6a] to-[#b8933a]" />
 
       <AnimatePresence>
         {open && (
@@ -84,16 +86,16 @@ export default function SiteHeader() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4, ease: EASE }}
-            className="fixed inset-0 z-[100] overflow-y-auto bg-background"
+            className="fixed inset-0 z-[100] overflow-y-auto bg-[#f8f2e4]"
           >
-            <div className="flex h-[76px] items-center justify-between px-5">
-              <Logo alt="The Imperial Palace" />
-              <button type="button" aria-label="Close navigation" onClick={close} className="flex h-11 w-11 cursor-pointer items-center justify-center text-foreground"><X className="h-6 w-6" /></button>
+            <div className="flex h-[76px] items-center justify-between border-b border-[#e6d9b8] px-5">
+              <Logo alt="The Imperial Palace" tone="light" />
+              <button type="button" aria-label="Close navigation" onClick={close} className="flex h-11 w-11 cursor-pointer items-center justify-center text-[#2a2218]"><X className="h-6 w-6" /></button>
             </div>
             <nav aria-label="Mobile" className="flex flex-col items-center gap-5 px-5 py-8">
               {[{ to: '/', label: 'Home' }, ...NAV_LINKS].map((link, i) => (
                 <motion.div key={link.to} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.08 + i * 0.05, ease: EASE }}>
-                  <Link to={link.to} onClick={close} className="font-serif text-3xl text-foreground transition-colors hover:text-primary">{link.label}</Link>
+                  <Link to={link.to} onClick={close} className="font-serif text-3xl text-[#2a2218] transition-colors hover:text-[#8a6a22]">{link.label}</Link>
                 </motion.div>
               ))}
             </nav>

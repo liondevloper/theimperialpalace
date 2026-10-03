@@ -13,14 +13,13 @@ const FOOTER_ADDRESS_LINES = [
   'Dr. Yagnik Road, Rajkot 360001 INDIA',
 ];
 
-// Labelled email groups shown in the footer contact column.
-const FOOTER_EMAILS = [
-  { label: 'Reservations', emails: [CONTACT_INFORMATION.email, 'crs@imperialpalace.in'] },
-  { label: 'Mail', emails: ['mail@imperialpalace.in'] },
-];
-
 export default function SiteFooter() {
   const info = CONTACT_INFORMATION;
+  // Read at render time so edits saved from the admin panel show up.
+  const emailGroups = [
+    { label: 'Reservations', emails: info.reservationEmails },
+    { label: 'Mail', emails: info.mailEmails },
+  ].filter((g) => g.emails.length > 0);
   const explore = [{ label: 'Rooms & suites', to: '/stay' }, ...NAV_LINKS.filter((l) => l.to !== '/stay' && l.to !== '/contact'), ...FOOTER_EXTRA_LINKS];
   return (
     <footer className="relative overflow-hidden border-t border-border bg-card">
@@ -46,7 +45,6 @@ export default function SiteFooter() {
             <ul className="space-y-3">
               <li><Link to="/contact" className={linkClass}>Contact & enquiries</Link></li>
               <li><Link to="/stay#book" className={linkClass}>Check availability</Link></li>
-              <li><Link to="/tour" className={linkClass}>360° virtual tour</Link></li>
             </ul>
           </div>
           <div>
@@ -58,7 +56,7 @@ export default function SiteFooter() {
                 ))}
               </p>
               <p><a href={info.phoneHref} className={linkClass}>{info.phone}</a></p>
-              {FOOTER_EMAILS.map((group) => (
+              {emailGroups.map((group) => (
                 <div key={group.label}>
                   <span className="block text-[10px] uppercase tracking-[0.25em] text-primary">{group.label}</span>
                   {group.emails.map((email) => (
@@ -71,10 +69,7 @@ export default function SiteFooter() {
         </div>
       </Reveal>
       <div className="relative border-t border-border px-5 py-6">
-        <div className="mx-auto flex max-w-7xl flex-col items-center gap-2 text-center text-xs text-muted-foreground sm:flex-row sm:justify-between sm:text-left lg:px-3">
-          <p>&copy; {new Date().getFullYear()} City Organisers Private Limited. All rights reserved.</p>
-          <p>Website by <a href="https://theimperialpalace.biz" className="underline hover:text-primary">theimperialpalace.biz</a></p>
-        </div>
+        <p className="mx-auto max-w-7xl text-center text-xs text-muted-foreground">&copy; {new Date().getFullYear()} City Organisers Private Limited. All rights reserved.</p>
       </div>
     </footer>
   );
