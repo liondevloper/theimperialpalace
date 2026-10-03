@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { Link } from "react-router-dom";
-import { BedDouble, Briefcase, CalendarHeart, Contact, ExternalLink, Home, Images, Inbox, LayoutDashboard, LogOut, Map, Sparkles, UtensilsCrossed, Waves } from "lucide-react";
+import { BedDouble, Briefcase, CalendarCheck, CalendarHeart, Contact, ExternalLink, Home, Images, Inbox, LayoutDashboard, LogOut, Map, Sparkles, UtensilsCrossed, Waves } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "../../lib/supabase.ts";
@@ -15,16 +15,16 @@ import { SECTIONS } from "./_lib/schema.ts";
 type Access = "loading" | "out" | "denied" | "admin";
 
 const ICONS: Record<string, LucideIcon> = {
-  dashboard: LayoutDashboard, enquiries: Inbox, career: Briefcase, home: Home, rooms: BedDouble, restaurants: UtensilsCrossed, venues: CalendarHeart,
+  dashboard: LayoutDashboard, enquiries: Inbox, reservations: CalendarCheck, career: Briefcase, home: Home, rooms: BedDouble, restaurants: UtensilsCrossed, venues: CalendarHeart,
   amenities: Waves, experiences: Sparkles, gallery: Images, tour: Map, contact: Contact,
 };
 
 const GROUPS = [
-  { title: "Overview", keys: ["dashboard", "enquiries", "career"] },
+  { title: "Overview", keys: ["dashboard", "enquiries", "reservations", "career"] },
   { title: "Website content", keys: SECTIONS.map((s) => s.key as string) },
 ];
 
-const FIXED_LABELS: Record<string, string> = { dashboard: "Dashboard", enquiries: "Enquiries", career: "Career enquiries" };
+const FIXED_LABELS: Record<string, string> = { dashboard: "Dashboard", enquiries: "Enquiries", reservations: "Reservations", career: "Career enquiries" };
 
 // Sign in only. New admin accounts cannot be created from the website.
 function LoginForm() {
@@ -145,7 +145,7 @@ export default function AdminPage() {
           </nav>
         </header>
         <main className="mx-auto max-w-5xl px-5 py-8 lg:py-12">
-          {section ? <ContentEditor key={section.key} def={section} /> : tab === "enquiries" ? <EnquiriesPanel /> : tab === "career" ? <EnquiriesPanel key="career" onlyKind="career" title="Career enquiries" /> : <DashboardPanel go={go} />}
+          {section ? <ContentEditor key={section.key} def={section} /> : tab === "enquiries" ? <EnquiriesPanel /> : tab === "reservations" ? <EnquiriesPanel key="reservations" onlyKind="booking" title="Reservations" /> : tab === "career" ? <EnquiriesPanel key="career" onlyKind="career" title="Career enquiries" /> : <DashboardPanel go={go} />}
         </main>
       </div>
     </div>

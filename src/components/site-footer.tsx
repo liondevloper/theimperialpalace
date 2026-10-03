@@ -7,6 +7,8 @@ import { Reveal } from './hotel-page.tsx';
 import PremiumMap from './premium-map.tsx';
 
 const linkClass = 'text-sm text-muted-foreground transition-colors hover:text-primary';
+// Emails must never wrap onto a second line. On phones they use a smaller size so two columns still fit.
+const emailClass = 'block whitespace-nowrap text-[10px] tracking-tight text-muted-foreground transition-colors hover:text-primary sm:text-sm sm:tracking-normal';
 const headingClass = 'mb-3 text-[11px] uppercase tracking-[0.35em] text-primary sm:mb-5';
 const DIRECTIONS_CLASS = 'inline-flex min-h-10 cursor-pointer items-center justify-center gap-2 bg-gradient-to-r from-[#b8933a] to-[#ecd594] px-4 text-[11px] font-medium uppercase tracking-[0.2em] text-[#0b1426] shadow-lg transition-opacity hover:opacity-90';
 // The Google embed draws its own "open in Maps" card in the top-left corner. The iframe is made taller
@@ -59,20 +61,20 @@ function GoogleMapCard() {
   );
 }
 
-// Admin > Contact details has one on/off switch per map. Both can be on at the same time.
+// Admin > Contact details has one on/off switch per map. Google is the default; both can be on together.
 function FooterMap() {
   const { premium, google } = footerMaps();
   return (
     <div className="relative mx-auto max-w-7xl px-5 pb-8 md:pb-12 lg:px-8">
       <div className={premium && google ? 'grid gap-4 md:grid-cols-2 md:gap-6' : ''}>
-        {premium && <PremiumMapCard />}
         {google && <GoogleMapCard />}
+        {premium && <PremiumMapCard />}
       </div>
     </div>
   );
 }
 
-// Address, phones and department emails. Each email stays on one line; groups wrap side by side.
+// Address, phones and department emails. Each email stays on one line; emails sit in two columns.
 function ContactBlock() {
   const groups = emailGroups();
   const phones = contactPhones();
@@ -87,12 +89,12 @@ function ContactBlock() {
             <a href={FAX.href} className={`${linkClass} block`}>Fax: {FAX.label}</a>
           </p>
         </div>
-        <div className="grid grid-cols-2 gap-x-4 gap-y-3 text-left sm:flex sm:flex-wrap sm:gap-x-10">
+        <div className="grid w-full grid-cols-[auto_auto] justify-between gap-x-3 gap-y-3 text-left sm:flex sm:w-auto sm:flex-wrap sm:justify-start sm:gap-x-10">
           {groups.map((group) => (
             <div key={group.label}>
               <span className="block text-[10px] uppercase tracking-[0.25em] text-primary">{group.label}</span>
               {group.emails.map((email) => (
-                <a key={email} href={`mailto:${email}`} className={`${linkClass} block whitespace-nowrap text-[13px] sm:text-sm`}>{email}</a>
+                <a key={email} href={`mailto:${email}`} className={emailClass}>{email}</a>
               ))}
             </div>
           ))}
@@ -122,6 +124,7 @@ export default function SiteFooter() {
       </div>
       <div className="pointer-events-none absolute left-1/2 top-64 h-64 w-[36rem] -translate-x-1/2 rounded-full bg-primary/10 blur-3xl" />
       <Reveal className="relative mx-auto max-w-7xl px-5 py-8 md:py-12 lg:px-8">
+        {/* Contact details sit first, right under the logo band, above Explore. */}
         <ContactBlock />
         <div className="grid gap-x-6 gap-y-8 sm:grid-cols-2 sm:gap-10">
           {/* Explore already lives in the menu on mobile, so it only shows on larger screens. */}
@@ -141,7 +144,6 @@ export default function SiteFooter() {
       <FooterMap />
       <div className="relative flex flex-col items-center gap-2 border-t border-border px-5 py-4 text-xs text-muted-foreground md:py-6">
         <p className="text-center">&copy; {new Date().getFullYear()} The Imperial Palace, City Organisers Private Limited. All rights reserved.</p>
-        <p className="flex gap-4"><Link to="/privacy-policy" className="hover:text-primary">Privacy policy</Link><Link to="/career" className="hover:text-primary">Careers</Link></p>
       </div>
     </footer>
   );
