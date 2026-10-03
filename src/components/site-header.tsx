@@ -6,7 +6,7 @@ import { NAV_LINKS } from '../lib/hotel-data.ts';
 import { LOGO_IMAGE } from '../lib/logo.ts';
 
 const EASE = [0.22, 1, 0.36, 1] as const;
-// Scroll distance (px) over which the home header fades from transparent to solid ivory.
+// Scroll distance (px) over which the home header fades from transparent to solid white.
 const FADE_DISTANCE = 320;
 
 // The source image (1254x1254) has wide empty margins. This frame crops to just the
@@ -29,7 +29,7 @@ export default function SiteHeader() {
   const isHome = pathname === '/';
   const { scrollY, scrollYProgress } = useScroll();
   useMotionValueEvent(scrollY, 'change', (v) => setScrolled(v > 24));
-  // Home: background fades in gradually with scroll so the hero video shows through at the top.
+  // Home: white background fades in gradually with scroll so the hero video shows through at the top.
   const bgOpacity = useTransform(scrollY, [0, FADE_DISTANCE], [0, 1]);
 
   useEffect(() => {
@@ -58,10 +58,10 @@ export default function SiteHeader() {
       initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.8, ease: EASE }}
-      className={`theme-ivory ${isHome ? 'fixed inset-x-0' : 'sticky'} top-0 z-50 text-foreground transition-shadow duration-500 ${scrolled ? 'shadow-[0_12px_30px_-18px_rgba(0,0,0,0.6)]' : ''}`}
+      className={`theme-ivory ${isHome ? 'fixed inset-x-0' : 'sticky'} top-0 z-50 text-foreground transition-shadow duration-500 ${scrolled ? 'shadow-[0_12px_30px_-18px_rgba(0,0,0,0.45)]' : ''}`}
     >
-      {/* Ivory background layer: always solid on inner pages, scroll-faded on home */}
-      <motion.div aria-hidden="true" style={isHome ? { opacity: bgOpacity } : undefined} className="absolute inset-0 -z-10 border-b border-[#e6d9b8] bg-[#f8f2e4]" />
+      {/* White background layer: always solid on inner pages, scroll-faded on home */}
+      <motion.div aria-hidden="true" style={isHome ? { opacity: bgOpacity } : undefined} className="absolute inset-0 -z-10 border-b border-[#ece6d6] bg-white" />
       {isHome && (
         <motion.div aria-hidden="true" animate={{ opacity: scrolled ? 0 : 1 }} transition={{ duration: 0.5 }} className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[140%] bg-gradient-to-b from-black/45 to-transparent" />
       )}
@@ -106,9 +106,9 @@ export default function SiteHeader() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4, ease: EASE }}
-            className="fixed inset-0 z-[100] overflow-y-auto bg-[#f8f2e4]"
+            className="fixed inset-0 z-[100] overflow-y-auto bg-white"
           >
-            <div className="grid h-[76px] grid-cols-[1fr_auto_1fr] items-center border-b border-[#e6d9b8] px-5">
+            <div className="grid h-[76px] grid-cols-[1fr_auto_1fr] items-center border-b border-[#ece6d6] px-5">
               <button type="button" aria-label="Close navigation" onClick={close} className="-ml-2 flex h-11 w-11 cursor-pointer items-center justify-center text-[#2a2218]"><X className="h-6 w-6" /></button>
               <Logo alt="The Imperial Palace" tone="light" />
               <div aria-hidden="true" />
