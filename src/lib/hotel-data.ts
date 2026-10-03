@@ -209,9 +209,9 @@ export const CONTACT_INFORMATION = {
   checkIn: '2:00 PM',
   checkOut: '12:00 PM',
   mapsUrl: 'https://maps.google.com/?q=The+Imperial+Palace+Rajkot+Dr+Yagnik+Road',
-  // Footer map switches, editable from admin > Contact details. If both are off the premium map is shown.
-  showPremiumMap: true,
-  showGoogleMap: false,
+  // Footer map switches, editable from admin > Contact details. Google is the default map.
+  showPremiumMap: false,
+  showGoogleMap: true,
   distances: [
     { label: 'Airport', distance: '33 kms', note: '50 mins · Rajkot Airport' },
     { label: 'Railway Station', distance: '2.8 kms', note: '5 mins · Rajkot Junction' },
@@ -243,10 +243,10 @@ export function mailEmailList(): string[] {
   return cleanList(CONTACT_INFORMATION.mailEmails);
 }
 
-/** Which footer maps to show, read at call time so admin edits show. Never returns both off. */
+/** Which footer maps to show, read at call time so admin edits show. Google is the default: it shows whenever the premium map is off. */
 export function footerMaps(): { premium: boolean; google: boolean } {
-  const google = CONTACT_INFORMATION.showGoogleMap === true;
-  const premium = CONTACT_INFORMATION.showPremiumMap === true || !google;
+  const premium = CONTACT_INFORMATION.showPremiumMap === true;
+  const google = CONTACT_INFORMATION.showGoogleMap === true || !premium;
   return { premium, google };
 }
 
