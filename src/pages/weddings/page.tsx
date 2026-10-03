@@ -17,7 +17,8 @@ const SERVICES = [
 ];
 
 export default function WeddingsPage() {
-  const [open, setOpen] = useState(false);
+  // null = closed, "" = open without a preselected venue
+  const [venue, setVenue] = useState<string | null>(null);
   const venues = VENUES.filter((v) => v.forWeddings);
   return (
     <PageLayout title="Weddings | The Imperial Palace Rajkot" description="Plan your wedding at The Imperial Palace, Rajkot, with grand ballrooms, an open-air pool deck and a dedicated planning team.">
@@ -26,12 +27,13 @@ export default function WeddingsPage() {
         <div className="mx-auto max-w-7xl">
           <Reveal><SectionHeading eyebrow="Wedding venues" title="A wedding with a sense of place" align="center" /></Reveal>
           <div className="mb-20 grid gap-6 md:grid-cols-3">
-            {venues.map((v) => (
-              <Reveal key={v.name}>
-                <article>
-                  <Img src={v.image} alt={v.name} width={800} height={600} className="aspect-[4/3] w-full object-cover" />
+            {venues.map((v, i) => (
+              <Reveal key={v.name} delay={i * 0.08}>
+                <article className="group">
+                  <div className="aspect-[4/3] overflow-hidden"><Img src={v.image} alt={v.name} width={800} height={600} className="h-full w-full object-cover transition-transform duration-[1400ms] group-hover:scale-110" /></div>
                   <h3 className="mt-4 font-serif text-2xl text-foreground">{v.name}</h3>
                   <p className="mt-1 text-sm text-muted-foreground">{v.size} · {v.capacity}</p>
+                  <button type="button" onClick={() => setVenue(v.name)} className={`${BTN.outline} mt-5`}>Enquire for this venue</button>
                 </article>
               </Reveal>
             ))}
@@ -48,11 +50,11 @@ export default function WeddingsPage() {
           </div>
           <div className="mt-16 bg-[#14110c] px-6 py-12 text-center">
             <h2 className="font-serif text-3xl font-light text-white">Ready to begin planning?</h2>
-            <button type="button" onClick={() => setOpen(true)} className={`${BTN.gold} mt-6`}>Request wedding proposal</button>
+            <button type="button" onClick={() => setVenue("")} className={`${BTN.gold} mt-6`}>Request wedding proposal</button>
           </div>
         </div>
       </section>
-      <EnquiryModal kind="wedding" open={open} onClose={() => setOpen(false)} />
+      <EnquiryModal kind="wedding" open={venue !== null} onClose={() => setVenue(null)} defaults={venue ? { venue } : {}} />
     </PageLayout>
   );
 }

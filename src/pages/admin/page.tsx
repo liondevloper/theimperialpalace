@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { Link } from "react-router-dom";
-import { BedDouble, CalendarHeart, Contact, ExternalLink, Home, Images, Inbox, LogOut, Map, Sparkles, UtensilsCrossed, Waves } from "lucide-react";
+import { BedDouble, CalendarHeart, Contact, ExternalLink, Home, Images, Inbox, LayoutDashboard, LogOut, Map, Sparkles, UtensilsCrossed, Waves } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "../../lib/supabase.ts";
@@ -9,14 +9,20 @@ import { BTN, FIELD, LABEL } from "../../lib/styles.ts";
 import { Logo } from "../../components/site-header.tsx";
 import ContentEditor from "./_components/content-editor.tsx";
 import EnquiriesPanel from "./_components/enquiries-panel.tsx";
+import DashboardPanel from "./_components/dashboard-panel.tsx";
 import { SECTIONS } from "./_lib/schema.ts";
 
 type Access = "loading" | "out" | "denied" | "admin";
 
 const ICONS: Record<string, LucideIcon> = {
-  enquiries: Inbox, home: Home, rooms: BedDouble, restaurants: UtensilsCrossed, venues: CalendarHeart,
+  dashboard: LayoutDashboard, enquiries: Inbox, home: Home, rooms: BedDouble, restaurants: UtensilsCrossed, venues: CalendarHeart,
   amenities: Waves, experiences: Sparkles, gallery: Images, tour: Map, contact: Contact,
 };
+
+const GROUPS = [
+  { title: "Overview", keys: ["dashboard", "enquiries"] },
+  { title: "Website content", keys: SECTIONS.map((s) => s.key as string) },
+];
 
 function LoginForm() {
   const [mode, setMode] = useState<"in" | "up">("in");
@@ -52,7 +58,8 @@ function LoginForm() {
 
 export default function AdminPage() {
   const [access, setAccess] = useState<Access>("loading");
-  const [tab, setTab] = useState<string>("enquiries");
+  const [tab, setTab] = useState<string>("dashboard");
+  const [email, setEmail] = useState("");
 
   useEffect(() => {
     document.title = "Admin | The Imperial Palace Rajkot";
@@ -63,6 +70,7 @@ export default function AdminPage() {
 
     const check = async (session: Session | null) => {
       if (!session) return setAccess("out");
+      setEmail(session.user.email ?? "");
       const { data, error } = await supabase.rpc("claim_admin");
       setAccess(!error && data === true ? "admin" : "denied");
     };
@@ -72,8 +80,10 @@ export default function AdminPage() {
   }, []);
 
   const signOut = () => void supabase.auth.signOut();
+  const go = (key: string) => { setTab(key); window.scrollTo({ top: 0 }); };
   const section = SECTIONS.find((s) => s.key === tab);
-  const tabs = [{ key: "enquiries", label: "Enquiries" }, ...SECTIONS.map((s) => ({ key: s.key, label: s.label }))];
+  const labelOf = (key: string) => (key === "dashboard" ? "Dashboard" : key === "enquiries" ? "Enquiries" : SECTIONS.find((s) => s.key === key)?.label ?? key);
+  const allKeys = GROUPS.flatMap((g) => g.keys);
 
   if (access !== "admin") {
     return (
@@ -93,7 +103,7 @@ export default function AdminPage() {
     );
   }
 
-  const navBtn = (active: boolean) => `flex min-h-11 w-full cursor-pointer items-center gap-3 px-4 text-left text-[12px] uppercase tracking-[0.14em] transition-colors ${active ? "bg-[#2a2218] text-[#e8d5a3]" : "text-[#e8d5a3]/60 hover:bg-[#2a2218]/60 hover:text-[#e8d5a3]"}`;
+  const navBtn = (active: boolean) => `flex min-h-11 w-full cursor-pointer items-center gap-3 px-4 text-left text-[12px] uppercase tracking-[0.14em] transition-colors ${active ? "border-l-2 border-[#c9a84c] bg-[#2a2218] text-[#e8d5a3]" : "border-l-2 border-transparent text-[#e8d5a3]/60 hover:bg-[#2a2218]/60 hover:text-[#e8d5a3]"}`;
 
   return (
     <div className="flex min-h-dvh bg-[#faf6ec]">
@@ -103,12 +113,18 @@ export default function AdminPage() {
           <p className="mt-1 text-[10px] uppercase tracking-[0.3em] text-[#b8933a]">Admin control room</p>
         </div>
         <nav aria-label="Admin sections" className="flex-1 overflow-y-auto py-3">
-          {tabs.map((t) => {
-            const Icon = ICONS[t.key] ?? Sparkles;
-            return <button key={t.key} type="button" onClick={() => setTab(t.key)} className={navBtn(tab === t.key)}><Icon className="h-4 w-4" />{t.label}</button>;
-          })}
+          {GROUPS.map((g) => (
+            <div key={g.title} className="mb-4">
+              <p className="px-5 pb-2 pt-2 text-[9px] uppercase tracking-[0.3em] text-[#b8933a]/70">{g.title}</p>
+              {g.keys.map((key) => {
+                const Icon = ICONS[key] ?? Sparkles;
+                return <button key={key} type="button" onClick={() => go(key)} className={navBtn(tab === key)}><Icon className="h-4 w-4" />{labelOf(key)}</button>;
+              })}
+            </div>
+          ))}
         </nav>
         <div className="space-y-1 border-t border-[#3a2e1c] p-3">
+          {email && <p className="truncate px-4 pb-2 text-[11px] text-[#e8d5a3]/50">{email}</p>}
           <Link to="/" target="_blank" className={navBtn(false)}><ExternalLink className="h-4 w-4" />View website</Link>
           <button type="button" onClick={signOut} className={navBtn(false)}><LogOut className="h-4 w-4" />Sign out</button>
         </div>
@@ -124,12 +140,11 @@ export default function AdminPage() {
             </div>
           </div>
           <nav aria-label="Admin sections" className="flex overflow-x-auto px-2">
-            {tabs.map((t) => <button key={t.key} type="button" onClick={() => setTab(t.key)} className={`min-h-11 shrink-0 cursor-pointer border-b-2 px-3 text-[11px] uppercase tracking-[0.14em] ${tab === t.key ? "border-[#c9a84c] text-foreground" : "border-transparent text-muted-foreground"}`}>{t.label}</button>)}
+            {allKeys.map((key) => <button key={key} type="button" onClick={() => go(key)} className={`min-h-11 shrink-0 cursor-pointer border-b-2 px-3 text-[11px] uppercase tracking-[0.14em] ${tab === key ? "border-[#c9a84c] text-foreground" : "border-transparent text-muted-foreground"}`}>{labelOf(key)}</button>)}
           </nav>
         </header>
         <main className="mx-auto max-w-5xl px-5 py-8 lg:py-12">
-          <p className="mb-6 border-l-2 border-[#c9a84c] bg-white px-4 py-3 text-sm text-muted-foreground">Every change you save here appears on the live website instantly.</p>
-          {section ? <ContentEditor key={section.key} def={section} /> : <EnquiriesPanel />}
+          {section ? <ContentEditor key={section.key} def={section} /> : tab === "enquiries" ? <EnquiriesPanel /> : <DashboardPanel go={go} />}
         </main>
       </div>
     </div>

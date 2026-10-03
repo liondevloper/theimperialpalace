@@ -1,6 +1,6 @@
 import type { ContentKey, Row } from "../../../lib/content.ts";
 
-export type FieldType = "text" | "optionalText" | "textarea" | "image" | "lines" | "checkbox" | "select";
+export type FieldType = "text" | "optionalText" | "textarea" | "image" | "images" | "lines" | "checkbox" | "select";
 export type AdminField = { name: string; label: string; type: FieldType; required?: boolean; options?: string[]; help?: string };
 export type SectionDef = {
   key: ContentKey;
@@ -8,6 +8,7 @@ export type SectionDef = {
   single?: boolean;
   titleField: string;
   noun: string;
+  page?: string;
   fields: AdminField[];
   blank: Row;
 };
@@ -18,7 +19,7 @@ const image = (name = "image", label = "Photo"): AdminField => ({ name, label, t
 
 export const SECTIONS: SectionDef[] = [
   {
-    key: "home", label: "Homepage", single: true, titleField: "heroTitle", noun: "homepage",
+    key: "home", label: "Homepage", single: true, titleField: "heroTitle", noun: "homepage", page: "/",
     blank: {},
     fields: [
       text("heroEyebrow", "Hero small heading"), text("heroTitle", "Hero title"), text("heroHighlight", "Hero highlighted word", true, "Shown in gold italics after the title"),
@@ -30,7 +31,7 @@ export const SECTIONS: SectionDef[] = [
     ],
   },
   {
-    key: "rooms", label: "Rooms & suites", titleField: "name", noun: "room",
+    key: "rooms", label: "Rooms & suites", titleField: "name", noun: "room", page: "/stay",
     blank: { name: "New room", slug: "", size: "", desc: "", longDesc: "", badge: null, featured: false, amenities: [], images: [] },
     fields: [
       text("name", "Room name"), text("size", "Size", true, "For example ~320 sq.ft"),
@@ -38,29 +39,29 @@ export const SECTIONS: SectionDef[] = [
       { name: "badge", label: "Badge (optional)", type: "optionalText", help: "For example Club Floor" },
       { name: "featured", label: "Show on the home page", type: "checkbox" },
       { name: "amenities", label: "Amenities", type: "lines", help: "One per line" },
-      { name: "images", label: "Photos", type: "lines", required: true, help: "One image address per line. The first is the main photo." },
+      { name: "images", label: "Photos", type: "images", required: true, help: "Upload several photos. The first one is the main photo." },
     ],
   },
   {
-    key: "restaurants", label: "Dining", titleField: "name", noun: "restaurant",
+    key: "restaurants", label: "Dining", titleField: "name", noun: "restaurant", page: "/dining",
     blank: { name: "New restaurant", slug: "", category: "", description: "", timing: "", image: "" },
     fields: [text("name", "Name"), text("category", "Type of dining"), area("description", "Description"), text("timing", "Timings"), image()],
   },
   {
-    key: "venues", label: "Venues", titleField: "name", noun: "venue",
+    key: "venues", label: "Venues", titleField: "name", noun: "venue", page: "/events",
     blank: { name: "New venue", size: "", capacity: "", types: "", image: "", forWeddings: false },
     fields: [
       text("name", "Venue name"), text("size", "Size"), text("capacity", "Capacity"), text("types", "Suitable for"), image(),
-      { name: "forWeddings", label: "Available for weddings", type: "checkbox" },
+      { name: "forWeddings", label: "Show on the weddings page", type: "checkbox" },
     ],
   },
   {
-    key: "amenities", label: "Wellness", titleField: "name", noun: "experience",
+    key: "amenities", label: "Wellness", titleField: "name", noun: "experience", page: "/wellness",
     blank: { name: "New experience", category: "", description: "", image: "" },
     fields: [text("name", "Name"), text("category", "Category"), area("description", "Description"), image()],
   },
   {
-    key: "experiences", label: "Experiences", titleField: "title", noun: "experience",
+    key: "experiences", label: "Experiences", titleField: "title", noun: "experience", page: "/experiences",
     blank: { title: "New experience", label: "", text: "", image: "", to: "/gallery" },
     fields: [
       text("title", "Title"), text("label", "Small heading"), area("text", "Description"), image(),
@@ -68,7 +69,7 @@ export const SECTIONS: SectionDef[] = [
     ],
   },
   {
-    key: "gallery", label: "Gallery", titleField: "title", noun: "photo",
+    key: "gallery", label: "Gallery", titleField: "title", noun: "photo", page: "/gallery",
     blank: { category: "Hotel", image: "", title: "New photo" },
     fields: [
       text("title", "Caption"), image(),
@@ -76,12 +77,12 @@ export const SECTIONS: SectionDef[] = [
     ],
   },
   {
-    key: "tour", label: "360° tour", titleField: "label", noun: "location",
+    key: "tour", label: "360° tour", titleField: "label", noun: "location", page: "/tour",
     blank: { id: "", label: "New location", area: "", description: "", image: "", hotspots: [] },
     fields: [text("label", "Location name"), text("area", "Area"), area("description", "Description"), image("image", "Photo or 360° image")],
   },
   {
-    key: "contact", label: "Contact details", single: true, titleField: "name", noun: "contact details",
+    key: "contact", label: "Contact details", single: true, titleField: "name", noun: "contact details", page: "/contact",
     blank: {},
     fields: [
       text("name", "Hotel name"), { name: "addressLines", label: "Address", type: "lines", required: true, help: "One line per row" },
