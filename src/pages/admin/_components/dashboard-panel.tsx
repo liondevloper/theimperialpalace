@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { ArrowRight, CheckCircle2, Inbox, MessageCircle, PhoneCall } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { supabase } from "../../../lib/supabase.ts";
-import { ROOMS, RESTAURANTS, GALLERY, VENUES } from "../../../lib/hotel-data.ts";
 import type { Enquiry } from "./enquiries-panel.tsx";
 import { STATUS_STYLE } from "./enquiries-panel.tsx";
+import { formatDateTime } from "../_lib/enquiry-export.ts";
 
 type Counts = { total: number; new: number; contacted: number; closed: number; week: number };
 
@@ -44,13 +44,6 @@ export default function DashboardPanel({ go }: { go: (tab: string) => void }) {
     { label: "Closed", value: counts?.closed, icon: CheckCircle2, accent: NAVY_CARD },
   ];
 
-  const content = [
-    { label: "Rooms & suites", value: ROOMS.length, tab: "rooms" },
-    { label: "Restaurants", value: RESTAURANTS.length, tab: "restaurants" },
-    { label: "Venues", value: VENUES.length, tab: "venues" },
-    { label: "Gallery photos", value: GALLERY.length, tab: "gallery" },
-  ];
-
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
 
@@ -72,46 +65,27 @@ export default function DashboardPanel({ go }: { go: (tab: string) => void }) {
         ))}
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[3fr_2fr]">
-        <section className="border border-[#e6d9b8] bg-white">
-          <div className="flex items-center justify-between border-b border-[#e6d9b8] px-5 py-4">
-            <h3 className="font-serif text-2xl text-foreground">Latest enquiries</h3>
-            <button type="button" onClick={() => go("enquiries")} className="flex min-h-11 cursor-pointer items-center gap-1 text-[11px] uppercase tracking-[0.2em] text-[#8a6a22]">View all <ArrowRight className="h-4 w-4" /></button>
-          </div>
-          {recent.length === 0 ? (
-            <p className="p-8 text-center text-sm text-muted-foreground">{counts ? "No enquiries yet." : "Loading..."}</p>
-          ) : (
-            <ul className="divide-y divide-[#efe6d2]">
-              {recent.map((r) => (
-                <li key={r.id} className="flex items-center justify-between gap-3 px-5 py-3">
-                  <div className="min-w-0">
-                    <p className="truncate font-medium text-foreground">{r.name}</p>
-                    <p className="text-xs text-muted-foreground">{r.kind} · {new Date(r.created_at).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}</p>
-                  </div>
-                  <span className={`shrink-0 px-2 py-0.5 text-[10px] uppercase tracking-[0.15em] ${STATUS_STYLE[r.status] ?? "bg-muted"}`}>{r.status}</span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
-
-        <section className="border border-[#e6d9b8] bg-white">
-          <div className="border-b border-[#e6d9b8] px-5 py-4"><h3 className="font-serif text-2xl text-foreground">Website content</h3></div>
+      <section className="border border-[#e6d9b8] bg-white">
+        <div className="flex items-center justify-between border-b border-[#e6d9b8] px-5 py-4">
+          <h3 className="font-serif text-2xl text-foreground">Latest enquiries</h3>
+          <button type="button" onClick={() => go("enquiries")} className="flex min-h-11 cursor-pointer items-center gap-1 text-[11px] uppercase tracking-[0.2em] text-[#8a6a22]">View all <ArrowRight className="h-4 w-4" /></button>
+        </div>
+        {recent.length === 0 ? (
+          <p className="p-8 text-center text-sm text-muted-foreground">{counts ? "No enquiries yet." : "Loading..."}</p>
+        ) : (
           <ul className="divide-y divide-[#efe6d2]">
-            {content.map((c) => (
-              <li key={c.tab}>
-                <button type="button" onClick={() => go(c.tab)} className="flex min-h-14 w-full cursor-pointer items-center justify-between px-5 text-left hover:bg-[#faf6ec]">
-                  <span className="text-sm text-foreground">{c.label}</span>
-                  <span className="flex items-center gap-3 font-serif text-2xl text-[#8a6a22]">{c.value}<ArrowRight className="h-4 w-4" /></span>
-                </button>
+            {recent.map((r) => (
+              <li key={r.id} className="flex items-center justify-between gap-3 px-5 py-3">
+                <div className="min-w-0">
+                  <p className="truncate font-medium text-foreground">{r.name}</p>
+                  <p className="text-xs text-muted-foreground">{r.kind} · {formatDateTime(r.created_at)}</p>
+                </div>
+                <span className={`shrink-0 px-2 py-0.5 text-[10px] uppercase tracking-[0.15em] ${STATUS_STYLE[r.status] ?? "bg-muted"}`}>{r.status}</span>
               </li>
             ))}
           </ul>
-          <div className="p-5">
-            <button type="button" onClick={() => go("home")} className="w-full cursor-pointer bg-[#111c33] px-4 py-3 text-[11px] uppercase tracking-[0.2em] text-[#e8d5a3] hover:bg-[#1c2a4a]">Edit homepage</button>
-          </div>
-        </section>
-      </div>
+        )}
+      </section>
     </div>
   );
 }
