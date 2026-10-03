@@ -1,19 +1,40 @@
 import { useRef } from "react";
 import type { ReactNode } from "react";
-import { motion, useInView } from "motion/react";
+import { motion, useInView, useScroll, useTransform } from "motion/react";
 import Img from "./img.tsx";
 
+const EASE = [0.22, 1, 0.36, 1] as const;
+
 export function PageHero({ title, eyebrow, image, subtitle }: { title: string; eyebrow: string; image: string; subtitle?: string }) {
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);
   return (
-    <section className="relative flex min-h-[380px] items-end overflow-hidden bg-[#14110c] md:min-h-[520px]">
-      <Img src={image} alt="" priority width={1600} height={900} className="absolute inset-0 h-full w-full object-cover" />
-      <div className="absolute inset-0 bg-[#14110c]/60" />
+    <section ref={ref} className="relative flex min-h-[400px] items-end overflow-hidden bg-[#2a2218] md:min-h-[560px]">
+      <motion.div style={{ y }} initial={{ scale: 1.15 }} animate={{ scale: 1.03 }} transition={{ duration: 2.4, ease: EASE }} className="absolute inset-0">
+        <Img src={image} alt="" priority width={1600} height={900} className="h-full w-full object-cover" />
+      </motion.div>
+      <div className="absolute inset-0 bg-gradient-to-t from-[#1e1810]/85 via-[#1e1810]/35 to-[#1e1810]/10" />
       <div className="relative mx-auto w-full max-w-7xl px-5 pb-12 pt-24 md:pb-20 lg:px-8">
-        <p className="mb-4 text-[11px] uppercase tracking-[0.4em] text-[#c9a84c]">{eyebrow}</p>
-        <h1 className="max-w-4xl font-serif text-4xl font-light leading-[1.05] text-white text-balance sm:text-5xl md:text-7xl">{title}</h1>
-        {subtitle && <p className="mt-5 max-w-xl text-sm leading-7 text-white/80 md:text-base">{subtitle}</p>}
+        <HeroText eyebrow={eyebrow} title={title} subtitle={subtitle} />
       </div>
     </section>
+  );
+}
+
+// Staggered entrance for hero copy, shared by the home page and inner pages.
+export function HeroText({ eyebrow, title, subtitle, children }: { eyebrow: string; title: ReactNode; subtitle?: string; children?: ReactNode }) {
+  const item = (delay: number) => ({ initial: { opacity: 0, y: 28, filter: "blur(6px)" }, animate: { opacity: 1, y: 0, filter: "blur(0px)" }, transition: { duration: 1, delay, ease: EASE } });
+  return (
+    <>
+      <motion.div {...item(0.2)} className="mb-5 flex items-center gap-4">
+        <motion.span initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 1, delay: 0.3, ease: EASE }} className="h-px w-12 origin-left bg-[#d9bc6a]" />
+        <span className="text-[11px] uppercase tracking-[0.4em] text-[#e8d5a3]">{eyebrow}</span>
+      </motion.div>
+      <motion.h1 {...item(0.35)} className="max-w-4xl font-serif text-4xl font-light leading-[1.04] text-white text-balance sm:text-6xl md:text-7xl">{title}</motion.h1>
+      {subtitle && <motion.p {...item(0.55)} className="mt-6 max-w-xl text-sm leading-7 text-white/85 md:text-base">{subtitle}</motion.p>}
+      {children && <motion.div {...item(0.75)}>{children}</motion.div>}
+    </>
   );
 }
 
@@ -24,20 +45,26 @@ export function SectionHeading({ eyebrow, title, description, align = "left", to
   return (
     <div className={`mb-10 max-w-2xl md:mb-14 ${align === "center" ? "mx-auto text-center" : ""}`}>
       <div className={`mb-5 flex items-center gap-4 ${align === "center" ? "justify-center" : ""}`}>
-        <span className="h-px w-10 bg-[#c9a84c]" />
-        <span className={`text-[11px] uppercase tracking-[0.35em] ${dark ? "text-[#c9a84c]" : "text-[#6f5318]"}`}>{eyebrow}</span>
+        <span className="h-px w-10 bg-gradient-to-r from-[#c9a84c] to-[#e8d5a3]" />
+        <span className={`text-[11px] uppercase tracking-[0.35em] ${dark ? "text-[#e8d5a3]" : "text-[#8a6a22]"}`}>{eyebrow}</span>
       </div>
       <h2 className={`font-serif text-3xl font-light leading-tight text-balance sm:text-4xl md:text-5xl ${dark ? "text-white" : "text-foreground"}`}>{title}</h2>
-      {description && <p className={`mt-5 text-sm leading-7 md:text-base ${dark ? "text-white/70" : "text-muted-foreground"}`}>{description}</p>}
+      {description && <p className={`mt-5 text-sm leading-7 md:text-base ${dark ? "text-white/75" : "text-muted-foreground"}`}>{description}</p>}
     </div>
   );
 }
 
 export function Reveal({ children, className = "", delay = 0 }: { children: ReactNode; className?: string; delay?: number }) {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-60px" });
+  const inView = useInView(ref, { once: true, margin: "-80px" });
   return (
-    <motion.div ref={ref} initial={{ opacity: 0, y: 16 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay, ease: "easeOut" }} className={className}>
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 36, filter: "blur(4px)" }}
+      animate={inView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
+      transition={{ duration: 0.9, delay, ease: EASE }}
+      className={className}
+    >
       {children}
     </motion.div>
   );
