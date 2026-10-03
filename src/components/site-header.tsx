@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { NAV_LINKS } from '../lib/hotel-data.ts';
+import { LOGO_URL } from '../lib/logo.ts';
 
 export default function SiteHeader() {
   const [open, setOpen] = useState(false);
@@ -27,9 +28,9 @@ export default function SiteHeader() {
         {/* Logo */}
         <Link to="/" className="flex min-w-0 items-center gap-3" aria-label="The Imperial Palace Rajkot, home">
           <img
-            src="/images/logo.png"
+            src={LOGO_URL}
             alt="The Imperial Palace logo"
-            className="h-12 w-12 shrink-0 object-contain"
+            className="h-14 w-14 shrink-0 rounded-full bg-white object-contain ring-1 ring-[#c9a84c]/60"
           />
         </Link>
 
@@ -49,7 +50,7 @@ export default function SiteHeader() {
       {open && (
         <div role="dialog" aria-modal="true" aria-label="Navigation" className="fixed inset-0 z-[100] overflow-y-auto bg-[#0e0c09]">
           <div className="flex h-[72px] items-center justify-between px-5">
-            <img src="/images/logo.png" alt="The Imperial Palace" className="h-12 w-12 object-contain" />
+            <img src={LOGO_URL} alt="The Imperial Palace" className="h-14 w-14 rounded-full bg-white object-contain ring-1 ring-[#c9a84c]/60" />
             <button type="button" aria-label="Close navigation" onClick={close} className="flex h-11 w-11 cursor-pointer items-center justify-center text-white"><X className="h-6 w-6" /></button>
           </div>
           <nav aria-label="Mobile" className="flex flex-col items-center gap-5 px-5 py-8">
