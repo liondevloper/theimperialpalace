@@ -5,12 +5,11 @@ import { animate, motion, useInView, useMotionValue, useScroll, useTransform } f
 import type { MotionValue } from "motion/react";
 import PageLayout from "../components/page-layout.tsx";
 import Img from "../components/img.tsx";
-import InstagramIcon from "../components/instagram-icon.tsx";
+import InstagramIcon, { instagramOf } from "../components/instagram-icon.tsx";
 import { Reveal, SectionHeading } from "../components/hotel-page.tsx";
 import { EnquiryButton } from "../components/enquiry-modal.tsx";
 import { BookStayButton } from "../components/book-stay-modal.tsx";
 import { CONTACT_INFORMATION, EXPERIENCES, GALLERY, HOME, HOTEL_IMAGES, RESTAURANTS, ROOMS, contactPhones, reservationEmailList } from "../lib/hotel-data.ts";
-import type { Restaurant } from "../lib/hotel-data.ts";
 import { introDelay } from "../lib/intro.ts";
 import { SITE } from "../lib/site-config.ts";
 import { BTN } from "../lib/styles.ts";
@@ -24,16 +23,6 @@ const imageCard = "overflow-hidden bg-card shadow-[0_24px_50px_-28px_rgba(6,12,2
 const zoom = "h-full w-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-110";
 
 const PERK_ICONS = [Clock, CalendarHeart, Sparkles];
-
-// Default Instagram for Delicacy. Admin > Dining can change it; clearing the field there hides the icon.
-const DEFAULT_INSTAGRAM: Record<string, string> = {
-  delicacy: "https://www.instagram.com/delicacybakery",
-};
-const instagramOf = (r: Restaurant & { instagram?: string | null }): string => {
-  if (r.instagram === null) return "";
-  if (typeof r.instagram === "string") return r.instagram.trim();
-  return DEFAULT_INSTAGRAM[r.slug] ?? "";
-};
 
 // "Title | text" or "200+ | Rooms & suites" -> [left, right]
 const splitPipe = (line: string): [string, string] => {
