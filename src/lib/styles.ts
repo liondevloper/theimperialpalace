@@ -1,14 +1,14 @@
 // Shared class strings so buttons and fields stay consistent across the site.
 const base =
-  "inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 px-6 py-3 text-[11px] font-medium uppercase tracking-[0.2em] transition-colors";
+  "group/btn relative inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 overflow-hidden px-7 py-3 text-[11px] font-medium uppercase tracking-[0.22em] transition-all duration-500 hover:-translate-y-0.5 active:translate-y-0";
 
 export const BTN = {
-  gold: `${base} border border-[#c9a84c] bg-[#c9a84c] text-[#14110c] hover:bg-[#dcc06a]`,
-  outline: `${base} border border-[#8a6a22] text-[#6f5318] hover:bg-[#c9a84c] hover:text-[#14110c]`,
-  light: `${base} border border-white/50 text-white hover:border-[#c9a84c] hover:text-[#c9a84c]`,
+  gold: `${base} bg-gradient-to-r from-[#b8933a] via-[#d9bc6a] to-[#b8933a] bg-[length:200%_100%] bg-left text-[#1e1810] shadow-[0_10px_30px_-12px_rgba(184,147,58,0.7)] hover:bg-right hover:shadow-[0_16px_40px_-12px_rgba(184,147,58,0.85)]`,
+  outline: `${base} border border-[#b8933a] text-[#7a5c1c] hover:bg-[#b8933a] hover:text-white`,
+  light: `${base} border border-white/60 text-white backdrop-blur-sm hover:border-[#e8d5a3] hover:bg-white/10 hover:text-[#f1e2b8]`,
 } as const;
 
 export const FIELD =
-  "h-11 w-full min-w-0 border border-input bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-2 focus-visible:outline-[#8a6a22]";
+  "h-11 w-full min-w-0 border border-input bg-white px-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus-visible:border-[#b8933a] focus-visible:outline-2 focus-visible:outline-[#b8933a]/40";
 
 export const LABEL = "text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground";
