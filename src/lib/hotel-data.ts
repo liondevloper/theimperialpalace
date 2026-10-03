@@ -71,18 +71,20 @@ export const HOME = {
 
 export type NavLinkItem = { label: string; to: string };
 
+// Same list is used by the top menu, the mobile menu and the footer "Explore" section.
 export const NAV_LINKS: NavLinkItem[] = [
   { label: 'Stay', to: '/stay' },
   { label: 'Dining', to: '/dining' },
   { label: 'Weddings', to: '/weddings' },
   { label: 'Events', to: '/events' },
   { label: 'Wellness', to: '/wellness' },
+  { label: 'Experiences', to: '/experiences' },
   { label: '360° Tour', to: '/tour' },
   { label: 'Gallery', to: '/gallery' },
   { label: 'Contact', to: '/contact' },
 ];
 
-export const FOOTER_EXTRA_LINKS: NavLinkItem[] = [{ label: 'Experiences', to: '/experiences' }];
+export const FOOTER_EXTRA_LINKS: NavLinkItem[] = [];
 
 /* ------------------------------------ Rooms ------------------------------------ */
 
