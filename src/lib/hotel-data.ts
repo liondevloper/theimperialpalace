@@ -35,7 +35,8 @@ export const HOME = {
   heroTitle: 'Where elegance meets',
   heroHighlight: 'Rajkot',
   heroSubtitle: 'Rajkot\'s 5-star address for refined stays, grand celebrations and warm Gujarati hospitality.',
-  heroImage: HOTEL_IMAGES.lobby,
+  // Empty by default: the hotel adds its own hero photo from the admin panel.
+  heroImage: '',
   welcomeTitle: 'A 5-star landmark of unhurried luxury',
   welcomeText: 'In the heart of Rajkot, The Imperial Palace is a 5-star hotel that pairs palatial proportions with quietly attentive service. Rooms are calm, tables are generous, and every celebration is treated as a once-only occasion.',
   facts: ['200+ | Rooms & suites', '4 | Dining venues', '8,000 | Sq.ft. ballroom', '24h | Reception'],
