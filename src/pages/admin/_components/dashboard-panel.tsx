@@ -3,7 +3,7 @@ import { ArrowRight, CheckCircle2, Inbox, MessageCircle, PhoneCall } from "lucid
 import type { LucideIcon } from "lucide-react";
 import { supabase } from "../../../lib/supabase.ts";
 import type { Enquiry } from "./enquiries-panel.tsx";
-import { STATUS_STYLE } from "./enquiries-panel.tsx";
+import { REFRESH_MS, STATUS_STYLE } from "./enquiries-panel.tsx";
 import { formatDateTime } from "../_lib/enquiry-export.ts";
 
 type Counts = { total: number; new: number; contacted: number; closed: number; week: number };
@@ -20,9 +20,10 @@ export default function DashboardPanel({ go }: { go: (tab: string) => void }) {
   const [counts, setCounts] = useState<Counts | null>(null);
   const [recent, setRecent] = useState<Enquiry[]>([]);
 
+  // Numbers and the latest list refresh on their own, so the dashboard is always current.
   useEffect(() => {
-    const weekAgo = new Date(Date.now() - 7 * 86_400_000).toISOString();
     const run = async () => {
+      const weekAgo = new Date(Date.now() - 7 * 86_400_000).toISOString();
       const [total, n, contacted, closed, week, latest] = await Promise.all([
         count((q) => q),
         count((q) => q.eq("status", "new")),
@@ -35,6 +36,8 @@ export default function DashboardPanel({ go }: { go: (tab: string) => void }) {
       setRecent((latest.data as Enquiry[] | null) ?? []);
     };
     void run();
+    const timer = window.setInterval(() => void run(), REFRESH_MS);
+    return () => window.clearInterval(timer);
   }, []);
 
   const stats: { label: string; value: number | undefined; icon: LucideIcon; accent: string }[] = [
