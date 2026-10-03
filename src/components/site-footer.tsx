@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { CONTACT_INFORMATION, FOOTER_EXTRA_LINKS, NAV_LINKS } from '../lib/hotel-data.ts';
 import { whatsappUrl } from '../lib/site-config.ts';
+import { LOGO_URL } from '../lib/logo.ts';
 
 const linkClass = 'text-sm text-white/70 transition-colors hover:text-[#c9a84c]';
 
@@ -11,7 +12,7 @@ export default function SiteFooter() {
     <footer className="bg-[#0e0c09]">
       <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 sm:grid-cols-2 lg:grid-cols-4 lg:px-8">
         <div>
-          <img src="/images/logo.png" alt="The Imperial Palace" className="h-16 w-16 object-contain" />
+          <img src={LOGO_URL} alt="The Imperial Palace" className="h-24 w-24 rounded-full bg-white object-contain ring-1 ring-[#c9a84c]/60" />
           <p className="mt-4 text-sm leading-7 text-white/70">A landmark of refined hospitality in the heart of Rajkot, Gujarat. 20 years of excellence.</p>
         </div>
         <div>
