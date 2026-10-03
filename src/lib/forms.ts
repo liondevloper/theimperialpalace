@@ -48,7 +48,7 @@ export const FORM_CONFIGS: Record<EnquiryKind, FormConfig> = {
     submitLabel: "Send event enquiry",
     fields: [NAME, EMAIL, PHONE,
       { name: "company", label: "Company (optional)", type: "text", placeholder: "Company name" },
-      { name: "eventType", label: "Event type", type: "select", options: ["Conference", "Board meeting", "Social celebration", "Gala dinner", "Other"] },
+      { name: "eventType", label: "Event type", type: "select", options: ["Banquet", "Conference", "Board meeting", "Social celebration", "Gala dinner", "Other"] },
       { name: "eventDate", label: "Preferred date", type: "date", required: true },
       guests("Expected guests"),
       { name: "venue", label: "Preferred venue", type: "select", options: VENUES.map((v) => v.name) },
