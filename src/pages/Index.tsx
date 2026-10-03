@@ -1,11 +1,12 @@
 import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Quote } from "lucide-react";
+import { ArrowRight, CalendarHeart, Clock, MessageSquareText, Phone, Quote, Sparkles } from "lucide-react";
 import { animate, motion, useInView, useMotionValue, useScroll, useTransform } from "motion/react";
 import type { MotionValue } from "motion/react";
 import PageLayout from "../components/page-layout.tsx";
 import Img from "../components/img.tsx";
 import { HeroText, Reveal, SectionHeading } from "../components/hotel-page.tsx";
+import { EnquiryButton } from "../components/enquiry-modal.tsx";
 import { CONTACT_INFORMATION, EXPERIENCES, GALLERY, HOME, HOTEL_IMAGES, RESTAURANTS, ROOMS } from "../lib/hotel-data.ts";
 import { SITE } from "../lib/site-config.ts";
 import { BTN } from "../lib/styles.ts";
@@ -15,6 +16,12 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 const textLink = "group inline-flex min-h-11 items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-[#7a5c1c] transition-all hover:gap-4";
 const imageCard = "overflow-hidden shadow-[0_20px_50px_-25px_rgba(90,70,30,0.45)] ring-1 ring-[#e6d9b8]";
 const zoom = "h-full w-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-110";
+
+const ENQUIRY_PERKS = [
+  { icon: Clock, title: "Reply within hours", text: "Our reservations desk answers every message personally." },
+  { icon: CalendarHeart, title: "Weddings & events", text: "Get a tailored proposal for venues, décor and menus." },
+  { icon: Sparkles, title: "Best direct rates", text: "Exclusive offers when you enquire with us directly." },
+];
 
 // "200+ | Rooms & suites" -> { value, label }
 const parseFact = (line: string) => {
@@ -59,7 +66,7 @@ function Hero() {
         <HeroText eyebrow={HOME.heroEyebrow} title={<>{HOME.heroTitle} <em className="bg-gradient-to-r from-[#f1e2b8] via-[#d9bc6a] to-[#f1e2b8] bg-clip-text italic text-transparent">{HOME.heroHighlight}</em></>} subtitle={HOME.heroSubtitle}>
           <div className="mt-10 flex flex-col gap-3 sm:flex-row">
             <Link to="/stay#book" className={BTN.gold}>Book your stay</Link>
-            <Link to="/tour" className={BTN.light}>Take the 360° tour</Link>
+            <EnquiryButton className={BTN.light}><MessageSquareText className="h-4 w-4" />Send an enquiry</EnquiryButton>
           </div>
         </HeroText>
       </motion.div>
@@ -109,6 +116,49 @@ function WeddingBand() {
             <Link to="/weddings" className={BTN.gold}>Plan your wedding</Link>
             <Link to="/events" className={BTN.light}>Explore venues</Link>
           </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+// Visible, premium enquiry block on the home page that opens the enquiry pop-up.
+function EnquiryBand() {
+  return (
+    <section className="relative overflow-hidden bg-[#1a140c] px-5 py-24 md:py-32 lg:px-8">
+      <div className="pointer-events-none absolute -left-32 top-0 h-96 w-96 rounded-full bg-[#b8933a]/20 blur-3xl" />
+      <div className="pointer-events-none absolute -right-32 bottom-0 h-96 w-96 rounded-full bg-[#d9bc6a]/10 blur-3xl" />
+      <div className="relative mx-auto grid max-w-7xl items-center gap-14 lg:grid-cols-2">
+        <Reveal>
+          <SectionHeading eyebrow="Enquire" title="Tell us what you are planning" description="A stay, a wedding, a corporate gala or a family dinner. Send us a note and our team will take care of the rest." tone="dark" />
+          <ul className="space-y-5">
+            {ENQUIRY_PERKS.map(({ icon: Icon, title, text }, i) => (
+              <Reveal key={title} delay={0.1 + i * 0.1}>
+                <li className="flex gap-4">
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-[#c9a84c]/50 text-[#d9bc6a]"><Icon className="h-5 w-5" /></span>
+                  <div>
+                    <p className="font-serif text-xl text-white">{title}</p>
+                    <p className="mt-1 text-sm text-white/65">{text}</p>
+                  </div>
+                </li>
+              </Reveal>
+            ))}
+          </ul>
+          <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+            <EnquiryButton className={BTN.gold}><MessageSquareText className="h-4 w-4" />Send an enquiry</EnquiryButton>
+            <a href={CONTACT_INFORMATION.phoneHref} className={BTN.light}><Phone className="h-4 w-4" />{CONTACT_INFORMATION.phone}</a>
+          </div>
+        </Reveal>
+        <Reveal delay={0.2} className="relative">
+          <div className="relative aspect-[4/5] overflow-hidden ring-1 ring-[#c9a84c]/40">
+            <Img src={HOTEL_IMAGES.exterior} alt="The Imperial Palace at dusk" width={900} height={1125} className="h-full w-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#140f08]/70 to-transparent" />
+          </div>
+          <motion.div animate={{ y: [0, -10, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }} className="absolute -bottom-6 left-4 right-4 border border-[#c9a84c]/40 bg-[#fbf8f1] p-5 shadow-[0_30px_60px_-20px_rgba(0,0,0,0.6)] sm:left-auto sm:right-[-1.5rem] sm:w-72">
+            <p className="text-[10px] uppercase tracking-[0.3em] text-[#8a6a22]">Reservations desk</p>
+            <p className="mt-2 font-serif text-2xl text-foreground">Open {CONTACT_INFORMATION.reception}</p>
+            <p className="mt-1 break-all text-sm text-muted-foreground">{CONTACT_INFORMATION.email}</p>
+          </motion.div>
         </Reveal>
       </div>
     </section>
@@ -208,11 +258,11 @@ export default function Index() {
         </div>
       </section>
 
-      <section className="bg-[#1a140c] px-5 py-24 md:py-32 lg:px-8">
+      <section className="bg-[#f6efe0] px-5 py-24 md:py-32 lg:px-8">
         <Reveal className="mx-auto max-w-4xl text-center">
           <Quote className="mx-auto h-10 w-10 text-[#b8933a]" />
-          <p className="mt-8 font-serif text-3xl font-light italic leading-snug text-[#f6efe0] text-balance md:text-5xl">{HOME.quote}</p>
-          <p className="mt-8 text-[11px] uppercase tracking-[0.35em] text-[#e8d5a3]">— {HOME.quoteAuthor}</p>
+          <p className="mt-8 font-serif text-3xl font-light italic leading-snug text-foreground text-balance md:text-5xl">{HOME.quote}</p>
+          <p className="mt-8 text-[11px] uppercase tracking-[0.35em] text-[#8a6a22]">— {HOME.quoteAuthor}</p>
         </Reveal>
       </section>
 
@@ -247,13 +297,15 @@ export default function Index() {
         </div>
       </section>
 
+      <EnquiryBand />
+
       <section className="relative overflow-hidden bg-[#f6efe0] px-5 py-24 text-center md:py-32">
         <Reveal>
           <p className="text-[11px] uppercase tracking-[0.35em] text-[#8a6a22]">Visit us</p>
           <h2 className="mx-auto mt-4 max-w-2xl font-serif text-3xl font-light text-foreground text-balance sm:text-5xl">{CONTACT_INFORMATION.addressLines.join(", ")}</h2>
           <div className="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
             <Link to="/stay#book" className={BTN.gold}>Reserve now</Link>
-            <Link to="/contact" className={BTN.outline}>Contact the hotel</Link>
+            <EnquiryButton className={BTN.outline}><MessageSquareText className="h-4 w-4" />Send an enquiry</EnquiryButton>
           </div>
         </Reveal>
       </section>
