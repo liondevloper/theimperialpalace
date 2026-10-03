@@ -8,7 +8,7 @@ export default function RoomCard({ room }: { room: Room }) {
     <article className="group flex h-full flex-col border border-border bg-card transition-colors hover:border-primary/50">
       <Link to={`/stay/${room.slug}`} className="relative block aspect-[4/3] overflow-hidden" aria-label={`View ${room.name}`}>
         <Img src={room.images[0]} alt={`${room.name} at The Imperial Palace`} width={800} height={600} sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
-        {room.badge && <span className="absolute right-3 top-3 bg-[#c9a84c] px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-[#14110c]">{room.badge}</span>}
+        {room.badge && <span className="absolute right-3 top-3 bg-[#c9a84c] px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-[#0f1a30]">{room.badge}</span>}
       </Link>
       <div className="flex flex-1 flex-col p-6">
         <div className="flex items-baseline justify-between gap-3">

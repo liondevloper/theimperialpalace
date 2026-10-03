@@ -14,11 +14,11 @@ export default function FloatingActions() {
         <WhatsappLogo weight="fill" className="h-7 w-7 shrink-0" />
         <span className="hidden sm:inline">WhatsApp</span>
       </a>
-      <EnquiryButton className={`${pill} border border-[#c9a84c]/60 bg-[#1a140c] text-[#e8d5a3] shadow-[0_10px_30px_-10px_rgba(0,0,0,0.6)]`}>
+      <EnquiryButton className={`${pill} border border-[#c9a84c]/60 bg-[#111c33] text-[#e8d5a3] shadow-[0_10px_30px_-10px_rgba(11,20,38,0.6)]`}>
         <MessageSquareText className="h-5 w-5" />
         <span className="hidden sm:inline">Send an enquiry</span>
       </EnquiryButton>
-      <BookStayButton className={`${pill} bg-gradient-to-r from-[#b8933a] via-[#d9bc6a] to-[#b8933a] text-[#1e1810] shadow-[0_10px_30px_-10px_rgba(184,147,58,0.8)]`}>
+      <BookStayButton className={`${pill} bg-gradient-to-r from-[#b8933a] via-[#d9bc6a] to-[#b8933a] text-[#0f1a30] shadow-[0_10px_30px_-10px_rgba(184,147,58,0.8)]`}>
         <CalendarCheck className="h-5 w-5" />
         Book stay
       </BookStayButton>

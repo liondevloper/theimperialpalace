@@ -22,9 +22,9 @@ export default function EnquiryModal({ kind, open, onClose, defaults }: Props) {
   return (
     <Modal open={open} onClose={onClose} label={FORM_CONFIGS[kind].title} split>
       <div className="grid md:grid-cols-[2fr_3fr]">
-        <aside className="relative hidden overflow-hidden bg-[#1a140c] md:block">
+        <aside className="relative hidden overflow-hidden bg-[#111c33] md:block">
           <Img src={HOME.heroImage} alt="" width={700} height={1000} className="absolute inset-0 h-full w-full object-cover opacity-60" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#140f08] via-[#140f08]/60 to-[#140f08]/20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0b1426] via-[#0b1426]/60 to-[#0b1426]/20" />
           <div className="relative flex h-full flex-col justify-end p-8">
             <p className="text-[10px] uppercase tracking-[0.35em] text-[#e8d5a3]">{c.name}</p>
             <p className="mt-3 font-serif text-3xl font-light leading-tight text-white">We would be delighted to host you</p>

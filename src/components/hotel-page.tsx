@@ -12,11 +12,11 @@ export function PageHero({ title, eyebrow, image, subtitle }: { title: string; e
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);
   const delay = introDelay();
   return (
-    <section ref={ref} className="relative flex min-h-[380px] items-end overflow-hidden bg-[#14110c] md:min-h-[520px]">
+    <section ref={ref} className="relative flex min-h-[380px] items-end overflow-hidden bg-[#0f1a30] md:min-h-[520px]">
       <motion.div style={{ y }} initial={{ scale: 1.15 }} animate={{ scale: 1.03 }} transition={{ duration: 2.4, delay, ease: EASE }} className="absolute inset-0">
         <Img src={image} alt="" priority width={1920} height={1080} sizes="100vw" className="h-full w-full object-cover" />
       </motion.div>
-      <div className="absolute inset-0 bg-gradient-to-t from-[#0d0b08] via-[#0d0b08]/45 to-[#0d0b08]/10" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0b1426] via-[#0b1426]/45 to-[#0b1426]/10" />
       <div className="relative mx-auto w-full max-w-7xl px-5 pb-12 pt-24 md:pb-16 lg:px-8">
         <HeroText eyebrow={eyebrow} title={title} subtitle={subtitle} delay={delay} />
       </div>
