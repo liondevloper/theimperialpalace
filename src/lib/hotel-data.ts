@@ -175,6 +175,9 @@ export const CONTACT_INFORMATION = {
   phone: '+91 281 248 0000',
   phoneHref: 'tel:+912812480000',
   email: 'reservations@theimperialpalace.biz',
+  // Footer email lists, editable from admin > Contact details.
+  reservationEmails: ['reservations@theimperialpalace.biz', 'crs@imperialpalace.in'],
+  mailEmails: ['mail@imperialpalace.in'],
   reception: '24 hours, 7 days',
   checkIn: '2:00 PM',
   checkOut: '12:00 PM',
