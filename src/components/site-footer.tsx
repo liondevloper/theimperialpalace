@@ -14,6 +14,12 @@ const FOOTER_ADDRESS_LINES = [
   'Dr. Yagnik Road, Rajkot 360001 INDIA',
 ];
 
+// Labelled email groups shown in the footer contact column.
+const FOOTER_EMAILS = [
+  { label: 'Reservations', emails: [CONTACT_INFORMATION.email, 'crs@imperialpalace.in'] },
+  { label: 'Mail', emails: ['mail@imperialpalace.in'] },
+];
+
 export default function SiteFooter() {
   const info = CONTACT_INFORMATION;
   const explore = [{ label: 'Rooms & suites', to: '/stay' }, ...NAV_LINKS.filter((l) => l.to !== '/stay' && l.to !== '/contact'), ...FOOTER_EXTRA_LINKS];
@@ -47,7 +53,14 @@ export default function SiteFooter() {
               ))}
             </p>
             <p><a href={info.phoneHref} className={linkClass}>{info.phone}</a></p>
-            <p><a href={`mailto:${info.email}`} className={`${linkClass} break-all`}>{info.email}</a></p>
+            {FOOTER_EMAILS.map((group) => (
+              <div key={group.label}>
+                <span className="block text-[10px] uppercase tracking-[0.25em] text-[#8a6a22]">{group.label}</span>
+                {group.emails.map((email) => (
+                  <a key={email} href={`mailto:${email}`} className={`${linkClass} block break-all`}>{email}</a>
+                ))}
+              </div>
+            ))}
           </address>
         </div>
       </Reveal>
