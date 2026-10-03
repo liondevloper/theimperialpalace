@@ -31,15 +31,15 @@ export const HOTEL_IMAGES = {
 /* ---------------------------------- Homepage --------------------------------- */
 
 export const HOME = {
-  heroEyebrow: 'Rajkot, Gujarat · Since 2004',
+  heroEyebrow: '5-Star Hotel · Rajkot, Gujarat · Since 2004',
   heroTitle: 'Where elegance meets',
   heroHighlight: 'Rajkot',
-  heroSubtitle: 'An iconic address for refined stays, grand celebrations and warm Gujarati hospitality.',
+  heroSubtitle: 'Rajkot\'s 5-star address for refined stays, grand celebrations and warm Gujarati hospitality.',
   heroImage: HOTEL_IMAGES.lobby,
-  welcomeTitle: 'A landmark of unhurried luxury',
-  welcomeText: 'In the heart of Rajkot, The Imperial Palace pairs palatial proportions with quietly attentive service. Rooms are calm, tables are generous, and every celebration is treated as a once-only occasion.',
+  welcomeTitle: 'A 5-star landmark of unhurried luxury',
+  welcomeText: 'In the heart of Rajkot, The Imperial Palace is a 5-star hotel that pairs palatial proportions with quietly attentive service. Rooms are calm, tables are generous, and every celebration is treated as a once-only occasion.',
   facts: ['200+ | Rooms & suites', '4 | Dining venues', '8,000 | Sq.ft. ballroom', '24h | Reception'],
-  marquee: ['Luxury Stays', 'Grand Weddings', 'Gujarati Thali', 'Poolside Evenings', 'Corporate Galas', 'Spa & Wellness'],
+  marquee: ['5-Star Luxury', 'Luxury Stays', 'Grand Weddings', 'Gujarati Thali', 'Poolside Evenings', 'Corporate Galas', 'Spa & Wellness'],
   quote: 'Two decades of hosting Rajkot\'s finest moments, one guest at a time.',
   quoteAuthor: 'The Imperial Palace family',
 };
@@ -128,7 +128,7 @@ export const EXPERIENCES: Experience[] = [
   { title: 'The Courtyard', label: 'A table for every hour', text: 'Indulge in a multi-cuisine feast at The Courtyard — from Gujarati Thali to global flavours.', image: HOTEL_IMAGES.diningCourtyard, to: '/dining' },
   { title: 'Poolside Retreat', label: 'A refreshing escape', text: 'Take a dip, bask in the sun, and enjoy a quieter side of the city by our outdoor pool.', image: HOTEL_IMAGES.pool, to: '/wellness' },
   { title: 'Celebrity Visits', label: 'The art of occasion', text: 'A landmark address for celebrated guests. The Imperial Palace has hosted cricket stars, Bollywood celebrities and more.', image: HOTEL_IMAGES.lobby, to: '/gallery' },
-  { title: '20 Years of Excellence', label: '15 November 2004 – 2024', text: 'Celebrating two decades of outstanding hospitality, exceptional cuisine, and timeless elegance in the heart of Rajkot.', image: HOTEL_IMAGES.exterior, to: '/gallery' },
+  { title: '20 Years of Excellence', label: '15 November 2004 – 2024', text: 'Celebrating two decades of outstanding 5-star hospitality, exceptional cuisine, and timeless elegance in the heart of Rajkot.', image: HOTEL_IMAGES.exterior, to: '/gallery' },
 ];
 
 /* ------------------------------------ Gallery ----------------------------------- */
