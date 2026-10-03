@@ -66,7 +66,7 @@ export default function BookingWidget() {
 
   return (
     <>
-      <form onSubmit={onSubmit} noValidate aria-label="Check availability" className="border border-border bg-card p-5 md:p-7">
+      <form onSubmit={onSubmit} noValidate aria-label="Check availability" className="border border-border bg-card p-5 shadow-[0_30px_60px_-35px_rgba(0,0,0,0.9)] md:p-7">
         <div className="grid gap-4 min-[420px]:grid-cols-2 lg:grid-cols-6">
           <Field label="Check-in" htmlFor={id("checkin")} error={errors.checkin}>
             <input id={id("checkin")} type="date" min={today} value={search.checkin} onChange={(e) => update("checkin", e.target.value)} aria-invalid={errors.checkin ? true : undefined} aria-describedby={errors.checkin ? `${id("checkin")}-error` : undefined} className={FIELD} />
@@ -86,7 +86,7 @@ export default function BookingWidget() {
       </form>
 
       <Modal open={resultOpen} onClose={() => setResultOpen(false)} label="Availability preview" wide>
-        <span className="inline-block border border-[#8a6a22] px-3 py-1 text-[10px] font-medium uppercase tracking-[0.25em] text-[#6f5318]">Demo preview</span>
+        <span className="inline-block border border-primary px-3 py-1 text-[10px] font-medium uppercase tracking-[0.25em] text-primary">Demo preview</span>
         <h2 className="mt-4 pr-10 font-serif text-3xl font-light text-foreground">Your stay at a glance</h2>
         <dl className="mt-6 grid grid-cols-2 gap-x-4 gap-y-4 border-y border-border py-5 text-sm sm:grid-cols-3">
           {summary.map(([term, detail]) => (
@@ -98,7 +98,7 @@ export default function BookingWidget() {
           {matches.map((room) => (
             <li key={room.slug} className="flex items-center justify-between gap-4 p-4">
               <div className="min-w-0"><p className="font-serif text-xl text-foreground">{room.name}</p><p className="text-xs text-muted-foreground">{room.size}</p></div>
-              <Link to={`/stay/${room.slug}`} onClick={() => setResultOpen(false)} className="shrink-0 text-[11px] uppercase tracking-[0.18em] text-[#6f5318] underline underline-offset-4">View room</Link>
+              <Link to={`/stay/${room.slug}`} onClick={() => setResultOpen(false)} className="shrink-0 text-[11px] uppercase tracking-[0.18em] text-primary underline underline-offset-4">View room</Link>
             </li>
           ))}
         </ul>

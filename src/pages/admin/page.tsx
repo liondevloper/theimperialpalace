@@ -67,6 +67,8 @@ export default function AdminPage() {
     robots.name = "robots";
     robots.content = "noindex";
     document.head.appendChild(robots);
+    // The public site is dark; the admin control room keeps its light ivory palette.
+    document.documentElement.classList.add("theme-ivory");
 
     const check = async (session: Session | null) => {
       if (!session) return setAccess("out");
@@ -76,7 +78,7 @@ export default function AdminPage() {
     };
     void supabase.auth.getSession().then(({ data }) => check(data.session));
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => { setTimeout(() => void check(session), 0); });
-    return () => { sub.subscription.unsubscribe(); robots.remove(); };
+    return () => { sub.subscription.unsubscribe(); robots.remove(); document.documentElement.classList.remove("theme-ivory"); };
   }, []);
 
   const signOut = () => void supabase.auth.signOut();
@@ -87,8 +89,8 @@ export default function AdminPage() {
 
   if (access !== "admin") {
     return (
-      <main className="flex min-h-dvh flex-col items-center justify-center gap-6 bg-gradient-to-b from-[#f6efe0] to-background px-5 py-12">
-        <Link to="/" aria-label="The Imperial Palace, home"><Logo alt="The Imperial Palace" className="h-20 md:h-24" /></Link>
+      <main className="theme-ivory flex min-h-dvh flex-col items-center justify-center gap-6 bg-gradient-to-b from-[#f6efe0] to-background px-5 py-12 text-foreground">
+        <Link to="/" aria-label="The Imperial Palace, home"><Logo alt="The Imperial Palace" tone="light" className="h-20 md:h-24" /></Link>
         {access === "loading" && <p className="text-sm text-muted-foreground">Loading...</p>}
         {access === "out" && <LoginForm />}
         {access === "denied" && (
@@ -106,7 +108,7 @@ export default function AdminPage() {
   const navBtn = (active: boolean) => `flex min-h-11 w-full cursor-pointer items-center gap-3 px-4 text-left text-[12px] uppercase tracking-[0.14em] transition-colors ${active ? "border-l-2 border-[#c9a84c] bg-[#2a2218] text-[#e8d5a3]" : "border-l-2 border-transparent text-[#e8d5a3]/60 hover:bg-[#2a2218]/60 hover:text-[#e8d5a3]"}`;
 
   return (
-    <div className="flex min-h-dvh bg-[#faf6ec]">
+    <div className="theme-ivory flex min-h-dvh bg-[#faf6ec] text-foreground">
       <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col bg-[#1a140c] lg:flex">
         <div className="border-b border-[#3a2e1c] p-5">
           <p className="font-serif text-xl text-[#f6efe0]">The Imperial Palace</p>
@@ -133,7 +135,7 @@ export default function AdminPage() {
       <div className="min-w-0 flex-1">
         <header className="sticky top-0 z-10 border-b border-[#e6d9b8] bg-[#faf6ec]/90 backdrop-blur lg:hidden">
           <div className="flex items-center justify-between px-4 py-2">
-            <Logo alt="The Imperial Palace" className="h-10" />
+            <Logo alt="The Imperial Palace" tone="light" className="h-10" />
             <div className="flex">
               <Link to="/" target="_blank" aria-label="View website" className="flex h-11 w-11 items-center justify-center"><ExternalLink className="h-5 w-5" /></Link>
               <button type="button" onClick={signOut} aria-label="Sign out" className="flex h-11 w-11 cursor-pointer items-center justify-center"><LogOut className="h-5 w-5" /></button>
