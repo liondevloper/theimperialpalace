@@ -9,7 +9,7 @@ import InstagramIcon, { instagramOf } from "../components/instagram-icon.tsx";
 import { Reveal, SectionHeading } from "../components/hotel-page.tsx";
 import { EnquiryButton } from "../components/enquiry-modal.tsx";
 import { BookStayButton } from "../components/book-stay-modal.tsx";
-import { CONTACT_INFORMATION, EXPERIENCES, GALLERY, HOME, HOTEL_IMAGES, RESTAURANTS, ROOMS, contactPhones, reservationEmailList } from "../lib/hotel-data.ts";
+import { CONTACT_INFORMATION, EXPERIENCES, GALLERY, HOME, HOTEL_IMAGES, RESTAURANTS, ROOMS, contactPhones } from "../lib/hotel-data.ts";
 import { introDelay } from "../lib/intro.ts";
 import { SITE } from "../lib/site-config.ts";
 import { BTN } from "../lib/styles.ts";
@@ -191,7 +191,6 @@ function WeddingBand() {
 // Visible, premium enquiry block on the home page that opens the enquiry pop-up.
 function EnquiryBand() {
   const perks = lines(HOME.enquiryPerks).map(splitPipe);
-  const emails = reservationEmailList();
   return (
     <section className="relative overflow-hidden bg-card px-5 py-16 md:py-24 lg:px-8">
       <div className="pointer-events-none absolute -left-32 top-0 h-96 w-96 rounded-full bg-[#b8933a]/15 blur-3xl" />
@@ -228,10 +227,6 @@ function EnquiryBand() {
           <motion.div animate={{ y: [0, -10, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }} className="absolute -bottom-6 left-4 right-4 border border-primary/40 bg-background/95 p-5 shadow-[0_30px_60px_-20px_rgba(6,12,26,0.8)] backdrop-blur sm:left-auto sm:right-[-1.5rem] sm:w-72">
             <p className="text-[10px] uppercase tracking-[0.3em] text-primary">Reservations desk</p>
             <p className="mt-2 font-serif text-2xl text-foreground">Open {CONTACT_INFORMATION.reception}</p>
-            {/* Every reservations email saved in admin, not just the first. */}
-            {emails.map((email) => (
-              <a key={email} href={`mailto:${email}`} className="mt-1 block break-all text-sm text-muted-foreground hover:text-primary">{email}</a>
-            ))}
           </motion.div>
         </Reveal>
       </div>
