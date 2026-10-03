@@ -30,6 +30,7 @@ export const HOTEL_IMAGES = {
 
 /* ---------------------------------- Homepage --------------------------------- */
 
+// Every text and photo on the home page is editable from admin > Homepage.
 export const HOME = {
   heroEyebrow: '5-Star Hotel · Rajkot, Gujarat · Since 2004',
   heroTitle: 'Where elegance meets',
@@ -42,8 +43,28 @@ export const HOME = {
   welcomeText: 'In the heart of Rajkot, The Imperial Palace is a 5-star hotel that pairs palatial proportions with quietly attentive service. Rooms are calm, tables are generous, and every celebration is treated as a once-only occasion.',
   facts: ['200+ | Rooms & suites', '4 | Dining venues', '8,000 | Sq.ft. ballroom', '24h | Reception'],
   marquee: ['5-Star Luxury', 'Luxury Stays', 'Grand Weddings', 'Gujarati Thali', 'Poolside Evenings', 'Corporate Galas', 'Spa & Wellness'],
+  stayTitle: 'Signature suites',
+  stayText: 'From refined rooms to the Imperial Suite, each space is designed around comfort and privacy.',
+  diningTitle: 'A table for every hour',
+  weddingTitle: 'Celebrate your most memorable moments',
+  weddingText: 'Grand ballrooms, an open-air pool deck and a planning team that handles every detail.',
+  weddingImage: HOTEL_IMAGES.wedding,
+  experiencesTitle: 'Moments worth remembering',
   quote: 'Two decades of hosting Rajkot\'s finest moments, one guest at a time.',
   quoteAuthor: 'The Imperial Palace family',
+  tourTitle: 'Walk the palace before you arrive',
+  tourText: 'Move between the lobby, suites, ballrooms and pool with an interactive panorama.',
+  tourImage: HOTEL_IMAGES.lobby,
+  galleryTitle: 'A glimpse of the palace',
+  enquiryTitle: 'Tell us what you are planning',
+  enquiryText: 'A stay, a wedding, a corporate gala or a family dinner. Send us a note and our team will take care of the rest.',
+  enquiryPerks: [
+    'Reply within hours | Our reservations desk answers every message personally.',
+    'Weddings & events | Get a tailored proposal for venues, décor and menus.',
+    'Best direct rates | Exclusive offers when you enquire with us directly.',
+  ],
+  enquiryImage: HOTEL_IMAGES.exterior,
+  visitTitle: 'Visit us',
 };
 
 /* ---------------------------------- Navigation --------------------------------- */
@@ -176,6 +197,8 @@ export const CONTACT_INFORMATION = {
   addressLines: ['Dr. Yagnik Rd, Jagnath Plot', 'Rajkot, Gujarat 360001', 'India'],
   phone: '+91 281 248 0000',
   phoneHref: 'tel:+912812480000',
+  // Optional second number, editable from admin > Contact details. Empty hides it.
+  phone2: '',
   email: 'reservations@theimperialpalace.biz',
   // Footer email lists, editable from admin > Contact details.
   reservationEmails: ['reservations@theimperialpalace.biz', 'crs@imperialpalace.in'],
@@ -190,3 +213,33 @@ export const CONTACT_INFORMATION = {
     { label: 'Bus Station', distance: '1.9 kms', note: '4 mins' },
   ],
 };
+
+/* ------------------------------ Shared contact helpers -------------------------- */
+
+const cleanList = (list: unknown): string[] =>
+  Array.isArray(list) ? list.filter((e): e is string => typeof e === 'string').map((e) => e.trim()).filter(Boolean) : [];
+
+/** All phone numbers (1 or 2) as { label, href }, read at call time so admin edits show. */
+export function contactPhones(): { label: string; href: string }[] {
+  const c = CONTACT_INFORMATION;
+  const out = [{ label: c.phone, href: c.phoneHref || `tel:${c.phone.replace(/[^\d+]/g, '')}` }];
+  const second = typeof c.phone2 === 'string' ? c.phone2.trim() : '';
+  if (second) out.push({ label: second, href: `tel:${second.replace(/[^\d+]/g, '')}` });
+  return out.filter((p) => p.label);
+}
+
+/** Reservation emails, falling back to the main email when the list is empty. */
+export function reservationEmailList(): string[] {
+  const list = cleanList(CONTACT_INFORMATION.reservationEmails);
+  return list.length ? list : cleanList([CONTACT_INFORMATION.email]);
+}
+
+export function mailEmailList(): string[] {
+  return cleanList(CONTACT_INFORMATION.mailEmails);
+}
+
+/** Google Maps embed for the hotel address (no API key needed). */
+export function mapEmbedUrl(): string {
+  const q = encodeURIComponent(`${CONTACT_INFORMATION.name}, ${CONTACT_INFORMATION.addressLines.join(', ')}`);
+  return `https://www.google.com/maps?q=${q}&output=embed`;
+}
