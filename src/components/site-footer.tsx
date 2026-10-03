@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { Star } from 'lucide-react';
 import { CONTACT_INFORMATION, FOOTER_EXTRA_LINKS, NAV_LINKS } from '../lib/hotel-data.ts';
 import { Logo } from './site-header.tsx';
 import { Reveal } from './hotel-page.tsx';
@@ -30,8 +31,12 @@ export default function SiteFooter() {
           <Link to="/" aria-label="The Imperial Palace, home" className="inline-block transition-transform duration-500 hover:scale-[1.03]">
             <Logo alt="The Imperial Palace" tone="light" className="h-24 md:h-28" />
           </Link>
-          <span className="mt-5 h-px w-24 bg-gradient-to-r from-transparent via-[#b8933a] to-transparent" />
-          <p className="mt-4 max-w-md text-sm leading-7 text-[#3a3f55]">A landmark of refined hospitality in the heart of Rajkot, Gujarat. 20 years of excellence.</p>
+          <div className="mt-4 flex gap-1.5 text-[#b8933a]" aria-label="Five star hotel">
+            {Array.from({ length: 5 }).map((_, i) => <Star key={i} className="h-4 w-4 fill-current" />)}
+          </div>
+          <p className="mt-2 text-[11px] font-medium uppercase tracking-[0.4em] text-[#1b2540]">Five Star Hotel</p>
+          <span className="mt-4 h-px w-24 bg-gradient-to-r from-transparent via-[#b8933a] to-transparent" />
+          <p className="mt-4 max-w-md text-sm leading-7 text-[#3a3f55]">Rajkot&apos;s 5-star landmark of refined hospitality in the heart of Gujarat. 20 years of excellence.</p>
         </Reveal>
       </div>
       <div className="pointer-events-none absolute left-1/2 top-64 h-64 w-[36rem] -translate-x-1/2 rounded-full bg-primary/10 blur-3xl" />
@@ -70,7 +75,7 @@ export default function SiteFooter() {
         </div>
       </Reveal>
       <div className="relative border-t border-border px-5 py-6">
-        <p className="mx-auto max-w-7xl text-center text-xs text-muted-foreground">&copy; {new Date().getFullYear()} City Organisers Private Limited. All rights reserved.</p>
+        <p className="mx-auto max-w-7xl text-center text-xs text-muted-foreground">&copy; {new Date().getFullYear()} City Organisers Private Limited. The Imperial Palace, a 5-star hotel in Rajkot. All rights reserved.</p>
       </div>
     </footer>
   );
