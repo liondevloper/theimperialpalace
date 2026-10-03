@@ -2,6 +2,7 @@ import { useId, useState } from "react";
 import type { ReactNode } from "react";
 import { ArrowLeft, BedDouble, CalendarDays, Check, Moon, Users } from "lucide-react";
 import Modal from "./modal.tsx";
+import WhatsappField, { whatsappError } from "./whatsapp-field.tsx";
 import { FORM_CONFIGS, formatDate, nightsBetween, todayIso, validate } from "../lib/forms.ts";
 import { submitEnquiry } from "../lib/enquiries.ts";
 import { ROOMS } from "../lib/hotel-data.ts";
@@ -48,6 +49,8 @@ function BookStayFlow({ defaultRoom }: { defaultRoom?: string }) {
   const [step, setStep] = useState<Step>("stay");
   const [stay, setStay] = useState<Stay>({ checkin: "", checkout: "", adults: "2", children: "0", rooms: "1", roomType: defaultRoom ?? ANY_ROOM });
   const [guest, setGuest] = useState<Guest>({ name: "", email: "", phone: "", message: "" });
+  const [whatsapp, setWhatsapp] = useState("");
+  const [sameWhatsapp, setSameWhatsapp] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [sending, setSending] = useState(false);
   const [submitError, setSubmitError] = useState("");
@@ -76,8 +79,10 @@ function BookStayFlow({ defaultRoom }: { defaultRoom?: string }) {
   };
 
   const submit = async () => {
+    const finalWhatsapp = (sameWhatsapp ? guest.phone : whatsapp).trim();
     const values: Record<string, string> = {
       ...guest,
+      whatsapp: finalWhatsapp,
       guests: String(guests),
       checkin: stay.checkin,
       checkout: stay.checkout,
@@ -88,6 +93,8 @@ function BookStayFlow({ defaultRoom }: { defaultRoom?: string }) {
       nights: String(nights),
     };
     const found = validate(FORM_CONFIGS.booking.fields, values);
+    const waError = sameWhatsapp ? "" : whatsappError(finalWhatsapp);
+    if (waError) found.whatsapp = waError;
     setErrors(found);
     if (Object.keys(found).length > 0) return;
     setSending(true);
@@ -127,8 +134,9 @@ function BookStayFlow({ defaultRoom }: { defaultRoom?: string }) {
   return (
     <div className="grid gap-6">
       <div className="pr-10">
-        <span className="text-[10px] uppercase tracking-[0.35em] text-primary">The Imperial Palace, Rajkot · 5-Star Hotel</span>
+        <span className="text-[10px] uppercase tracking-[0.35em] text-primary">The Imperial Palace, Rajkot</span>
         <h2 className="mt-2 font-serif text-3xl font-light text-foreground md:text-4xl">Book your stay</h2>
+        <p className="mt-1 text-[10px] uppercase tracking-[0.35em] text-primary">5 Star Hotel</p>
         <div className="mt-4"><StepDots step={step} /></div>
       </div>
 
@@ -175,6 +183,7 @@ function BookStayFlow({ defaultRoom }: { defaultRoom?: string }) {
             <Field label="Phone *" htmlFor={id("phone")} error={errors.phone}>
               <input id={id("phone")} type="tel" autoComplete="tel" placeholder="+91 98765 43210" value={guest.phone} onChange={(e) => updateGuest("phone", e.target.value)} className={FIELD} {...invalid("phone")} />
             </Field>
+            <WhatsappField phone={guest.phone} value={whatsapp} same={sameWhatsapp} onSameChange={setSameWhatsapp} onChange={(v) => { setWhatsapp(v); setErrors((p) => ({ ...p, whatsapp: "" })); }} error={errors.whatsapp} />
             <Field label="Special requests" htmlFor={id("message")} wide>
               <textarea id={id("message")} rows={3} placeholder="Early check-in, airport pickup, extra bed..." value={guest.message} onChange={(e) => updateGuest("message", e.target.value)} className={`${FIELD} h-auto py-2`} />
             </Field>
@@ -184,7 +193,7 @@ function BookStayFlow({ defaultRoom }: { defaultRoom?: string }) {
             <button type="button" onClick={() => setStep("stay")} className="inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 text-[11px] uppercase tracking-[0.18em] text-muted-foreground hover:text-foreground"><ArrowLeft className="h-4 w-4" />Change dates</button>
             <button type="button" onClick={() => void submit()} disabled={sending} className={`${BTN.gold} disabled:opacity-60`}>{sending ? "Sending..." : "Request booking"}</button>
           </div>
-          <p className="text-xs leading-5 text-muted-foreground">No payment now. Our team will confirm availability and rates by phone or email.</p>
+          <p className="text-xs leading-5 text-muted-foreground">No payment now. Our team will confirm availability and rates by phone, WhatsApp or email.</p>
         </>
       )}
     </div>
