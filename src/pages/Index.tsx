@@ -8,7 +8,7 @@ import Img from "../components/img.tsx";
 import { Reveal, SectionHeading } from "../components/hotel-page.tsx";
 import { EnquiryButton } from "../components/enquiry-modal.tsx";
 import { BookStayButton } from "../components/book-stay-modal.tsx";
-import { CONTACT_INFORMATION, EXPERIENCES, GALLERY, HOME, HOTEL_IMAGES, RESTAURANTS, ROOMS } from "../lib/hotel-data.ts";
+import { CONTACT_INFORMATION, EXPERIENCES, GALLERY, HOME, HOTEL_IMAGES, RESTAURANTS, ROOMS, contactPhones, reservationEmailList } from "../lib/hotel-data.ts";
 import { introDelay } from "../lib/intro.ts";
 import { SITE } from "../lib/site-config.ts";
 import { BTN } from "../lib/styles.ts";
@@ -21,17 +21,16 @@ const textLink = "group inline-flex min-h-11 items-center gap-2 text-[11px] uppe
 const imageCard = "overflow-hidden bg-card shadow-[0_24px_50px_-28px_rgba(6,12,26,0.9)] ring-1 ring-border";
 const zoom = "h-full w-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-110";
 
-const ENQUIRY_PERKS = [
-  { icon: Clock, title: "Reply within hours", text: "Our reservations desk answers every message personally." },
-  { icon: CalendarHeart, title: "Weddings & events", text: "Get a tailored proposal for venues, décor and menus." },
-  { icon: Sparkles, title: "Best direct rates", text: "Exclusive offers when you enquire with us directly." },
-];
+const PERK_ICONS = [Clock, CalendarHeart, Sparkles];
 
-// "200+ | Rooms & suites" -> { value, label }
-const parseFact = (line: string) => {
-  const [value = "", label = ""] = line.split("|").map((s) => s.trim());
-  return { value, label };
+// "Title | text" or "200+ | Rooms & suites" -> [left, right]
+const splitPipe = (line: string): [string, string] => {
+  const [a = "", b = ""] = line.split("|").map((s) => s.trim());
+  return [a, b];
 };
+
+const str = (value: unknown, fallback = "") => (typeof value === "string" && value.trim() ? value.trim() : fallback);
+const lines = (value: unknown) => (Array.isArray(value) ? value.filter((v): v is string => typeof v === "string" && v.trim() !== "") : []);
 
 // Counts up the numeric part of a value (e.g. "8,000" or "200+") when scrolled into view.
 function CountUp({ value }: { value: string }) {
@@ -52,8 +51,6 @@ function CountUp({ value }: { value: string }) {
   }, [inView, match, mv, target, value]);
   return <span ref={ref}>{value}</span>;
 }
-
-const str = (value: unknown) => (typeof value === "string" ? value.trim() : "");
 
 // Visitors with "data saver" turned on get the photo only, so the page stays fast for them.
 const prefersSaveData = () => {
@@ -87,6 +84,17 @@ const heroItem = (delay: number) => ({
   animate: { opacity: 1, y: 0, filter: "blur(0px)" },
   transition: { duration: 1, delay, ease: EASE },
 });
+
+// One call button per saved number (1 or 2), shared by the enquiry band and "Visit us".
+function PhoneButtons({ className }: { className: string }) {
+  return (
+    <>
+      {contactPhones().map((p) => (
+        <a key={p.href} href={p.href} className={className}><Phone className="h-4 w-4" />{p.label}</a>
+      ))}
+    </>
+  );
+}
 
 function Hero() {
   const ref = useRef<HTMLElement>(null);
@@ -135,7 +143,8 @@ function Hero() {
 }
 
 function Marquee() {
-  const items = [...HOME.marquee, ...HOME.marquee];
+  const base = lines(HOME.marquee);
+  const items = [...base, ...base];
   return (
     <div className="overflow-hidden border-y border-border bg-card py-4">
       <motion.div animate={{ x: ["0%", "-50%"] }} transition={{ duration: 30, repeat: Infinity, ease: "linear" }} className="flex w-max gap-12">
@@ -163,11 +172,11 @@ function WeddingBand() {
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   return (
     <section ref={ref} className="relative overflow-hidden bg-[#0b1426]">
-      <ParallaxImage src={HOTEL_IMAGES.wedding} alt="A wedding celebration at The Imperial Palace" progress={scrollYProgress} />
+      <ParallaxImage src={str(HOME.weddingImage, HOTEL_IMAGES.wedding)} alt="A wedding celebration at The Imperial Palace" progress={scrollYProgress} />
       <div className="absolute inset-0 bg-gradient-to-r from-[#0b1426]/90 via-[#0b1426]/60 to-[#0b1426]/10" />
       <div className="relative mx-auto max-w-7xl px-5 py-20 md:py-28 lg:px-8">
         <Reveal>
-          <SectionHeading eyebrow="Weddings & events" title="Celebrate your most memorable moments" description="Grand ballrooms, an open-air pool deck and a planning team that handles every detail." tone="dark" />
+          <SectionHeading eyebrow="Weddings & events" title={str(HOME.weddingTitle)} description={str(HOME.weddingText)} tone="dark" />
           <div className="flex flex-col gap-3 sm:flex-row">
             <Link to="/weddings" className={BTN.gold}>Plan your wedding</Link>
             <Link to="/events" className={BTN.light}>Explore venues</Link>
@@ -180,40 +189,48 @@ function WeddingBand() {
 
 // Visible, premium enquiry block on the home page that opens the enquiry pop-up.
 function EnquiryBand() {
+  const perks = lines(HOME.enquiryPerks).map(splitPipe);
+  const emails = reservationEmailList();
   return (
     <section className="relative overflow-hidden bg-card px-5 py-16 md:py-24 lg:px-8">
       <div className="pointer-events-none absolute -left-32 top-0 h-96 w-96 rounded-full bg-[#b8933a]/15 blur-3xl" />
       <div className="pointer-events-none absolute -right-32 bottom-0 h-96 w-96 rounded-full bg-[#d9bc6a]/10 blur-3xl" />
       <div className="relative mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-2">
         <Reveal>
-          <SectionHeading eyebrow="Enquire" title="Tell us what you are planning" description="A stay, a wedding, a corporate gala or a family dinner. Send us a note and our team will take care of the rest." />
+          <SectionHeading eyebrow="Enquire" title={str(HOME.enquiryTitle)} description={str(HOME.enquiryText)} />
           <ul className="space-y-4">
-            {ENQUIRY_PERKS.map(({ icon: Icon, title, text }, i) => (
-              <Reveal key={title} delay={0.1 + i * 0.1}>
-                <li className="flex gap-4">
-                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-primary/50 text-primary"><Icon className="h-5 w-5" /></span>
-                  <div>
-                    <p className="font-serif text-xl text-foreground">{title}</p>
-                    <p className="mt-1 text-sm text-muted-foreground">{text}</p>
-                  </div>
-                </li>
-              </Reveal>
-            ))}
+            {perks.map(([title, text], i) => {
+              const Icon = PERK_ICONS[i % PERK_ICONS.length];
+              return (
+                <Reveal key={`${title}-${i}`} delay={0.1 + i * 0.1}>
+                  <li className="flex gap-4">
+                    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-primary/50 text-primary"><Icon className="h-5 w-5" /></span>
+                    <div>
+                      <p className="font-serif text-xl text-foreground">{title}</p>
+                      {text && <p className="mt-1 text-sm text-muted-foreground">{text}</p>}
+                    </div>
+                  </li>
+                </Reveal>
+              );
+            })}
           </ul>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          <div className="mt-8 flex flex-col flex-wrap gap-3 sm:flex-row">
             <EnquiryButton className={BTN.gold}><MessageSquareText className="h-4 w-4" />Send an enquiry</EnquiryButton>
-            <a href={CONTACT_INFORMATION.phoneHref} className={BTN.outline}><Phone className="h-4 w-4" />{CONTACT_INFORMATION.phone}</a>
+            <PhoneButtons className={BTN.outline} />
           </div>
         </Reveal>
         <Reveal delay={0.2} className="relative">
           <div className="relative aspect-[4/5] overflow-hidden ring-1 ring-primary/40">
-            <Img src={HOTEL_IMAGES.exterior} alt="The Imperial Palace at dusk" width={900} height={1125} sizes="(min-width: 1024px) 50vw, 100vw" className="h-full w-full object-cover" />
+            <Img src={str(HOME.enquiryImage, HOTEL_IMAGES.exterior)} alt="The Imperial Palace at dusk" width={900} height={1125} sizes="(min-width: 1024px) 50vw, 100vw" className="h-full w-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0b1426]/70 to-transparent" />
           </div>
           <motion.div animate={{ y: [0, -10, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }} className="absolute -bottom-6 left-4 right-4 border border-primary/40 bg-background/95 p-5 shadow-[0_30px_60px_-20px_rgba(6,12,26,0.8)] backdrop-blur sm:left-auto sm:right-[-1.5rem] sm:w-72">
             <p className="text-[10px] uppercase tracking-[0.3em] text-primary">Reservations desk</p>
             <p className="mt-2 font-serif text-2xl text-foreground">Open {CONTACT_INFORMATION.reception}</p>
-            <p className="mt-1 break-all text-sm text-muted-foreground">{CONTACT_INFORMATION.email}</p>
+            {/* Every reservations email saved in admin, not just the first. */}
+            {emails.map((email) => (
+              <a key={email} href={`mailto:${email}`} className="mt-1 block break-all text-sm text-muted-foreground hover:text-primary">{email}</a>
+            ))}
           </motion.div>
         </Reveal>
       </div>
@@ -223,7 +240,7 @@ function EnquiryBand() {
 
 export default function Index() {
   const featured = ROOMS.filter((r) => r.featured);
-  const facts = HOME.facts.map(parseFact);
+  const facts = lines(HOME.facts).map(splitPipe);
   const galleryPicks = GALLERY.slice(0, 8);
   return (
     <PageLayout title="The Imperial Palace Rajkot | 5-Star Luxury Hotel in Gujarat" description={SITE.description}>
@@ -237,10 +254,10 @@ export default function Index() {
           <Reveal delay={0.15}>
             <p className="text-base leading-8 text-muted-foreground">{HOME.welcomeText}</p>
             <dl className="mt-8 grid grid-cols-2 gap-6 border-t border-border pt-6 sm:grid-cols-4">
-              {facts.map((f, i) => (
-                <Reveal key={f.label} delay={0.2 + i * 0.1}>
-                  <dd className="bg-gradient-to-br from-[#c9a84c] to-[#f1e2b8] bg-clip-text font-serif text-4xl font-light text-transparent md:text-5xl"><CountUp value={f.value} /></dd>
-                  <dt className="mt-1 text-[11px] uppercase tracking-[0.2em] text-muted-foreground">{f.label}</dt>
+              {facts.map(([value, label], i) => (
+                <Reveal key={`${label}-${i}`} delay={0.2 + i * 0.1}>
+                  <dd className="bg-gradient-to-br from-[#c9a84c] to-[#f1e2b8] bg-clip-text font-serif text-4xl font-light text-transparent md:text-5xl"><CountUp value={value} /></dd>
+                  <dt className="mt-1 text-[11px] uppercase tracking-[0.2em] text-muted-foreground">{label}</dt>
                 </Reveal>
               ))}
             </dl>
@@ -251,7 +268,7 @@ export default function Index() {
       <section className={`bg-gradient-to-b from-card to-background ${SECTION} md:pb-28`}>
         <div className="mx-auto max-w-7xl">
           <div className="flex flex-wrap items-end justify-between gap-x-6">
-            <Reveal><SectionHeading eyebrow="Stay" title="Signature suites" description="From refined rooms to the Imperial Suite, each space is designed around comfort and privacy." /></Reveal>
+            <Reveal><SectionHeading eyebrow="Stay" title={str(HOME.stayTitle)} description={str(HOME.stayText)} /></Reveal>
             <Link to="/stay" className={`${textLink} mb-8 md:mb-10`}>All rooms and suites <ArrowRight className="h-4 w-4" /></Link>
           </div>
           <div className="grid gap-6 md:grid-cols-3">
@@ -275,7 +292,7 @@ export default function Index() {
 
       <section className={SECTION}>
         <div className="mx-auto max-w-7xl">
-          <Reveal><SectionHeading eyebrow="Dining" title="A table for every hour" /></Reveal>
+          <Reveal><SectionHeading eyebrow="Dining" title={str(HOME.diningTitle)} /></Reveal>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {RESTAURANTS.map((r, i) => (
               <Reveal key={r.slug} delay={i * 0.1}>
@@ -295,7 +312,7 @@ export default function Index() {
 
       <section className={SECTION}>
         <div className="mx-auto max-w-7xl">
-          <Reveal><SectionHeading eyebrow="Experiences" title="Moments worth remembering" align="center" /></Reveal>
+          <Reveal><SectionHeading eyebrow="Experiences" title={str(HOME.experiencesTitle)} align="center" /></Reveal>
           <div className="grid gap-4 md:grid-cols-6">
             {EXPERIENCES.slice(0, 5).map((e, i) => (
               <Reveal key={e.title} delay={i * 0.08} className={i < 2 ? "md:col-span-3" : "md:col-span-2"}>
@@ -326,14 +343,14 @@ export default function Index() {
         <div className="mx-auto grid max-w-7xl items-center gap-8 lg:grid-cols-2 lg:gap-12">
           <Reveal>
             <Link to="/tour" className={`group relative block aspect-[16/10] ${imageCard}`} aria-label="Open the 360 degree tour">
-              <Img src={HOTEL_IMAGES.lobby} alt="Preview of the 360 degree tour" width={1200} height={750} sizes="(min-width: 1024px) 50vw, 100vw" className={zoom} />
+              <Img src={str(HOME.tourImage, HOTEL_IMAGES.lobby)} alt="Preview of the 360 degree tour" width={1200} height={750} sizes="(min-width: 1024px) 50vw, 100vw" className={zoom} />
               <span className="absolute inset-0 flex items-center justify-center">
                 <motion.span animate={{ scale: [1, 1.15, 1] }} transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }} className="flex h-24 w-24 items-center justify-center rounded-full border border-white/70 bg-white/10 font-serif text-xl text-white backdrop-blur">360°</motion.span>
               </span>
             </Link>
           </Reveal>
           <Reveal delay={0.15}>
-            <SectionHeading eyebrow="Virtual experience" title="Walk the palace before you arrive" description="Move between the lobby, suites, ballrooms and pool with an interactive panorama." />
+            <SectionHeading eyebrow="Virtual experience" title={str(HOME.tourTitle)} description={str(HOME.tourText)} />
             <Link to="/tour" className={BTN.gold}>Start the tour</Link>
           </Reveal>
         </div>
@@ -341,7 +358,7 @@ export default function Index() {
 
       <section className={`bg-gradient-to-b from-background to-card ${SECTION}`}>
         <div className="mx-auto max-w-7xl">
-          <Reveal><SectionHeading eyebrow="Gallery" title="A glimpse of the palace" /></Reveal>
+          <Reveal><SectionHeading eyebrow="Gallery" title={str(HOME.galleryTitle)} /></Reveal>
           <div className="columns-2 gap-3 md:columns-4">
             {galleryPicks.map((g, i) => (
               <Reveal key={`${g.title}-${i}`} delay={(i % 4) * 0.08} className={`group mb-3 break-inside-avoid ${imageCard} ${i % 3 === 0 ? "aspect-[3/4]" : "aspect-square"}`}>
@@ -357,9 +374,9 @@ export default function Index() {
 
       <section className="relative overflow-hidden px-5 py-14 text-center md:py-20">
         <Reveal>
-          <p className="text-[11px] uppercase tracking-[0.35em] text-primary">Visit us</p>
+          <p className="text-[11px] uppercase tracking-[0.35em] text-primary">{str(HOME.visitTitle, "Visit us")}</p>
           <h2 className="mx-auto mt-4 max-w-2xl font-serif text-3xl font-light text-foreground text-balance sm:text-5xl">{CONTACT_INFORMATION.addressLines.join(", ")}</h2>
-          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+          <div className="mt-8 flex flex-col flex-wrap justify-center gap-3 sm:flex-row">
             <BookStayButton className={BTN.gold}>Reserve now</BookStayButton>
             <EnquiryButton className={BTN.outline}><MessageSquareText className="h-4 w-4" />Send an enquiry</EnquiryButton>
           </div>
