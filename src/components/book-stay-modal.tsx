@@ -2,6 +2,7 @@ import { useId, useState } from "react";
 import type { ReactNode } from "react";
 import { ArrowLeft, BedDouble, CalendarDays, Check, Moon, Users } from "lucide-react";
 import Modal from "./modal.tsx";
+import PhoneInput from "./phone-input.tsx";
 import WhatsappField, { whatsappError } from "./whatsapp-field.tsx";
 import { FORM_CONFIGS, formatDate, nightsBetween, todayIso, validate } from "../lib/forms.ts";
 import { submitEnquiry } from "../lib/enquiries.ts";
@@ -181,7 +182,7 @@ function BookStayFlow({ defaultRoom }: { defaultRoom?: string }) {
               <input id={id("email")} type="email" autoComplete="email" placeholder="example@gmail.com" value={guest.email} onChange={(e) => updateGuest("email", e.target.value)} className={FIELD} {...invalid("email")} />
             </Field>
             <Field label="Phone *" htmlFor={id("phone")} error={errors.phone}>
-              <input id={id("phone")} type="tel" autoComplete="tel" placeholder="+91 98765 43210" value={guest.phone} onChange={(e) => updateGuest("phone", e.target.value)} className={FIELD} {...invalid("phone")} />
+              <PhoneInput id={id("phone")} value={guest.phone} onChange={(v) => updateGuest("phone", v)} invalid={!!errors.phone} describedBy={errors.phone ? `${id("phone")}-error` : undefined} />
             </Field>
             <WhatsappField phone={guest.phone} value={whatsapp} same={sameWhatsapp} onSameChange={setSameWhatsapp} onChange={(v) => { setWhatsapp(v); setErrors((p) => ({ ...p, whatsapp: "" })); }} error={errors.whatsapp} />
             <Field label="Special requests" htmlFor={id("message")} wide>
@@ -217,7 +218,7 @@ export function BookStayButton({ className, children, onOpen, defaultRoom }: But
   const [open, setOpen] = useState(false);
   return (
     <>
-      <button type="button" onClick={() => { onOpen?.(); setOpen(true); }} className={className}>{children}</button>
+      <button type="button" onClick={() => setOpen(true)} className={className}>{children}</button>
       <BookStayModal open={open} onClose={() => setOpen(false)} defaultRoom={defaultRoom} />
     </>
   );
