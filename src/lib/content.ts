@@ -89,21 +89,62 @@ export function normalize(key: ContentKey, data: Row[] | Row): Row[] | Row {
   return data;
 }
 
+/* ------------------------- Cleaning up removed uploads ------------------------- */
+
+const BUCKET = "site-media";
+const BUCKET_PREFIX = `/storage/v1/object/public/${BUCKET}/`;
+
+// Only files we uploaded to our own bucket can be deleted; built-in CDN photos are never touched.
+function storagePath(url: string): string | null {
+  const index = url.indexOf(BUCKET_PREFIX);
+  if (index < 0) return null;
+  return decodeURIComponent(url.slice(index + BUCKET_PREFIX.length).split("?")[0]) || null;
+}
+
+function collectPaths(value: unknown, out: Set<string>): Set<string> {
+  if (typeof value === "string") {
+    const path = storagePath(value);
+    if (path) out.add(path);
+  } else if (Array.isArray(value)) value.forEach((v) => collectPaths(v, out));
+  else if (isRow(value)) Object.values(value).forEach((v) => collectPaths(v, out));
+  return out;
+}
+
+/**
+ * Deletes uploads that were in a section before a save but are no longer used anywhere on the site.
+ * Runs after the save succeeds, and a file still used by another section is kept.
+ */
+async function deleteUnusedUploads(before: Row[] | Row): Promise<void> {
+  const inUse = collectPaths(TARGETS, new Set());
+  const unused = [...collectPaths(before, new Set())].filter((p) => !inUse.has(p));
+  if (unused.length) await supabase.storage.from(BUCKET).remove(unused);
+}
+
+/* ------------------------------- Save and reset -------------------------------- */
+
 /** Returns an error message, or null on success. */
 export async function saveContent(key: ContentKey, data: Row[] | Row): Promise<string | null> {
+  const before = getContent(key);
   const clean = normalize(key, data);
   const { error } = await supabase.from("site_content").upsert({ key, data: clean, updated_at: new Date().toISOString() });
   if (error) return "Could not save. Please check your connection and try again.";
-  applyContent(key, clean);
+  if (Array.isArray(TARGETS[key])) applyContent(key, clean);
+  else applyContent(key, { ...DEFAULTS[key], ...(clean as Row) });
+  // A failed cleanup only leaves an unused file behind, so it never blocks the save.
+  await deleteUnusedUploads(before).catch(() => undefined);
   return null;
 }
 
 export async function resetContent(key: ContentKey): Promise<string | null> {
+  const before = getContent(key);
   const { error } = await supabase.from("site_content").delete().eq("key", key);
   if (error) return "Could not reset this section.";
   applyContent(key, structuredClone(DEFAULTS[key]));
+  await deleteUnusedUploads(before).catch(() => undefined);
   return null;
 }
+
+/* ------------------------------------ Upload ----------------------------------- */
 
 const MB = 1024 * 1024;
 const MEDIA = {
@@ -123,9 +164,9 @@ export async function uploadMedia(file: File, kind: MediaKind): Promise<string> 
   if (file.size > rule.max) throw new Error(rule.sizeError);
   const ext = file.name.split(".").pop()?.toLowerCase() ?? rule.fallbackExt;
   const path = `${Date.now()}-${slugify(file.name.replace(/\.[^.]+$/, "")) || kind}.${ext}`;
-  const { error } = await supabase.storage.from("site-media").upload(path, file, { contentType: file.type, cacheControl: ONE_YEAR_SECONDS });
+  const { error } = await supabase.storage.from(BUCKET).upload(path, file, { contentType: file.type, cacheControl: ONE_YEAR_SECONDS });
   if (error) throw new Error("Upload failed. Please try again.");
-  return supabase.storage.from("site-media").getPublicUrl(path).data.publicUrl;
+  return supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
 }
 
 export const uploadImage = (file: File) => uploadMedia(file, "image");
