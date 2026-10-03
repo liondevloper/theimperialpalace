@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import type { KeyboardEvent, ReactNode } from "react";
+import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 
 type ModalProps = { open: boolean; onClose: () => void; label: string; children: ReactNode; wide?: boolean };
@@ -48,7 +49,8 @@ export default function Modal({ open, onClose, label, children, wide = false }: 
     }
   };
 
-  return (
+  // Portal to <body> so modals opened from the sticky (blurred) header are not clipped by it.
+  return createPortal(
     <div
       className="fixed inset-0 z-[200] flex items-end justify-center bg-black/70 p-0 sm:items-center sm:p-4"
       onMouseDown={(event) => {
@@ -69,6 +71,7 @@ export default function Modal({ open, onClose, label, children, wide = false }: 
         </button>
         {children}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

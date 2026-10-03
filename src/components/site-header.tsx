@@ -5,7 +5,7 @@ import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'motion/
 import { NAV_LINKS } from '../lib/hotel-data.ts';
 import { HEADER_LOGO_URL } from '../lib/logo.ts';
 import { BTN } from '../lib/styles.ts';
-import { BookStayButton } from './book-stay-modal.tsx';
+import BookStayModal from './book-stay-modal.tsx';
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -22,6 +22,7 @@ export function Logo({ alt, small = false, className = '' }: { alt: string; smal
 
 export default function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const [bookingOpen, setBookingOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { scrollY } = useScroll();
   useMotionValueEvent(scrollY, 'change', (v) => setScrolled(v > 24));
@@ -40,6 +41,11 @@ export default function SiteHeader() {
   }, [open]);
 
   const close = () => setOpen(false);
+  // Booking state lives here (not in the mobile menu) so closing the menu keeps the popup open.
+  const openBooking = () => {
+    setOpen(false);
+    setBookingOpen(true);
+  };
 
   return (
     <motion.header
@@ -67,10 +73,10 @@ export default function SiteHeader() {
         </nav>
 
         <div className="flex shrink-0 items-center gap-2">
-          <BookStayButton className={`${BTN.gold} hidden px-5 sm:inline-flex`}>
+          <button type="button" onClick={openBooking} className={`${BTN.gold} hidden px-5 sm:inline-flex`}>
             <CalendarCheck className="h-4 w-4" />
             Book stay
-          </BookStayButton>
+          </button>
           <button type="button" aria-label="Open navigation" aria-expanded={open} onClick={() => setOpen(true)} className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center text-[#3a3024] xl:hidden">
             <Menu className="h-6 w-6" />
           </button>
@@ -99,14 +105,16 @@ export default function SiteHeader() {
                   <Link to={link.to} onClick={close} className="font-serif text-3xl text-[#2a2218] transition-colors hover:text-[#8a6a22]">{link.label}</Link>
                 </motion.div>
               ))}
-              <BookStayButton onOpen={close} className={`${BTN.gold} mt-4`}>
+              <button type="button" onClick={openBooking} className={`${BTN.gold} mt-4`}>
                 <CalendarCheck className="h-4 w-4" />
                 Book stay
-              </BookStayButton>
+              </button>
             </nav>
           </motion.div>
         )}
       </AnimatePresence>
+
+      <BookStayModal open={bookingOpen} onClose={() => setBookingOpen(false)} />
     </motion.header>
   );
 }
