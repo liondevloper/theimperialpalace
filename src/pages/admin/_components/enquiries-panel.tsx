@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Download, Mail, Phone, RefreshCw, Search, Trash2 } from "lucide-react";
+import { Download, FileText, Mail, Phone, RefreshCw, Search, Trash2 } from "lucide-react";
 import { WhatsappLogo } from "@phosphor-icons/react";
 import { supabase } from "../../../lib/supabase.ts";
 import { BTN, FIELD, LABEL } from "../../../lib/styles.ts";
+import { exportCsv, exportEnquiryPdf, exportPdf, formatDateTime, formatValue, label } from "../_lib/enquiry-export.ts";
 
 export type Enquiry = {
   id: string;
@@ -25,21 +26,7 @@ export const STATUS_STYLE: Record<string, string> = {
   closed: "bg-emerald-100 text-emerald-900",
 };
 
-const label = (key: string) => key.replace(/([A-Z])/g, " $1").replace(/^./, (c) => c.toUpperCase());
 const waLink = (phone: string) => `https://wa.me/${phone.replace(/\D/g, "").replace(/^0/, "91")}`;
-const csvCell = (v: unknown) => `"${String(v ?? "").replace(/"/g, '""')}"`;
-
-function exportCsv(rows: Enquiry[]) {
-  const keys = Array.from(new Set(rows.flatMap((r) => Object.keys(r.details))));
-  const head = ["Date", "Type", "Status", "Name", "Email", "Phone", ...keys.map(label)];
-  const body = rows.map((r) => [new Date(r.created_at).toLocaleString("en-IN"), r.kind, r.status, r.name, r.email, r.phone, ...keys.map((k) => r.details[k])]);
-  const csv = "\uFEFF" + [head, ...body].map((line) => line.map(csvCell).join(",")).join("\r\n");
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
-  a.download = `enquiries-${new Date().toISOString().slice(0, 10)}.csv`;
-  a.click();
-  URL.revokeObjectURL(a.href);
-}
 
 export default function EnquiriesPanel() {
   const [rows, setRows] = useState<Enquiry[] | null>(null);
@@ -48,6 +35,8 @@ export default function EnquiriesPanel() {
   const [query, setQuery] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  // Which PDF is being prepared: "all" for the report, or an enquiry id.
+  const [pdfBusy, setPdfBusy] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -81,6 +70,18 @@ export default function EnquiriesPanel() {
     else setRows((prev) => prev?.filter((r) => r.id !== id) ?? null);
   };
 
+  const makePdf = async (key: string, task: () => Promise<void>) => {
+    setPdfBusy(key);
+    try {
+      await task();
+    } catch {
+      setError("Could not create the PDF. Please try again.");
+    } finally {
+      setPdfBusy(null);
+    }
+  };
+
+  const filterText = [`Type: ${label(kind)}`, `Status: ${label(status)}`, query.trim() && `Search: "${query.trim()}"`].filter(Boolean).join(" | ");
   const contactBtn = "inline-flex min-h-9 items-center gap-1.5 border border-[#e6d9b8] px-3 text-xs text-foreground transition-colors hover:border-[#c9a84c] hover:bg-[#faf6ec]";
 
   return (
@@ -88,11 +89,14 @@ export default function EnquiriesPanel() {
       <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 className="font-serif text-3xl font-light text-foreground">Enquiries</h2>
-          <p className="mt-1 text-xs text-muted-foreground">All bookings and messages sent from the website.</p>
+          <p className="mt-1 text-xs text-muted-foreground">All bookings and messages sent from the website. Times are in Indian time (IST).</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <button type="button" onClick={() => void load()} className={`${BTN.outline} px-4`}><RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />Refresh</button>
-          <button type="button" disabled={!filtered?.length} onClick={() => filtered && exportCsv(filtered)} className={`${BTN.gold} px-4 disabled:opacity-50`}><Download className="h-4 w-4" />Download Excel</button>
+          <button type="button" disabled={!filtered?.length} onClick={() => filtered && exportCsv(filtered)} className={`${BTN.outline} px-4 disabled:opacity-50`}><Download className="h-4 w-4" />Download Excel</button>
+          <button type="button" disabled={!filtered?.length || pdfBusy !== null} onClick={() => filtered && void makePdf("all", () => exportPdf(filtered, filterText))} className={`${BTN.gold} px-4 disabled:opacity-50`}>
+            <FileText className="h-4 w-4" />{pdfBusy === "all" ? "Preparing PDF..." : "Download PDF"}
+          </button>
         </div>
       </div>
 
@@ -126,7 +130,7 @@ export default function EnquiriesPanel() {
                   <p className="flex flex-wrap items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-[#6f5318]">
                     <span className="bg-[#1a140c] px-2 py-0.5 text-[#e8d5a3]">{r.kind}</span>
                     <span className={`px-2 py-0.5 ${STATUS_STYLE[r.status] ?? "bg-muted"}`}>{r.status}</span>
-                    {new Date(r.created_at).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}
+                    {formatDateTime(r.created_at)}
                   </p>
                   <p className="mt-2 font-serif text-2xl text-foreground">{r.name}</p>
                   <div className="mt-2 flex flex-wrap gap-2">
@@ -137,12 +141,15 @@ export default function EnquiriesPanel() {
                 </div>
                 <div className="flex items-center gap-2">
                   <select aria-label="Status" value={r.status} onChange={(e) => void setStatus(r.id, e.target.value)} className={`${FIELD} w-36`}>{STATUSES.map((s) => <option key={s} value={s}>{label(s)}</option>)}</select>
+                  <button type="button" disabled={pdfBusy !== null} onClick={() => void makePdf(r.id, () => exportEnquiryPdf(r))} aria-label="Download this enquiry as PDF" title="Download PDF" className="flex h-11 w-11 cursor-pointer items-center justify-center text-[#8a6a22] disabled:opacity-50">
+                    <FileText className={`h-4 w-4 ${pdfBusy === r.id ? "animate-pulse" : ""}`} />
+                  </button>
                   <button type="button" onClick={() => void remove(r.id)} aria-label="Delete enquiry" className="flex h-11 w-11 cursor-pointer items-center justify-center text-destructive"><Trash2 className="h-4 w-4" /></button>
                 </div>
               </div>
               {Object.keys(r.details).length > 0 && (
                 <dl className="mt-4 grid gap-x-6 gap-y-3 border-t border-[#efe6d2] pt-4 text-sm sm:grid-cols-2 lg:grid-cols-3">
-                  {Object.entries(r.details).map(([k, v]) => (<div key={k} className={k === "message" ? "sm:col-span-2 lg:col-span-3" : ""}><dt className={LABEL}>{label(k)}</dt><dd className="break-words text-foreground">{String(v)}</dd></div>))}
+                  {Object.entries(r.details).map(([k, v]) => (<div key={k} className={k === "message" ? "sm:col-span-2 lg:col-span-3" : ""}><dt className={LABEL}>{label(k)}</dt><dd className="break-words text-foreground">{formatValue(v)}</dd></div>))}
                 </dl>
               )}
             </li>
