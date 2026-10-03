@@ -41,7 +41,7 @@ function LoginForm() {
   };
 
   return (
-    <form onSubmit={(e) => void submit(e)} className="mx-auto grid w-full max-w-sm gap-4 border border-[#e6d9b8] bg-white p-8 shadow-[0_30px_80px_-40px_rgba(90,70,30,0.5)]">
+    <form onSubmit={(e) => void submit(e)} className="mx-auto grid w-full max-w-sm gap-4 border border-[#e6d9b8] bg-white p-8 shadow-[0_30px_80px_-40px_rgba(15,26,48,0.5)]">
       <p className="text-[10px] uppercase tracking-[0.35em] text-[#8a6a22]">Control room</p>
       <h1 className="font-serif text-3xl font-light text-foreground">Admin sign in</h1>
       <div className="grid gap-1.5"><label htmlFor="a-email" className={LABEL}>Email</label><input id="a-email" type="email" required autoComplete="email" placeholder="example@gmail.com" value={email} onChange={(e) => setEmail(e.target.value)} className={FIELD} /></div>
@@ -63,7 +63,7 @@ export default function AdminPage() {
     robots.name = "robots";
     robots.content = "noindex";
     document.head.appendChild(robots);
-    // The public site is dark; the admin control room keeps its light ivory palette.
+    // The public site is navy; the admin control room keeps its light ivory palette.
     document.documentElement.classList.add("theme-ivory");
 
     const check = async (session: Session | null) => {
@@ -101,19 +101,20 @@ export default function AdminPage() {
     );
   }
 
-  const navBtn = (active: boolean) => `flex min-h-11 w-full cursor-pointer items-center gap-3 px-4 text-left text-[12px] uppercase tracking-[0.14em] transition-colors ${active ? "border-l-2 border-[#c9a84c] bg-[#2a2218] text-[#e8d5a3]" : "border-l-2 border-transparent text-[#e8d5a3]/60 hover:bg-[#2a2218]/60 hover:text-[#e8d5a3]"}`;
+  const navBtn = (active: boolean) => `flex min-h-11 w-full cursor-pointer items-center gap-3 px-4 text-left text-[12px] uppercase tracking-[0.14em] transition-colors ${active ? "border-l-2 border-[#c9a84c] bg-[#1c2a4a] text-[#e8d5a3]" : "border-l-2 border-transparent text-[#e8d5a3]/60 hover:bg-[#1c2a4a]/60 hover:text-[#e8d5a3]"}`;
 
   return (
     <div className="theme-ivory flex min-h-dvh bg-[#faf6ec] text-foreground">
-      <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col bg-[#1a140c] lg:flex">
-        <div className="border-b border-[#3a2e1c] p-5">
-          <p className="font-serif text-xl text-[#f6efe0]">The Imperial Palace</p>
-          <p className="mt-1 text-[10px] uppercase tracking-[0.3em] text-[#b8933a]">Admin control room</p>
+      <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col bg-[#111c33] lg:flex">
+        {/* Ivory logo block so the logo shows in its true colours. */}
+        <div className="border-b border-[#e6d9b8] bg-[#f8f2e4] p-5">
+          <Logo alt="The Imperial Palace" tone="light" className="h-14" />
+          <p className="mt-2 text-[10px] uppercase tracking-[0.3em] text-[#8a6a22]">Admin control room</p>
         </div>
         <nav aria-label="Admin sections" className="flex-1 overflow-y-auto py-3">
           {GROUPS.map((g) => (
             <div key={g.title} className="mb-4">
-              <p className="px-5 pb-2 pt-2 text-[9px] uppercase tracking-[0.3em] text-[#b8933a]/70">{g.title}</p>
+              <p className="px-5 pb-2 pt-2 text-[9px] uppercase tracking-[0.3em] text-[#b8933a]/80">{g.title}</p>
               {g.keys.map((key) => {
                 const Icon = ICONS[key] ?? Sparkles;
                 return <button key={key} type="button" onClick={() => go(key)} className={navBtn(tab === key)}><Icon className="h-4 w-4" />{labelOf(key)}</button>;
@@ -121,7 +122,7 @@ export default function AdminPage() {
             </div>
           ))}
         </nav>
-        <div className="space-y-1 border-t border-[#3a2e1c] p-3">
+        <div className="space-y-1 border-t border-[#26355a] p-3">
           {email && <p className="truncate px-4 pb-2 text-[11px] text-[#e8d5a3]/50">{email}</p>}
           <Link to="/" target="_blank" className={navBtn(false)}><ExternalLink className="h-4 w-4" />View website</Link>
           <button type="button" onClick={signOut} className={navBtn(false)}><LogOut className="h-4 w-4" />Sign out</button>

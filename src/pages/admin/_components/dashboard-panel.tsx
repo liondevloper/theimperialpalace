@@ -14,6 +14,8 @@ async function count(apply: (q: ReturnType<typeof base>) => ReturnType<typeof ba
 }
 const base = () => supabase.from("enquiries").select("id", { count: "exact", head: true });
 
+const NAVY_CARD = "from-[#1c2a4a] to-[#111c33] text-[#e8d5a3]";
+
 export default function DashboardPanel({ go }: { go: (tab: string) => void }) {
   const [counts, setCounts] = useState<Counts | null>(null);
   const [recent, setRecent] = useState<Enquiry[]>([]);
@@ -36,10 +38,10 @@ export default function DashboardPanel({ go }: { go: (tab: string) => void }) {
   }, []);
 
   const stats: { label: string; value: number | undefined; icon: LucideIcon; accent: string }[] = [
-    { label: "New enquiries", value: counts?.new, icon: Inbox, accent: "from-[#b8933a] to-[#d9bc6a] text-[#1a140c]" },
-    { label: "Last 7 days", value: counts?.week, icon: MessageCircle, accent: "from-[#2a2218] to-[#1a140c] text-[#e8d5a3]" },
-    { label: "Contacted", value: counts?.contacted, icon: PhoneCall, accent: "from-[#2a2218] to-[#1a140c] text-[#e8d5a3]" },
-    { label: "Closed", value: counts?.closed, icon: CheckCircle2, accent: "from-[#2a2218] to-[#1a140c] text-[#e8d5a3]" },
+    { label: "New enquiries", value: counts?.new, icon: Inbox, accent: "from-[#b8933a] to-[#d9bc6a] text-[#0f1a30]" },
+    { label: "Last 7 days", value: counts?.week, icon: MessageCircle, accent: NAVY_CARD },
+    { label: "Contacted", value: counts?.contacted, icon: PhoneCall, accent: NAVY_CARD },
+    { label: "Closed", value: counts?.closed, icon: CheckCircle2, accent: NAVY_CARD },
   ];
 
   const content = [
@@ -62,7 +64,7 @@ export default function DashboardPanel({ go }: { go: (tab: string) => void }) {
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         {stats.map(({ label, value, icon: Icon, accent }) => (
-          <button key={label} type="button" onClick={() => go("enquiries")} className={`cursor-pointer bg-gradient-to-br p-5 text-left shadow-[0_20px_40px_-25px_rgba(0,0,0,0.5)] transition-transform hover:-translate-y-1 ${accent}`}>
+          <button key={label} type="button" onClick={() => go("enquiries")} className={`cursor-pointer bg-gradient-to-br p-5 text-left shadow-[0_20px_40px_-25px_rgba(15,26,48,0.5)] transition-transform hover:-translate-y-1 ${accent}`}>
             <Icon className="h-5 w-5 opacity-80" />
             <p className="mt-6 font-serif text-5xl font-light">{value ?? "–"}</p>
             <p className="mt-1 text-[11px] uppercase tracking-[0.2em] opacity-80">{label}</p>
@@ -106,7 +108,7 @@ export default function DashboardPanel({ go }: { go: (tab: string) => void }) {
             ))}
           </ul>
           <div className="p-5">
-            <button type="button" onClick={() => go("home")} className="w-full cursor-pointer bg-[#1a140c] px-4 py-3 text-[11px] uppercase tracking-[0.2em] text-[#e8d5a3] hover:bg-[#2a2218]">Edit homepage</button>
+            <button type="button" onClick={() => go("home")} className="w-full cursor-pointer bg-[#111c33] px-4 py-3 text-[11px] uppercase tracking-[0.2em] text-[#e8d5a3] hover:bg-[#1c2a4a]">Edit homepage</button>
           </div>
         </section>
       </div>
