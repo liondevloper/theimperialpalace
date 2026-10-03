@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { MapPin, Navigation, Star } from 'lucide-react';
-import { CONTACT_INFORMATION, FOOTER_EXTRA_LINKS, NAV_LINKS, contactPhones, mailEmailList, mapEmbedUrl, reservationEmailList } from '../lib/hotel-data.ts';
+import { CONTACT_INFORMATION, FOOTER_EXTRA_LINKS, NAV_LINKS, contactPhones, footerMaps, mailEmailList, mapEmbedUrl, reservationEmailList } from '../lib/hotel-data.ts';
 import { Logo } from './site-header.tsx';
 import { Reveal } from './hotel-page.tsx';
 import PremiumMap from './premium-map.tsx';
@@ -11,16 +11,6 @@ const DIRECTIONS_CLASS = 'inline-flex min-h-10 cursor-pointer items-center justi
 // The Google embed draws its own "open in Maps" card in the top-left corner. The iframe is made taller
 // and shifted up inside a clipping box so that card is cut off, while the pin stays centred.
 const GOOGLE_CROP = 90;
-
-type MapStyle = 'premium' | 'google' | 'both';
-
-// Admin > Contact details > "Map style" decides which map(s) visitors see. Premium is the default.
-function mapStyle(): MapStyle {
-  const value = Reflect.get(CONTACT_INFORMATION, 'mapStyle');
-  if (value === 'Google map') return 'google';
-  if (value === 'Both maps') return 'both';
-  return 'premium';
-}
 
 // Registered company address shown in the footer. The hotel name comes first.
 const FOOTER_ADDRESS_LINES = [
@@ -77,13 +67,14 @@ function GoogleMapCard() {
   );
 }
 
+// Admin > Contact details has one on/off switch per map. Both can be on at the same time.
 function FooterMap() {
-  const style = mapStyle();
+  const { premium, google } = footerMaps();
   return (
     <div className="relative mx-auto max-w-7xl px-5 pb-12 lg:px-8">
-      <div className={style === 'both' ? 'grid gap-6 md:grid-cols-2' : ''}>
-        {style !== 'google' && <PremiumMapCard />}
-        {style !== 'premium' && <GoogleMapCard />}
+      <div className={premium && google ? 'grid gap-6 md:grid-cols-2' : ''}>
+        {premium && <PremiumMapCard />}
+        {google && <GoogleMapCard />}
       </div>
     </div>
   );
