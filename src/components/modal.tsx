@@ -1,13 +1,15 @@
 import { useEffect, useRef } from "react";
 import type { KeyboardEvent, ReactNode } from "react";
 import { createPortal } from "react-dom";
+import { motion } from "motion/react";
 import { X } from "lucide-react";
 
-type ModalProps = { open: boolean; onClose: () => void; label: string; children: ReactNode; wide?: boolean };
+type ModalProps = { open: boolean; onClose: () => void; label: string; children: ReactNode; wide?: boolean; split?: boolean };
 
 const FOCUSABLE = 'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])';
+const EASE = [0.22, 1, 0.36, 1] as const;
 
-export default function Modal({ open, onClose, label, children, wide = false }: ModalProps) {
+export default function Modal({ open, onClose, label, children, wide = false, split = false }: ModalProps) {
   const panelRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef(onClose);
 
@@ -49,29 +51,37 @@ export default function Modal({ open, onClose, label, children, wide = false }: 
     }
   };
 
+  const size = split ? "max-w-5xl p-0" : wide ? "max-w-2xl p-5 sm:p-8" : "max-w-xl p-5 sm:p-8";
+
   // Portal to <body> so modals opened from the sticky (blurred) header are not clipped by it.
   return createPortal(
-    <div
-      className="fixed inset-0 z-[200] flex items-end justify-center bg-black/70 p-0 sm:items-center sm:p-4"
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+      className="fixed inset-0 z-[200] flex items-end justify-center bg-[#140f08]/75 p-0 backdrop-blur-sm sm:items-center sm:p-4"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
     >
-      <div
+      <motion.div
         ref={panelRef}
         role="dialog"
         aria-modal="true"
         aria-label={label}
         tabIndex={-1}
         onKeyDown={trapFocus}
-        className={`relative max-h-[94dvh] w-full overflow-y-auto border border-[#c9a84c]/40 bg-background p-5 outline-none sm:p-8 ${wide ? "max-w-2xl" : "max-w-xl"}`}
+        initial={{ opacity: 0, y: 40, scale: 0.97 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.5, ease: EASE }}
+        className={`relative max-h-[94dvh] w-full overflow-y-auto border border-[#c9a84c]/40 bg-background shadow-[0_40px_120px_-30px_rgba(0,0,0,0.7)] outline-none ${size}`}
       >
-        <button type="button" onClick={onClose} aria-label="Close" className="absolute right-3 top-3 flex h-11 w-11 cursor-pointer items-center justify-center text-muted-foreground hover:text-foreground">
+        <button type="button" onClick={onClose} aria-label="Close" className="absolute right-3 top-3 z-10 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full bg-background/80 text-muted-foreground backdrop-blur hover:text-foreground">
           <X className="h-5 w-5" />
         </button>
         {children}
-      </div>
-    </div>,
+      </motion.div>
+    </motion.div>,
     document.body,
   );
 }
