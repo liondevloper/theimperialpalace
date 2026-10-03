@@ -54,6 +54,7 @@ export default function Modal({ open, onClose, label, children, wide = false, sp
   const size = split ? "max-w-5xl p-0" : wide ? "max-w-2xl p-5 sm:p-8" : "max-w-xl p-5 sm:p-8";
 
   // Portal to <body> so modals opened from the sticky (blurred) header are not clipped by it.
+  // The panel uses the light "theme-ivory" palette so every form popup is white instead of blue.
   return createPortal(
     <motion.div
       initial={{ opacity: 0 }}
@@ -74,9 +75,9 @@ export default function Modal({ open, onClose, label, children, wide = false, sp
         initial={{ opacity: 0, y: 40, scale: 0.97 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.5, ease: EASE }}
-        className={`relative max-h-[94dvh] w-full overflow-y-auto border border-[#c9a84c]/40 bg-background shadow-[0_40px_120px_-30px_rgba(0,0,0,0.7)] outline-none ${size}`}
+        className={`theme-ivory relative max-h-[94dvh] w-full overflow-y-auto border border-[#c9a84c]/40 bg-white text-foreground shadow-[0_40px_120px_-30px_rgba(0,0,0,0.7)] outline-none ${size}`}
       >
-        <button type="button" onClick={onClose} aria-label="Close" className="absolute right-3 top-3 z-10 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full bg-background/80 text-muted-foreground backdrop-blur hover:text-foreground">
+        <button type="button" onClick={onClose} aria-label="Close" className="absolute right-3 top-3 z-10 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full bg-white/80 text-muted-foreground backdrop-blur hover:text-foreground">
           <X className="h-5 w-5" />
         </button>
         {children}
