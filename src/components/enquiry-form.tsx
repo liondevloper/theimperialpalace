@@ -1,4 +1,4 @@
-import { useId, useState } from "react";
+import { Fragment, useId, useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
 import { Check } from "lucide-react";
 import { FORM_CONFIGS, todayIso, validate } from "../lib/forms.ts";
@@ -79,8 +79,8 @@ export default function EnquiryForm({ kind, defaults = {}, showHeading = true, s
         const error = errors[field.name];
         const shared = { id, name: field.name, value: values[field.name], onChange, "aria-invalid": error ? true : undefined, "aria-describedby": error ? `${id}-error` : undefined };
         return (
-          <>
-            <div key={field.name} className={`grid min-w-0 content-start gap-1.5 ${field.wide || field.type === "textarea" ? "sm:col-span-2" : ""}`}>
+          <Fragment key={field.name}>
+            <div className={`grid min-w-0 content-start gap-1.5 ${field.wide || field.type === "textarea" ? "sm:col-span-2" : ""}`}>
               <label htmlFor={id} className={LABEL}>{field.label}{field.required ? " *" : ""}</label>
               {field.type === "textarea" ? (
                 <textarea {...shared} rows={3} placeholder={field.placeholder} className={`${FIELD} h-auto py-2`} />
@@ -94,7 +94,7 @@ export default function EnquiryForm({ kind, defaults = {}, showHeading = true, s
             {field.name === "phone" && (
               <WhatsappField phone={values.phone ?? ""} value={whatsapp} same={sameWhatsapp} onSameChange={setSameWhatsapp} onChange={(v) => { setWhatsapp(v); setErrors((p) => ({ ...p, whatsapp: "" })); }} error={errors.whatsapp} />
             )}
-          </>
+          </Fragment>
         );
       })}
       {submitError && <p role="alert" className="text-sm text-destructive sm:col-span-2">{submitError}</p>}
