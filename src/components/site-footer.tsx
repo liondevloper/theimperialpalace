@@ -23,19 +23,20 @@ export default function SiteFooter() {
   const explore = [{ label: 'Rooms & suites', to: '/stay' }, ...NAV_LINKS.filter((l) => l.to !== '/stay' && l.to !== '/contact'), ...FOOTER_EXTRA_LINKS];
   return (
     <footer className="relative overflow-hidden border-t border-border bg-card">
-      <div className="h-px w-full bg-gradient-to-r from-transparent via-[#d4b46a] to-transparent" />
-      <div className="pointer-events-none absolute left-1/2 top-0 h-64 w-[36rem] -translate-x-1/2 rounded-full bg-primary/10 blur-3xl" />
-      <Reveal className="relative mx-auto max-w-7xl px-5 py-14 lg:px-8">
-        {/* Centred brand block */}
-        <div className="flex flex-col items-center text-center">
+      {/* Centred brand block on light ivory so the logo shows in its true colours */}
+      <div className="theme-ivory border-b-2 border-[#d4b46a] bg-[#f8f2e4] px-5 py-12 text-foreground">
+        <Reveal className="mx-auto flex max-w-7xl flex-col items-center text-center">
           <Link to="/" aria-label="The Imperial Palace, home" className="inline-block transition-transform duration-500 hover:scale-[1.03]">
-            <Logo alt="The Imperial Palace" className="h-24 md:h-28" />
+            <Logo alt="The Imperial Palace" tone="light" className="h-24 md:h-28" />
           </Link>
-          <span className="mt-6 h-px w-24 bg-gradient-to-r from-transparent via-primary to-transparent" />
-          <p className="mt-5 max-w-md text-sm leading-7 text-muted-foreground">A landmark of refined hospitality in the heart of Rajkot, Gujarat. 20 years of excellence.</p>
-        </div>
+          <span className="mt-6 h-px w-24 bg-gradient-to-r from-transparent via-[#b8933a] to-transparent" />
+          <p className="mt-5 max-w-md text-sm leading-7 text-[#5a4a32]">A landmark of refined hospitality in the heart of Rajkot, Gujarat. 20 years of excellence.</p>
+        </Reveal>
+      </div>
 
-        <div className="mt-12 grid gap-10 border-t border-border pt-10 text-center sm:grid-cols-3 sm:text-left">
+      <div className="pointer-events-none absolute left-1/2 top-[40%] h-64 w-[36rem] -translate-x-1/2 rounded-full bg-primary/10 blur-3xl" />
+      <Reveal className="relative mx-auto max-w-7xl px-5 py-12 lg:px-8">
+        <div className="grid gap-10 text-center sm:grid-cols-3 sm:text-left">
           <div>
             <h3 className={headingClass}>Explore</h3>
             <ul className="grid grid-cols-2 gap-3 sm:grid-cols-1">{explore.map((l) => <li key={l.to}><Link to={l.to} className={linkClass}>{l.label}</Link></li>)}</ul>
