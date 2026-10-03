@@ -13,9 +13,8 @@ const DIRECTIONS_CLASS = 'inline-flex min-h-10 cursor-pointer items-center justi
 // and shifted up inside a clipping box so that card is cut off, while the pin stays centred.
 const GOOGLE_CROP = 90;
 
-// Registered company address shown in the footer. The hotel name comes first.
+// Registered company address shown under the "The Imperial Palace" heading.
 const FOOTER_ADDRESS_LINES = [
-  'The Imperial Palace',
   'City Organisers Private Limited',
   'Dr. Yagnik Road, Rajkot 360001 INDIA',
 ];
@@ -73,10 +72,37 @@ function FooterMap() {
   );
 }
 
-export default function SiteFooter() {
-  // Read at render time so edits saved from the admin panel show up.
+// Address, phones and department emails. Each email stays on one line; groups wrap side by side.
+function ContactBlock() {
   const groups = emailGroups();
   const phones = contactPhones();
+  return (
+    <div className="mb-8 border-b border-border pb-8 text-center sm:text-left md:mb-12 md:pb-10">
+      <h3 className={headingClass}>The Imperial Palace</h3>
+      <address className="grid gap-6 text-sm not-italic leading-6 text-muted-foreground sm:grid-cols-[auto_1fr] sm:gap-12">
+        <div>
+          <p>{FOOTER_ADDRESS_LINES.map((line) => <span key={line} className="block">{line}</span>)}</p>
+          <p className="mt-2">
+            {phones.map((p) => <a key={p.href} href={p.href} className={`${linkClass} block`}>{p.label}</a>)}
+            <a href={FAX.href} className={`${linkClass} block`}>Fax: {FAX.label}</a>
+          </p>
+        </div>
+        <div className="grid grid-cols-2 gap-x-4 gap-y-3 text-left sm:flex sm:flex-wrap sm:gap-x-10">
+          {groups.map((group) => (
+            <div key={group.label}>
+              <span className="block text-[10px] uppercase tracking-[0.25em] text-primary">{group.label}</span>
+              {group.emails.map((email) => (
+                <a key={email} href={`mailto:${email}`} className={`${linkClass} block whitespace-nowrap text-[13px] sm:text-sm`}>{email}</a>
+              ))}
+            </div>
+          ))}
+        </div>
+      </address>
+    </div>
+  );
+}
+
+export default function SiteFooter() {
   const explore = [{ label: 'Rooms & suites', to: '/stay' }, ...NAV_LINKS.filter((l) => l.to !== '/stay' && l.to !== '/contact'), ...FOOTER_EXTRA_LINKS];
   return (
     <footer className="relative overflow-hidden border-t border-border bg-card">
@@ -96,43 +122,19 @@ export default function SiteFooter() {
       </div>
       <div className="pointer-events-none absolute left-1/2 top-64 h-64 w-[36rem] -translate-x-1/2 rounded-full bg-primary/10 blur-3xl" />
       <Reveal className="relative mx-auto max-w-7xl px-5 py-8 md:py-12 lg:px-8">
-        <div className="grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3 sm:gap-10 sm:text-left">
-          <div>
+        <ContactBlock />
+        <div className="grid gap-x-6 gap-y-8 sm:grid-cols-2 sm:gap-10">
+          {/* Explore already lives in the menu on mobile, so it only shows on larger screens. */}
+          <div className="hidden sm:block">
             <h3 className={headingClass}>Explore</h3>
-            <ul className="space-y-2 sm:space-y-3">{explore.map((l) => <li key={l.to}><Link to={l.to} className={linkClass}>{l.label}</Link></li>)}</ul>
+            <ul className="space-y-3">{explore.map((l) => <li key={l.to}><Link to={l.to} className={linkClass}>{l.label}</Link></li>)}</ul>
           </div>
-          <div>
+          <div className="text-center sm:text-left">
             <h3 className={headingClass}>Guest services</h3>
             <ul className="space-y-2 sm:space-y-3">
               <li><Link to="/contact" className={linkClass}>Contact & enquiries</Link></li>
               <li><Link to="/stay#book" className={linkClass}>Check availability</Link></li>
-              <li><Link to="/career" className={linkClass}>Careers</Link></li>
-              <li><Link to="/privacy-policy" className={linkClass}>Privacy policy</Link></li>
             </ul>
-          </div>
-          <div className="col-span-2 sm:col-span-1">
-            <h3 className={headingClass}>Contact</h3>
-            <address className="space-y-3 text-sm not-italic leading-6 text-muted-foreground">
-              <p>
-                {FOOTER_ADDRESS_LINES.map((line, i) => (
-                  <span key={line} className={i === 0 ? 'block font-medium text-foreground' : 'block'}>{line}</span>
-                ))}
-              </p>
-              <p>
-                {phones.map((p) => <a key={p.href} href={p.href} className={`${linkClass} block`}>{p.label}</a>)}
-                <a href={FAX.href} className={`${linkClass} block`}>Fax: {FAX.label}</a>
-              </p>
-              <div className="grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-1">
-                {groups.map((group) => (
-                  <div key={group.label} className="min-w-0">
-                    <span className="block text-[10px] uppercase tracking-[0.25em] text-primary">{group.label}</span>
-                    {group.emails.map((email) => (
-                      <a key={email} href={`mailto:${email}`} className={`${linkClass} block break-all`}>{email}</a>
-                    ))}
-                  </div>
-                ))}
-              </div>
-            </address>
           </div>
         </div>
       </Reveal>
