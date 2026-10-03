@@ -3,17 +3,17 @@ import { Link, NavLink } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'motion/react';
 import { NAV_LINKS } from '../lib/hotel-data.ts';
-import { LOGO_URL } from '../lib/logo.ts';
+import { HEADER_LOGO_URL } from '../lib/logo.ts';
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-// No circle: mix-blend-multiply makes the artwork's white background disappear on the ivory header.
+// Wide cropped logo; fixed height keeps it inside the header, multiply hides its white background.
 function Logo({ alt, small = false }: { alt: string; small?: boolean }) {
   return (
     <img
-      src={LOGO_URL}
+      src={HEADER_LOGO_URL}
       alt={alt}
-      className={`w-auto shrink-0 object-contain mix-blend-multiply transition-all duration-500 ${small ? 'h-20' : 'h-24 md:h-28'}`}
+      className={`block w-auto max-w-[62vw] shrink-0 object-contain mix-blend-multiply transition-all duration-500 ${small ? 'h-12 md:h-14' : 'h-14 md:h-16'}`}
     />
   );
 }
@@ -46,8 +46,8 @@ export default function SiteHeader() {
       transition={{ duration: 0.8, ease: EASE }}
       className={`sticky top-0 z-50 border-b transition-all duration-500 ${scrolled ? 'border-[#e6d9b8] bg-[#fbf8f1]/90 shadow-[0_8px_30px_-18px_rgba(90,70,30,0.35)] backdrop-blur-xl' : 'border-transparent bg-[#fbf8f1]'}`}
     >
-      <div className={`mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 transition-all duration-500 lg:px-8 ${scrolled ? 'h-[88px]' : 'h-[104px] md:h-[120px]'}`}>
-        <Link to="/" className="flex min-w-0 items-center transition-transform duration-500 hover:scale-105" aria-label="The Imperial Palace Rajkot, home">
+      <div className={`mx-auto flex max-w-7xl items-center justify-between gap-4 overflow-hidden px-5 transition-all duration-500 lg:px-8 ${scrolled ? 'h-[70px] md:h-[76px]' : 'h-[80px] md:h-[88px]'}`}>
+        <Link to="/" className="flex min-w-0 items-center transition-transform duration-500 hover:scale-[1.03]" aria-label="The Imperial Palace Rajkot, home">
           <Logo alt="The Imperial Palace logo" small={scrolled} />
         </Link>
 
@@ -64,7 +64,7 @@ export default function SiteHeader() {
           ))}
         </nav>
 
-        <button type="button" aria-label="Open navigation" aria-expanded={open} onClick={() => setOpen(true)} className="flex h-11 w-11 cursor-pointer items-center justify-center text-[#3a3024] xl:hidden">
+        <button type="button" aria-label="Open navigation" aria-expanded={open} onClick={() => setOpen(true)} className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center text-[#3a3024] xl:hidden">
           <Menu className="h-6 w-6" />
         </button>
       </div>
@@ -81,7 +81,7 @@ export default function SiteHeader() {
             transition={{ duration: 0.4, ease: EASE }}
             className="fixed inset-0 z-[100] overflow-y-auto bg-[#fbf8f1]"
           >
-            <div className="flex h-[104px] items-center justify-between px-5">
+            <div className="flex h-[80px] items-center justify-between px-5">
               <Logo alt="The Imperial Palace" />
               <button type="button" aria-label="Close navigation" onClick={close} className="flex h-11 w-11 cursor-pointer items-center justify-center text-[#3a3024]"><X className="h-6 w-6" /></button>
             </div>
