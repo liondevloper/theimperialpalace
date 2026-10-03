@@ -24,8 +24,8 @@ export const SECTIONS: SectionDef[] = [
     fields: [
       text("heroEyebrow", "Hero small heading"), text("heroTitle", "Hero title"), text("heroHighlight", "Hero highlighted word", true, "Shown in gold italics after the title"),
       area("heroSubtitle", "Hero subtitle"),
-      { name: "heroImage", label: "Hero background photo (below the header)", type: "image", required: false, help: "Optional. Leave empty to show the navy and gold background." },
-      { name: "heroVideo", label: "Hero background video (below the header)", type: "video", required: false, help: "Optional. MP4 or WebM, under 50 MB. Plays silently on loop. If you add both, the video plays and the photo shows while it loads." },
+      { name: "heroImage", label: "Hero background photo (below the header)", type: "image", required: false, help: "Optional. Leave empty to show the navy and gold background. Tip: add a photo too when you use a video, it shows instantly while the video loads." },
+      { name: "heroVideo", label: "Hero background video (below the header)", type: "video", required: false, help: "Optional. MP4, under 30 MB. For the fastest loading keep it under 10 MB: 1080p or 720p, 10 to 20 seconds, no sound. Plays silently on loop." },
       text("welcomeTitle", "Welcome heading"), area("welcomeText", "Welcome text"),
       { name: "facts", label: "Key numbers", type: "lines", required: true, help: "One per line, format: 200+ | Rooms & suites" },
       { name: "marquee", label: "Scrolling highlights ribbon", type: "lines", required: true, help: "One phrase per line" },

@@ -108,10 +108,13 @@ export async function resetContent(key: ContentKey): Promise<string | null> {
 const MB = 1024 * 1024;
 const MEDIA = {
   image: { prefix: "image/", max: 5 * MB, fallbackExt: "jpg", typeError: "Please choose an image file.", sizeError: "Image must be smaller than 5 MB." },
-  // Videos are larger; keep under 50 MB so the hero loads fast and fits storage limits.
-  video: { prefix: "video/", max: 50 * MB, fallbackExt: "mp4", typeError: "Please choose a video file (MP4 or WebM).", sizeError: "Video must be smaller than 50 MB." },
+  // Smaller videos start playing much sooner, especially on phones. Under 10 MB is ideal.
+  video: { prefix: "video/", max: 30 * MB, fallbackExt: "mp4", typeError: "Please choose a video file (MP4 or WebM).", sizeError: "Video must be smaller than 30 MB. Compress it to under 10 MB for the fastest loading." },
 } as const;
 export type MediaKind = keyof typeof MEDIA;
+
+// Every upload gets a unique file name, so browsers and the CDN can safely cache it for a year.
+const ONE_YEAR_SECONDS = "31536000";
 
 /** Uploads an image or video to the public site-media bucket and returns its URL. */
 export async function uploadMedia(file: File, kind: MediaKind): Promise<string> {
@@ -120,7 +123,7 @@ export async function uploadMedia(file: File, kind: MediaKind): Promise<string> 
   if (file.size > rule.max) throw new Error(rule.sizeError);
   const ext = file.name.split(".").pop()?.toLowerCase() ?? rule.fallbackExt;
   const path = `${Date.now()}-${slugify(file.name.replace(/\.[^.]+$/, "")) || kind}.${ext}`;
-  const { error } = await supabase.storage.from("site-media").upload(path, file, { contentType: file.type });
+  const { error } = await supabase.storage.from("site-media").upload(path, file, { contentType: file.type, cacheControl: ONE_YEAR_SECONDS });
   if (error) throw new Error("Upload failed. Please try again.");
   return supabase.storage.from("site-media").getPublicUrl(path).data.publicUrl;
 }
