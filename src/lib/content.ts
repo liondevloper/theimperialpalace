@@ -105,15 +105,24 @@ export async function resetContent(key: ContentKey): Promise<string | null> {
   return null;
 }
 
-const MAX_UPLOAD = 5 * 1024 * 1024;
+const MB = 1024 * 1024;
+const MEDIA = {
+  image: { prefix: "image/", max: 5 * MB, fallbackExt: "jpg", typeError: "Please choose an image file.", sizeError: "Image must be smaller than 5 MB." },
+  // Videos are larger; keep under 50 MB so the hero loads fast and fits storage limits.
+  video: { prefix: "video/", max: 50 * MB, fallbackExt: "mp4", typeError: "Please choose a video file (MP4 or WebM).", sizeError: "Video must be smaller than 50 MB." },
+} as const;
+export type MediaKind = keyof typeof MEDIA;
 
-/** Uploads an image to the public site-media bucket and returns its URL. */
-export async function uploadImage(file: File): Promise<string> {
-  if (!file.type.startsWith("image/")) throw new Error("Please choose an image file.");
-  if (file.size > MAX_UPLOAD) throw new Error("Image must be smaller than 5 MB.");
-  const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
-  const path = `${Date.now()}-${slugify(file.name.replace(/\.[^.]+$/, "")) || "image"}.${ext}`;
+/** Uploads an image or video to the public site-media bucket and returns its URL. */
+export async function uploadMedia(file: File, kind: MediaKind): Promise<string> {
+  const rule = MEDIA[kind];
+  if (!file.type.startsWith(rule.prefix)) throw new Error(rule.typeError);
+  if (file.size > rule.max) throw new Error(rule.sizeError);
+  const ext = file.name.split(".").pop()?.toLowerCase() ?? rule.fallbackExt;
+  const path = `${Date.now()}-${slugify(file.name.replace(/\.[^.]+$/, "")) || kind}.${ext}`;
   const { error } = await supabase.storage.from("site-media").upload(path, file, { contentType: file.type });
   if (error) throw new Error("Upload failed. Please try again.");
   return supabase.storage.from("site-media").getPublicUrl(path).data.publicUrl;
 }
+
+export const uploadImage = (file: File) => uploadMedia(file, "image");
