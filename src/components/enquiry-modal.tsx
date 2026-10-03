@@ -39,7 +39,7 @@ export default function EnquiryModal({ kind, open, onClose, defaults }: Props) {
           </div>
         </aside>
         <div className="p-5 pt-14 sm:p-8 sm:pt-12">
-          <EnquiryForm kind={kind} defaults={defaults} />
+          <EnquiryForm kind={kind} defaults={defaults} stickySubmit />
         </div>
       </div>
     </Modal>
