@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { CalendarCheck, Menu, X } from 'lucide-react';
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'motion/react';
 import { NAV_LINKS } from '../lib/hotel-data.ts';
 import { HEADER_LOGO_URL } from '../lib/logo.ts';
+import { BTN } from '../lib/styles.ts';
+import { BookStayButton } from './book-stay-modal.tsx';
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -51,7 +53,7 @@ export default function SiteHeader() {
           <Logo alt="The Imperial Palace logo" small={scrolled} />
         </Link>
 
-        <nav aria-label="Primary" className="hidden items-center gap-7 xl:flex">
+        <nav aria-label="Primary" className="hidden items-center gap-6 xl:flex">
           {NAV_LINKS.map((link) => (
             <NavLink key={link.to} to={link.to} className={({ isActive }) => `group relative py-2 text-[11px] uppercase tracking-[0.18em] transition-colors hover:text-[#8a6a22] ${isActive ? 'text-[#8a6a22]' : 'text-[#3a3024]/80'}`}>
               {({ isActive }) => (
@@ -64,9 +66,15 @@ export default function SiteHeader() {
           ))}
         </nav>
 
-        <button type="button" aria-label="Open navigation" aria-expanded={open} onClick={() => setOpen(true)} className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center text-[#3a3024] xl:hidden">
-          <Menu className="h-6 w-6" />
-        </button>
+        <div className="flex shrink-0 items-center gap-2">
+          <BookStayButton className={`${BTN.gold} hidden px-5 sm:inline-flex`}>
+            <CalendarCheck className="h-4 w-4" />
+            Book stay
+          </BookStayButton>
+          <button type="button" aria-label="Open navigation" aria-expanded={open} onClick={() => setOpen(true)} className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center text-[#3a3024] xl:hidden">
+            <Menu className="h-6 w-6" />
+          </button>
+        </div>
       </div>
 
       <AnimatePresence>
@@ -91,6 +99,10 @@ export default function SiteHeader() {
                   <Link to={link.to} onClick={close} className="font-serif text-3xl text-[#2a2218] transition-colors hover:text-[#8a6a22]">{link.label}</Link>
                 </motion.div>
               ))}
+              <BookStayButton onOpen={close} className={`${BTN.gold} mt-4`}>
+                <CalendarCheck className="h-4 w-4" />
+                Book stay
+              </BookStayButton>
             </nav>
           </motion.div>
         )}
