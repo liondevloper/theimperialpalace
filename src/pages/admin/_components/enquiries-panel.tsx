@@ -17,7 +17,8 @@ export type Enquiry = {
 };
 
 const STATUSES = ["new", "contacted", "closed"];
-const KINDS = ["all", "booking", "wedding", "event", "contact", "dining", "wellness"];
+// Bookings live in their own Reservations tab, so they are not listed here.
+const KINDS = ["all", "wedding", "event", "contact", "dining", "wellness"];
 const LIMIT = 200;
 // New enquiries show up on their own: the list re-checks every few seconds.
 export const REFRESH_MS = 10_000;
@@ -58,7 +59,7 @@ export default function EnquiriesPanel({ onlyKind, title = "Enquiries" }: { only
     if (!searching) q = q.gte("created_at", startOfToday());
     if (onlyKind) q = q.eq("kind", onlyKind);
     else if (kind !== "all") q = q.eq("kind", kind);
-    else q = q.neq("kind", "career");
+    else q = q.not("kind", "in", "(career,booking)");
     if (status !== "all") q = q.eq("status", status);
     const { data, error: err } = await q;
     setLoading(false);
