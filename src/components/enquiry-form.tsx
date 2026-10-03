@@ -6,6 +6,7 @@ import type { EnquiryKind, FormField } from "../lib/forms.ts";
 import { submitEnquiry } from "../lib/enquiries.ts";
 import { THANK_YOU } from "../lib/site-config.ts";
 import { BTN, FIELD, LABEL } from "../lib/styles.ts";
+import PhoneInput from "./phone-input.tsx";
 import WhatsappField, { whatsappError } from "./whatsapp-field.tsx";
 
 // `stickySubmit` keeps the send button pinned at the bottom of a popup so it never needs scrolling to.
@@ -29,11 +30,11 @@ export default function EnquiryForm({ kind, defaults = {}, showHeading = true, s
   const [submitError, setSubmitError] = useState("");
   const fieldId = (name: string) => `${uid}-${name}`;
 
-  const onChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = event.target;
+  const setValue = (name: string, value: string) => {
     setValues((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: "" }));
   };
+  const onChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setValue(event.target.name, event.target.value);
 
   const onSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -70,8 +71,8 @@ export default function EnquiryForm({ kind, defaults = {}, showHeading = true, s
     <form onSubmit={onSubmit} noValidate className="grid gap-4 sm:grid-cols-2">
       {showHeading && (
         <div className="sm:col-span-2">
-          <h2 className="pr-10 font-serif text-3xl font-light text-foreground">{config.title}</h2>
-          <p className="mt-2 text-sm leading-6 text-muted-foreground">{config.subtitle}</p>
+          <h2 className="pr-10 font-serif text-2xl font-light text-foreground sm:text-3xl">{config.title}</h2>
+          <p className="mt-1 text-sm leading-6 text-muted-foreground">{config.subtitle}</p>
         </div>
       )}
       {config.fields.map((field) => {
@@ -86,6 +87,8 @@ export default function EnquiryForm({ kind, defaults = {}, showHeading = true, s
                 <textarea {...shared} rows={3} placeholder={field.placeholder} className={`${FIELD} h-auto py-2`} />
               ) : field.type === "select" ? (
                 <select {...shared} className={FIELD}>{field.options?.map((option) => <option key={option}>{option}</option>)}</select>
+              ) : field.type === "tel" ? (
+                <PhoneInput id={id} name={field.name} value={values[field.name] ?? ""} onChange={(v) => setValue(field.name, v)} invalid={!!error} describedBy={error ? `${id}-error` : undefined} />
               ) : (
                 <input {...shared} type={field.type} min={field.type === "date" ? todayIso() : field.min} placeholder={field.placeholder} className={FIELD} />
               )}

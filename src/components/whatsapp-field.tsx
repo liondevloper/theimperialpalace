@@ -1,4 +1,5 @@
 import { useId } from "react";
+import PhoneInput from "./phone-input.tsx";
 import { FIELD, LABEL } from "../lib/styles.ts";
 
 const PHONE_RE = /^\+?[\d\s()-]{8,18}$/;
@@ -25,22 +26,16 @@ export default function WhatsappField({ phone, value, same, onSameChange, onChan
   return (
     <div className="grid min-w-0 content-start gap-1.5">
       <label htmlFor={id} className={LABEL}>WhatsApp number</label>
-      <input
-        id={id}
-        type="tel"
-        autoComplete="tel"
-        placeholder="+91 98765 43210"
-        value={same ? phone : value}
-        readOnly={same}
-        onChange={(e) => onChange(e.target.value)}
-        aria-invalid={error ? true : undefined}
-        className={FIELD}
-      />
+      {same ? (
+        <input id={id} type="tel" readOnly value={phone} placeholder="Same as phone number" className={FIELD} />
+      ) : (
+        <PhoneInput id={id} value={value} onChange={onChange} invalid={!!error} describedBy={error ? `${id}-error` : undefined} />
+      )}
       <label className="flex min-h-9 cursor-pointer items-center gap-2 text-xs text-muted-foreground">
         <input type="checkbox" checked={same} onChange={(e) => onSameChange(e.target.checked)} className="h-4 w-4 accent-[#c9a84c]" />
         My phone number is also my WhatsApp number
       </label>
-      {error && <p className="text-xs text-destructive">{error}</p>}
+      {error && <p id={`${id}-error`} className="text-xs text-destructive">{error}</p>}
     </div>
   );
 }

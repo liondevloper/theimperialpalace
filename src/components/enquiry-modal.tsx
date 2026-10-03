@@ -11,6 +11,7 @@ import { CONTACT_INFORMATION, HOTEL_IMAGES } from "../lib/hotel-data.ts";
 type Props = { kind: EnquiryKind; open: boolean; onClose: () => void; defaults?: Record<string, string> };
 
 // Split layout: hotel photo + contact details on the left, the form on the right.
+// The form starts right at the top so the heading is visible the moment the pop-up opens.
 export default function EnquiryModal({ kind, open, onClose, defaults }: Props) {
   const c = CONTACT_INFORMATION;
   const details = [
@@ -38,7 +39,7 @@ export default function EnquiryModal({ kind, open, onClose, defaults }: Props) {
             </ul>
           </div>
         </aside>
-        <div className="p-5 pt-14 sm:p-8 sm:pt-12">
+        <div className="p-5 sm:p-8">
           <EnquiryForm kind={kind} defaults={defaults} stickySubmit />
         </div>
       </div>

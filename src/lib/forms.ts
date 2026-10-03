@@ -11,14 +11,16 @@ export type FormField = {
   wide?: boolean;
   min?: number;
 };
-export type EnquiryKind = "booking" | "wedding" | "event" | "contact" | "dining" | "wellness";
+export type EnquiryKind = "booking" | "wedding" | "event" | "contact" | "dining" | "wellness" | "career";
 export type FormConfig = { title: string; subtitle: string; submitLabel: string; fields: FormField[] };
 
 const NAME: FormField = { name: "name", label: "Full name", type: "text", required: true, placeholder: "John Smith" };
 const EMAIL: FormField = { name: "email", label: "Email", type: "email", required: true, placeholder: "example@gmail.com" };
-const PHONE: FormField = { name: "phone", label: "Phone", type: "tel", required: true, placeholder: "+91 98765 43210" };
+const PHONE: FormField = { name: "phone", label: "Phone", type: "tel", required: true };
 const message = (placeholder: string): FormField => ({ name: "message", label: "Message", type: "textarea", placeholder, wide: true });
 const guests = (label = "Guests"): FormField => ({ name: "guests", label, type: "number", required: true, placeholder: "2", min: 1 });
+
+export const CAREER_DEPARTMENTS = ["Front Office", "Housekeeping", "Food & Beverage Service", "Kitchen", "Banquets", "Sales & Marketing", "Engineering", "Accounts", "Human Resources", "Security", "Other"];
 
 export const FORM_CONFIGS: Record<EnquiryKind, FormConfig> = {
   booking: {
@@ -78,6 +80,18 @@ export const FORM_CONFIGS: Record<EnquiryKind, FormConfig> = {
       { name: "service", label: "Experience", type: "select", options: AMENITIES.map((a) => a.name) },
       { name: "date", label: "Preferred date", type: "date", required: true },
       message("Anything we should know")],
+  },
+  career: {
+    title: "Join our team",
+    subtitle: "Send us your details and we will find an opening for you at The Imperial Palace.",
+    submitLabel: "Send application",
+    fields: [NAME, EMAIL, PHONE,
+      { name: "qualification", label: "Qualification", type: "text", required: true, placeholder: "Qualification" },
+      { name: "employedAt", label: "Employed at", type: "text", required: true, placeholder: "Employed at" },
+      { name: "designation", label: "Designation", type: "text", required: true, placeholder: "Designation" },
+      { name: "experience", label: "Total experience (years)", type: "text", placeholder: "3" },
+      { name: "department", label: "Department you are interested in", type: "select", options: CAREER_DEPARTMENTS, wide: true },
+      { name: "message", label: "Current job description", type: "textarea", placeholder: "Current Job Description", wide: true }],
   },
 };
 
