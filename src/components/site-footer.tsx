@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { MapPin, Navigation, Star } from 'lucide-react';
-import { CONTACT_INFORMATION, FOOTER_EXTRA_LINKS, NAV_LINKS, contactPhones, footerMaps, mailEmailList, mapEmbedUrl, reservationEmailList } from '../lib/hotel-data.ts';
+import { CONTACT_INFORMATION, FOOTER_EXTRA_LINKS, NAV_LINKS, contactPhones, footerMaps, mapEmbedUrl } from '../lib/hotel-data.ts';
+import { FAX, emailGroups } from '../lib/emails.ts';
 import { Logo } from './site-header.tsx';
 import { Reveal } from './hotel-page.tsx';
 import PremiumMap from './premium-map.tsx';
@@ -82,10 +83,7 @@ function FooterMap() {
 
 export default function SiteFooter() {
   // Read at render time so edits saved from the admin panel show up.
-  const emailGroups = [
-    { label: 'Reservations', emails: reservationEmailList() },
-    { label: 'Mail', emails: mailEmailList() },
-  ].filter((g) => g.emails.length > 0);
+  const groups = emailGroups();
   const phones = contactPhones();
   const explore = [{ label: 'Rooms & suites', to: '/stay' }, ...NAV_LINKS.filter((l) => l.to !== '/stay' && l.to !== '/contact'), ...FOOTER_EXTRA_LINKS];
   return (
@@ -117,6 +115,8 @@ export default function SiteFooter() {
             <ul className="space-y-3">
               <li><Link to="/contact" className={linkClass}>Contact & enquiries</Link></li>
               <li><Link to="/stay#book" className={linkClass}>Check availability</Link></li>
+              <li><Link to="/career" className={linkClass}>Careers</Link></li>
+              <li><Link to="/privacy-policy" className={linkClass}>Privacy policy</Link></li>
             </ul>
           </div>
           <div>
@@ -127,8 +127,11 @@ export default function SiteFooter() {
                   <span key={line} className={i === 0 ? 'block font-medium text-foreground' : 'block'}>{line}</span>
                 ))}
               </p>
-              <p>{phones.map((p) => <a key={p.href} href={p.href} className={`${linkClass} block`}>{p.label}</a>)}</p>
-              {emailGroups.map((group) => (
+              <p>
+                {phones.map((p) => <a key={p.href} href={p.href} className={`${linkClass} block`}>{p.label}</a>)}
+                <a href={FAX.href} className={`${linkClass} block`}>Fax: {FAX.label}</a>
+              </p>
+              {groups.map((group) => (
                 <div key={group.label}>
                   <span className="block text-[10px] uppercase tracking-[0.25em] text-primary">{group.label}</span>
                   {group.emails.map((email) => (
@@ -141,8 +144,9 @@ export default function SiteFooter() {
         </div>
       </Reveal>
       <FooterMap />
-      <div className="relative border-t border-border px-5 py-6">
-        <p className="mx-auto max-w-7xl text-center text-xs text-muted-foreground">&copy; {new Date().getFullYear()} The Imperial Palace, City Organisers Private Limited. All rights reserved.</p>
+      <div className="relative flex flex-col items-center gap-2 border-t border-border px-5 py-6 text-xs text-muted-foreground">
+        <p className="text-center">&copy; {new Date().getFullYear()} The Imperial Palace, City Organisers Private Limited. All rights reserved.</p>
+        <p className="flex gap-4"><Link to="/privacy-policy" className="hover:text-primary">Privacy policy</Link><Link to="/career" className="hover:text-primary">Careers</Link></p>
       </div>
     </footer>
   );
