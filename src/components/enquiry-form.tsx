@@ -84,7 +84,7 @@ export default function EnquiryForm({ kind, defaults = {}, showHeading = true, s
   if (sent) {
     return (
       <div className="flex flex-col items-center py-8 text-center" role="status">
-        <span className="mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-[#c9a84c] text-[#14110c]"><Check className="h-7 w-7" /></span>
+        <span className="mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-[var(--brand-gold)] text-[var(--brand-ink-alt)]"><Check className="h-7 w-7" /></span>
         <h3 className="font-serif text-3xl font-light text-foreground">{THANK_YOU}</h3>
         <p className="mt-3 max-w-sm text-sm leading-6 text-muted-foreground">Our team will get back to you shortly.</p>
       </div>
