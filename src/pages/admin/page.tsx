@@ -24,7 +24,8 @@ const GROUPS = [
   { title: "Website content", keys: SECTIONS.map((s) => s.key as string) },
 ];
 
-const FIXED_LABELS: Record<string, string> = { dashboard: "Dashboard", enquiries: "Enquiries", reservations: "Reservations", career: "Career enquiries" };
+// "Room bookings" are the Book Stay requests; dining, wedding, event and wellness requests are in Enquiries.
+const FIXED_LABELS: Record<string, string> = { dashboard: "Dashboard", enquiries: "All enquiries", reservations: "Room bookings", career: "Career enquiries" };
 
 // Sign in only. New admin accounts cannot be created from the website.
 function LoginForm() {
@@ -145,7 +146,7 @@ export default function AdminPage() {
           </nav>
         </header>
         <main className="mx-auto max-w-5xl px-5 py-8 lg:py-12">
-          {section ? <ContentEditor key={section.key} def={section} /> : tab === "enquiries" ? <EnquiriesPanel /> : tab === "reservations" ? <EnquiriesPanel key="reservations" onlyKind="booking" title="Reservations" /> : tab === "career" ? <EnquiriesPanel key="career" onlyKind="career" title="Career enquiries" /> : <DashboardPanel go={go} />}
+          {section ? <ContentEditor key={section.key} def={section} /> : tab === "enquiries" ? <EnquiriesPanel title="All enquiries" /> : tab === "reservations" ? <EnquiriesPanel key="reservations" onlyKind="booking" title="Room bookings" /> : tab === "career" ? <EnquiriesPanel key="career" onlyKind="career" title="Career enquiries" /> : <DashboardPanel go={go} />}
         </main>
       </div>
     </div>
