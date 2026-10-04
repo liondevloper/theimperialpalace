@@ -1,10 +1,14 @@
 import { Link } from 'react-router-dom';
+import { FacebookLogo, XLogo } from '@phosphor-icons/react';
 import { Navigation, Star } from 'lucide-react';
-import { CONTACT_INFORMATION, FOOTER_EXTRA_LINKS, NAV_LINKS, contactPhones, footerMaps, mapEmbedUrl } from '../lib/hotel-data.ts';
+import { CONTACT_INFORMATION, FOOTER_EXTRA_LINKS, NAV_LINKS, RESTAURANTS, contactPhones, footerMaps, mapEmbedUrl } from '../lib/hotel-data.ts';
 import { FAX, emailGroups } from '../lib/emails.ts';
+import { WHATSAPP, whatsappUrl } from '../lib/site-config.ts';
 import { Logo } from './site-header.tsx';
 import { Reveal } from './hotel-page.tsx';
 import PremiumMap from './premium-map.tsx';
+import InstagramIcon, { instagramOf } from './instagram-icon.tsx';
+import WhatsappIcon from './whatsapp-icon.tsx';
 
 const linkClass = 'text-sm text-muted-foreground transition-colors hover:text-primary';
 // Emails must never wrap onto a second line. On phones they use a smaller size so two columns still fit.
@@ -21,10 +25,15 @@ const FOOTER_ADDRESS_LINES = [
   'Dr. Yagnik Road, Rajkot 360001 INDIA',
 ];
 
+// Official social pages of The Imperial Palace.
+const SOCIAL_LINKS = {
+  instagram: 'https://www.instagram.com/imperialpalacerajkot',
+  facebook: 'https://www.facebook.com/share/1CX45kWQCx/',
+  x: 'https://x.com/imperial_rajkot',
+} as const;
+
 const FRAME_CLASS = 'relative overflow-hidden border border-[#c9a84c]/40 shadow-[0_30px_60px_-35px_rgba(0,0,0,0.8)]';
 const HEIGHT_CLASS = 'h-[220px] md:h-[340px]';
-// Directions button sits at the bottom of the map so it never covers the pin.
-const BUTTON_SPOT = 'absolute bottom-3 left-1/2 -translate-x-1/2';
 
 function DirectionsButton() {
   return (
@@ -34,30 +43,41 @@ function DirectionsButton() {
   );
 }
 
-// Dark navy and gold map with only the directions button on top.
+// Each map has its Get directions button underneath it, so the button never covers the map.
+function MapWithButton({ children }: { children: React.ReactNode }) {
+  return (
+    <div>
+      {children}
+      <div className="mt-4 flex justify-center"><DirectionsButton /></div>
+    </div>
+  );
+}
+
+// Dark navy and gold map.
 function PremiumMapCard() {
   return (
-    <div className={FRAME_CLASS}>
-      <PremiumMap className={`${HEIGHT_CLASS} w-full`}>
-        <div className={BUTTON_SPOT}><DirectionsButton /></div>
-      </PremiumMap>
-    </div>
+    <MapWithButton>
+      <div className={FRAME_CLASS}>
+        <PremiumMap className={`${HEIGHT_CLASS} w-full`} />
+      </div>
+    </MapWithButton>
   );
 }
 
 function GoogleMapCard() {
   return (
-    <div className={`${FRAME_CLASS} ${HEIGHT_CLASS}`}>
-      <iframe
-        title="Google map of The Imperial Palace, Rajkot"
-        src={mapEmbedUrl()}
-        loading="lazy"
-        referrerPolicy="no-referrer-when-downgrade"
-        className="absolute left-0 w-full border-0"
-        style={{ top: -GOOGLE_CROP, height: `calc(100% + ${GOOGLE_CROP * 2}px)` }}
-      />
-      <div className={BUTTON_SPOT}><DirectionsButton /></div>
-    </div>
+    <MapWithButton>
+      <div className={`${FRAME_CLASS} ${HEIGHT_CLASS}`}>
+        <iframe
+          title="Google map of The Imperial Palace, Rajkot"
+          src={mapEmbedUrl()}
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+          className="absolute left-0 w-full border-0"
+          style={{ top: -GOOGLE_CROP, height: `calc(100% + ${GOOGLE_CROP * 2}px)` }}
+        />
+      </div>
+    </MapWithButton>
   );
 }
 
@@ -66,7 +86,7 @@ function FooterMap() {
   const { premium, google } = footerMaps();
   return (
     <div className="relative mx-auto max-w-7xl px-5 pb-8 md:pb-12 lg:px-8">
-      <div className={premium && google ? 'grid gap-4 md:grid-cols-2 md:gap-6' : ''}>
+      <div className={premium && google ? 'grid gap-6 md:grid-cols-2' : ''}>
         {google && <GoogleMapCard />}
         {premium && <PremiumMapCard />}
       </div>
@@ -100,6 +120,38 @@ function ContactBlock() {
           ))}
         </div>
       </address>
+    </div>
+  );
+}
+
+const socialBtn = 'flex h-10 w-10 items-center justify-center border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary';
+
+// Delicacy Bakery first, then The Imperial Palace with its WhatsApp number and social pages.
+function SocialBlock() {
+  const bakery = RESTAURANTS.find((r) => r.slug === 'delicacy');
+  const bakeryInstagram = bakery ? instagramOf(bakery) : '';
+  const whatsappLabel = `+${WHATSAPP.number.slice(0, 2)} ${WHATSAPP.number.slice(2)}`;
+  return (
+    <div className="relative mx-auto grid max-w-7xl gap-8 border-t border-border px-5 py-8 text-center sm:grid-cols-2 sm:text-left lg:px-8">
+      {bakeryInstagram && (
+        <div>
+          <h3 className={headingClass}>Delicacy Bakery</h3>
+          <a href={bakeryInstagram} target="_blank" rel="noopener noreferrer" className={`${linkClass} inline-flex items-center gap-2`}>
+            <InstagramIcon className="h-4 w-4" />Follow on Instagram
+          </a>
+        </div>
+      )}
+      <div>
+        <h3 className={headingClass}>The Imperial Palace</h3>
+        <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" className={`${linkClass} inline-flex items-center gap-2`}>
+          <WhatsappIcon className="h-4 w-4 text-[#25D366]" />{whatsappLabel}
+        </a>
+        <div className="mt-4 flex justify-center gap-2 sm:justify-start">
+          <a href={SOCIAL_LINKS.instagram} target="_blank" rel="noopener noreferrer" aria-label="The Imperial Palace on Instagram" className={socialBtn}><InstagramIcon className="h-4 w-4" /></a>
+          <a href={SOCIAL_LINKS.facebook} target="_blank" rel="noopener noreferrer" aria-label="The Imperial Palace on Facebook" className={socialBtn}><FacebookLogo weight="fill" className="h-4 w-4" /></a>
+          <a href={SOCIAL_LINKS.x} target="_blank" rel="noopener noreferrer" aria-label="The Imperial Palace on X" className={socialBtn}><XLogo weight="fill" className="h-4 w-4" /></a>
+        </div>
+      </div>
     </div>
   );
 }
@@ -142,7 +194,12 @@ export default function SiteFooter() {
         </div>
       </Reveal>
       <FooterMap />
+      <SocialBlock />
       <div className="relative flex flex-col items-center gap-2 border-t border-border px-5 py-4 text-xs text-muted-foreground md:py-6">
+        <nav aria-label="Legal" className="flex gap-5">
+          <Link to="/privacy-policy" className={linkClass}>Privacy Policy</Link>
+          <Link to="/career" className={linkClass}>Career</Link>
+        </nav>
         <p className="text-center">&copy; {new Date().getFullYear()} The Imperial Palace, City Organisers Private Limited. All rights reserved.</p>
       </div>
     </footer>
