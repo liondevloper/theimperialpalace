@@ -19,8 +19,22 @@ const EMAIL: FormField = { name: "email", label: "Email", type: "email", require
 const PHONE: FormField = { name: "phone", label: "Phone", type: "tel", required: true };
 const message = (placeholder: string): FormField => ({ name: "message", label: "Message", type: "textarea", placeholder, wide: true });
 const guests = (label = "Guests"): FormField => ({ name: "guests", label, type: "number", required: true, placeholder: "2", min: 1 });
+const range = (from: number, to: number) => Array.from({ length: to - from + 1 }, (_, i) => String(from + i));
+const ADULTS: FormField = { name: "adults", label: "Adults", type: "select", options: range(1, 20) };
+const CHILDREN: FormField = { name: "children", label: "Children", type: "select", options: range(0, 10) };
 
 export const CAREER_DEPARTMENTS = ["Front Office", "Housekeeping", "Food & Beverage Service", "Kitchen", "Banquets", "Sales & Marketing", "Engineering", "Accounts", "Human Resources", "Security", "Other"];
+
+// The floating enquiry button lets guests pick a subject; each subject opens the matching form.
+export const SUBJECT_KIND: Record<string, EnquiryKind> = {
+  "General enquiry": "contact",
+  "Dining reservation": "dining",
+  "Wedding reservation": "wedding",
+  "Event or banquet": "event",
+  "Wellness appointment": "wellness",
+};
+export const SUBJECTS = Object.keys(SUBJECT_KIND);
+export const SUBJECT_FIELD: FormField = { name: "subject", label: "Subject", type: "select", options: SUBJECTS, wide: true };
 
 export const FORM_CONFIGS: Record<EnquiryKind, FormConfig> = {
   booking: {
@@ -58,8 +72,7 @@ export const FORM_CONFIGS: Record<EnquiryKind, FormConfig> = {
     title: "Send an enquiry",
     subtitle: "Whether you are planning a stay or simply have a question, we would love to hear from you.",
     submitLabel: "Send message",
-    fields: [NAME, EMAIL, PHONE,
-      { name: "subject", label: "Subject", type: "select", options: ["Room reservation", "Banquet", "Dining reservation", "Wedding or event", "Wellness appointment", "General enquiry"] },
+    fields: [SUBJECT_FIELD, NAME, EMAIL, PHONE,
       { ...message("How can we help you?"), required: true }],
   },
   dining: {
@@ -69,7 +82,7 @@ export const FORM_CONFIGS: Record<EnquiryKind, FormConfig> = {
     fields: [NAME, EMAIL, PHONE,
       { name: "restaurant", label: "Restaurant", type: "select", options: RESTAURANTS.map((r) => r.name) },
       { name: "date", label: "Date", type: "date", required: true },
-      guests("Party size"),
+      ADULTS, CHILDREN,
       message("Dietary needs or special occasion")],
   },
   wellness: {

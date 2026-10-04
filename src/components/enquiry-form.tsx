@@ -1,7 +1,7 @@
 import { Fragment, useId, useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
 import { Check } from "lucide-react";
-import { FORM_CONFIGS, todayIso, validate } from "../lib/forms.ts";
+import { FORM_CONFIGS, SUBJECT_FIELD, SUBJECT_KIND, todayIso, validate } from "../lib/forms.ts";
 import type { EnquiryKind, FormField } from "../lib/forms.ts";
 import { submitEnquiry } from "../lib/enquiries.ts";
 import { THANK_YOU } from "../lib/site-config.ts";
@@ -10,7 +10,8 @@ import PhoneInput from "./phone-input.tsx";
 import WhatsappField, { whatsappError } from "./whatsapp-field.tsx";
 
 // `stickySubmit` keeps the send button pinned at the bottom of a popup so it never needs scrolling to.
-type Props = { kind: EnquiryKind; defaults?: Record<string, string>; showHeading?: boolean; stickySubmit?: boolean };
+// `subjectSwitch` (contact kind only) lets the guest pick a subject; the form below then becomes that subject's form.
+type Props = { kind: EnquiryKind; defaults?: Record<string, string>; showHeading?: boolean; stickySubmit?: boolean; subjectSwitch?: boolean };
 
 function initialValues(fields: FormField[], defaults: Record<string, string>) {
   const values: Record<string, string> = {};
@@ -18,10 +19,19 @@ function initialValues(fields: FormField[], defaults: Record<string, string>) {
   return values;
 }
 
-export default function EnquiryForm({ kind, defaults = {}, showHeading = true, stickySubmit = false }: Props) {
-  const config = FORM_CONFIGS[kind];
+// Non-contact forms have no subject field of their own, so the switcher adds it at the top.
+const fieldsFor = (kind: EnquiryKind, switcher: boolean): FormField[] => {
+  const fields = FORM_CONFIGS[kind].fields;
+  return switcher && kind !== "contact" ? [SUBJECT_FIELD, ...fields] : fields;
+};
+
+export default function EnquiryForm({ kind, defaults = {}, showHeading = true, stickySubmit = false, subjectSwitch = false }: Props) {
+  const switcher = subjectSwitch && kind === "contact";
   const uid = useId();
-  const [values, setValues] = useState(() => initialValues(config.fields, defaults));
+  const [activeKind, setActiveKind] = useState<EnquiryKind>(kind);
+  const config = FORM_CONFIGS[activeKind];
+  const fields = fieldsFor(activeKind, switcher);
+  const [values, setValues] = useState(() => initialValues(fields, defaults));
   const [whatsapp, setWhatsapp] = useState("");
   const [sameWhatsapp, setSameWhatsapp] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -34,16 +44,30 @@ export default function EnquiryForm({ kind, defaults = {}, showHeading = true, s
     setValues((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: "" }));
   };
-  const onChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setValue(event.target.name, event.target.value);
+
+  // Switching subject swaps the form but keeps what the guest already typed about themselves.
+  const changeSubject = (subject: string) => {
+    const nextKind = SUBJECT_KIND[subject] ?? "contact";
+    const keep = { name: values.name ?? "", email: values.email ?? "", phone: values.phone ?? "", subject };
+    setActiveKind(nextKind);
+    setValues(initialValues(fieldsFor(nextKind, true), keep));
+    setErrors({});
+    setSubmitError("");
+  };
+
+  const onChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    if (switcher && event.target.name === "subject") changeSubject(event.target.value);
+    else setValue(event.target.name, event.target.value);
+  };
 
   const onSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    const found = validate(config.fields, values);
+    const found = validate(fields, values);
     const finalWhatsapp = (sameWhatsapp ? values.phone : whatsapp).trim();
     const waError = sameWhatsapp ? "" : whatsappError(finalWhatsapp);
     if (waError) found.whatsapp = waError;
     setErrors(found);
-    const firstInvalid = config.fields.find((f) => found[f.name]);
+    const firstInvalid = fields.find((f) => found[f.name]);
     if (firstInvalid) {
       document.getElementById(fieldId(firstInvalid.name))?.focus();
       return;
@@ -51,7 +75,7 @@ export default function EnquiryForm({ kind, defaults = {}, showHeading = true, s
     if (waError) return;
     setSending(true);
     setSubmitError("");
-    const result = await submitEnquiry(kind, { ...values, whatsapp: finalWhatsapp });
+    const result = await submitEnquiry(activeKind, { ...values, whatsapp: finalWhatsapp });
     setSending(false);
     if (result.ok) setSent(true);
     else setSubmitError(result.message);
@@ -75,7 +99,7 @@ export default function EnquiryForm({ kind, defaults = {}, showHeading = true, s
           <p className="mt-1 text-sm leading-6 text-muted-foreground">{config.subtitle}</p>
         </div>
       )}
-      {config.fields.map((field) => {
+      {fields.map((field) => {
         const id = fieldId(field.name);
         const error = errors[field.name];
         const shared = { id, name: field.name, value: values[field.name], onChange, "aria-invalid": error ? true : undefined, "aria-describedby": error ? `${id}-error` : undefined };
