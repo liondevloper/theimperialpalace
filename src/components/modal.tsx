@@ -60,7 +60,7 @@ export default function Modal({ open, onClose, label, children, wide = false, sp
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className="fixed inset-0 z-[200] flex items-end justify-center bg-[#0b1426]/75 p-0 backdrop-blur-sm sm:items-center sm:p-4"
+      className="fixed inset-0 z-[200] flex items-end justify-center bg-[var(--brand-ink)]/75 p-0 backdrop-blur-sm sm:items-center sm:p-4"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
@@ -75,7 +75,7 @@ export default function Modal({ open, onClose, label, children, wide = false, sp
         initial={{ opacity: 0, y: 40, scale: 0.97 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.5, ease: EASE }}
-        className={`theme-ivory relative max-h-[94dvh] w-full overflow-y-auto border border-[#c9a84c]/40 bg-white text-foreground shadow-[0_40px_120px_-30px_rgba(0,0,0,0.7)] outline-none ${size}`}
+        className={`theme-ivory relative max-h-[94dvh] w-full overflow-y-auto border border-[var(--brand-gold)]/40 bg-white text-foreground shadow-[0_40px_120px_-30px_rgba(0,0,0,0.7)] outline-none ${size}`}
       >
         <button type="button" onClick={onClose} aria-label="Close" className="absolute right-3 top-3 z-10 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full bg-white/80 text-muted-foreground backdrop-blur hover:text-foreground">
           <X className="h-5 w-5" />
