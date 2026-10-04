@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { FacebookLogo, XLogo } from '@phosphor-icons/react';
+import { FacebookLogo, InstagramLogo, WhatsappLogo, XLogo } from '@phosphor-icons/react';
 import { Navigation, Star } from 'lucide-react';
 import { CONTACT_INFORMATION, FOOTER_EXTRA_LINKS, NAV_LINKS, RESTAURANTS, contactPhones, footerMaps, mapEmbedUrl } from '../lib/hotel-data.ts';
 import { FAX, emailGroups } from '../lib/emails.ts';
@@ -7,8 +7,7 @@ import { WHATSAPP, whatsappUrl } from '../lib/site-config.ts';
 import { Logo } from './site-header.tsx';
 import { Reveal } from './hotel-page.tsx';
 import PremiumMap from './premium-map.tsx';
-import InstagramIcon, { instagramOf } from './instagram-icon.tsx';
-import WhatsappIcon from './whatsapp-icon.tsx';
+import { instagramOf } from './instagram-icon.tsx';
 
 const linkClass = 'text-sm text-muted-foreground transition-colors hover:text-primary';
 // Emails must never wrap onto a second line. On phones they use a smaller size so two columns still fit.
@@ -96,7 +95,25 @@ function FooterMap() {
   );
 }
 
-// Address, phones and department emails. Each email stays on one line; emails sit in two columns.
+// Original brand logos in their brand colours. X is black, so it flips to white in dark mode.
+const iconBtn = 'flex h-10 w-10 items-center justify-center rounded-full border border-border bg-white transition-transform hover:scale-110';
+
+function InstagramLink({ href, label }: { href: string; label: string }) {
+  return <a href={href} target="_blank" rel="noopener noreferrer" aria-label={label} className={iconBtn}><InstagramLogo weight="fill" className="h-5 w-5 text-[#E4405F]" /></a>;
+}
+
+// The Imperial Palace social pages, shown right under the fax number.
+function HotelSocials() {
+  return (
+    <div className="mt-4 flex justify-center gap-2 sm:justify-start">
+      <InstagramLink href={SOCIAL_LINKS.instagram} label="The Imperial Palace on Instagram" />
+      <a href={SOCIAL_LINKS.facebook} target="_blank" rel="noopener noreferrer" aria-label="The Imperial Palace on Facebook" className={iconBtn}><FacebookLogo weight="fill" className="h-5 w-5 text-[#1877F2]" /></a>
+      <a href={SOCIAL_LINKS.x} target="_blank" rel="noopener noreferrer" aria-label="The Imperial Palace on X" className={iconBtn}><XLogo weight="fill" className="h-5 w-5 text-black" /></a>
+    </div>
+  );
+}
+
+// Address, phones, fax, social icons and department emails. Each email stays on one line; emails sit in two columns.
 function ContactBlock() {
   const groups = emailGroups();
   const phones = contactPhones();
@@ -110,6 +127,7 @@ function ContactBlock() {
             {phones.map((p) => <a key={p.href} href={p.href} className={`${linkClass} block`}>{p.label}</a>)}
             <a href={FAX.href} className={`${linkClass} block`}>Fax: {FAX.label}</a>
           </p>
+          <HotelSocials />
         </div>
         <div className="grid w-full grid-cols-[auto_auto] justify-between gap-x-3 gap-y-3 text-left sm:flex sm:w-auto sm:flex-wrap sm:justify-start sm:gap-x-10">
           {groups.map((group) => (
@@ -126,33 +144,19 @@ function ContactBlock() {
   );
 }
 
-const socialBtn = 'flex h-10 w-10 items-center justify-center border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary';
-
-// Delicacy Bakery first, then The Imperial Palace with its WhatsApp number and social pages.
-function SocialBlock() {
+// Delicacy Bakery: its WhatsApp number (with the WhatsApp logo) and Instagram logo.
+function BakeryBlock() {
   const bakery = RESTAURANTS.find((r) => r.slug === 'delicacy');
   const bakeryInstagram = bakery ? instagramOf(bakery) : '';
   const whatsappLabel = `+${WHATSAPP.number.slice(0, 2)} ${WHATSAPP.number.slice(2)}`;
   return (
-    <div className="relative mx-auto grid max-w-7xl gap-8 border-t border-border px-5 py-8 text-center sm:grid-cols-2 sm:text-left lg:px-8">
-      {bakeryInstagram && (
-        <div>
-          <h3 className={headingClass}>Delicacy Bakery</h3>
-          <a href={bakeryInstagram} target="_blank" rel="noopener noreferrer" className={`${linkClass} inline-flex items-center gap-2`}>
-            <InstagramIcon className="h-4 w-4" />Follow on Instagram
-          </a>
-        </div>
-      )}
-      <div>
-        <h3 className={headingClass}>The Imperial Palace</h3>
-        <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" className={`${linkClass} inline-flex items-center gap-2`}>
-          <WhatsappIcon className="h-4 w-4 text-[#25D366]" />{whatsappLabel}
+    <div className="relative mx-auto max-w-7xl border-t border-border px-5 py-8 text-center sm:text-left lg:px-8">
+      <h3 className={headingClass}>Delicacy Bakery</h3>
+      <div className="flex flex-wrap items-center justify-center gap-4 sm:justify-start">
+        <a href={whatsappUrl('Hello, I would like to know more about Delicacy Bakery.')} target="_blank" rel="noopener noreferrer" className={`${linkClass} inline-flex items-center gap-2`}>
+          <span className={iconBtn}><WhatsappLogo weight="fill" className="h-5 w-5 text-[#25D366]" /></span>{whatsappLabel}
         </a>
-        <div className="mt-4 flex justify-center gap-2 sm:justify-start">
-          <a href={SOCIAL_LINKS.instagram} target="_blank" rel="noopener noreferrer" aria-label="The Imperial Palace on Instagram" className={socialBtn}><InstagramIcon className="h-4 w-4" /></a>
-          <a href={SOCIAL_LINKS.facebook} target="_blank" rel="noopener noreferrer" aria-label="The Imperial Palace on Facebook" className={socialBtn}><FacebookLogo weight="fill" className="h-4 w-4" /></a>
-          <a href={SOCIAL_LINKS.x} target="_blank" rel="noopener noreferrer" aria-label="The Imperial Palace on X" className={socialBtn}><XLogo weight="fill" className="h-4 w-4" /></a>
-        </div>
+        {bakeryInstagram && <InstagramLink href={bakeryInstagram} label="Delicacy Bakery on Instagram" />}
       </div>
     </div>
   );
@@ -196,7 +200,7 @@ export default function SiteFooter() {
         </div>
       </Reveal>
       <FooterMap />
-      <SocialBlock />
+      <BakeryBlock />
       <div className="relative flex flex-col items-center gap-2 border-t border-border px-5 py-4 text-xs text-muted-foreground md:py-6">
         <nav aria-label="Legal" className="flex gap-5">
           <Link to="/privacy-policy" className={linkClass}>Privacy Policy</Link>
