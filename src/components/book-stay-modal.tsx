@@ -11,10 +11,13 @@ import { THANK_YOU } from "../lib/site-config.ts";
 import { BTN, FIELD, LABEL } from "../lib/styles.ts";
 
 const ANY_ROOM = "Any room type";
+const NO_PICKUP = "No pick-up needed";
+// Pick-up points come from the hotel's distance list: airport, railway and bus station.
+const PICKUP_OPTIONS = [NO_PICKUP, "Airport pick-up", "Railway station pick-up", "Bus station pick-up", "Other pick-up location"];
 const range = (from: number, to: number) => Array.from({ length: to - from + 1 }, (_, i) => String(from + i));
 
 type Stay = { checkin: string; checkout: string; adults: string; children: string; rooms: string; roomType: string };
-type Guest = { name: string; email: string; phone: string; message: string };
+type Guest = { name: string; email: string; phone: string; message: string; pickup: string; pickupTime: string; pickupDetails: string };
 type Step = "stay" | "guest" | "done";
 
 function Field({ label, htmlFor, error, wide, children }: { label: string; htmlFor: string; error?: string; wide?: boolean; children: ReactNode }) {
@@ -49,7 +52,7 @@ function BookStayFlow({ defaultRoom }: { defaultRoom?: string }) {
   const today = todayIso();
   const [step, setStep] = useState<Step>("stay");
   const [stay, setStay] = useState<Stay>({ checkin: "", checkout: "", adults: "2", children: "0", rooms: "1", roomType: defaultRoom ?? ANY_ROOM });
-  const [guest, setGuest] = useState<Guest>({ name: "", email: "", phone: "", message: "" });
+  const [guest, setGuest] = useState<Guest>({ name: "", email: "", phone: "", message: "", pickup: NO_PICKUP, pickupTime: "", pickupDetails: "" });
   const [whatsapp, setWhatsapp] = useState("");
   const [sameWhatsapp, setSameWhatsapp] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -58,6 +61,7 @@ function BookStayFlow({ defaultRoom }: { defaultRoom?: string }) {
 
   const nights = stay.checkin && stay.checkout ? nightsBetween(stay.checkin, stay.checkout) : 0;
   const guests = Number(stay.adults) + Number(stay.children);
+  const wantsPickup = guest.pickup !== NO_PICKUP;
 
   const updateStay = (key: keyof Stay, value: string) => {
     // Clear check-out if the new check-in is on or after it.
@@ -81,8 +85,9 @@ function BookStayFlow({ defaultRoom }: { defaultRoom?: string }) {
 
   const submit = async () => {
     const finalWhatsapp = (sameWhatsapp ? guest.phone : whatsapp).trim();
+    const { pickup, pickupTime, pickupDetails, ...contact } = guest;
     const values: Record<string, string> = {
-      ...guest,
+      ...contact,
       whatsapp: finalWhatsapp,
       guests: String(guests),
       checkin: stay.checkin,
@@ -92,6 +97,9 @@ function BookStayFlow({ defaultRoom }: { defaultRoom?: string }) {
       children: stay.children,
       rooms: stay.rooms,
       nights: String(nights),
+      pickup,
+      // Time and flight/train details only matter when a pick-up is requested.
+      ...(wantsPickup ? { pickupTime, pickupDetails } : {}),
     };
     const found = validate(FORM_CONFIGS.booking.fields, values);
     const waError = sameWhatsapp ? "" : whatsappError(finalWhatsapp);
@@ -185,8 +193,23 @@ function BookStayFlow({ defaultRoom }: { defaultRoom?: string }) {
               <PhoneInput id={id("phone")} value={guest.phone} onChange={(v) => updateGuest("phone", v)} invalid={!!errors.phone} describedBy={errors.phone ? `${id("phone")}-error` : undefined} />
             </Field>
             <WhatsappField phone={guest.phone} value={whatsapp} same={sameWhatsapp} onSameChange={setSameWhatsapp} onChange={(v) => { setWhatsapp(v); setErrors((p) => ({ ...p, whatsapp: "" })); }} error={errors.whatsapp} />
+            <Field label="Pick-up" htmlFor={id("pickup")} wide={!wantsPickup}>
+              <select id={id("pickup")} value={guest.pickup} onChange={(e) => updateGuest("pickup", e.target.value)} className={FIELD}>
+                {PICKUP_OPTIONS.map((o) => <option key={o}>{o}</option>)}
+              </select>
+            </Field>
+            {wantsPickup && (
+              <>
+                <Field label="Arrival date & time" htmlFor={id("pickupTime")}>
+                  <input id={id("pickupTime")} type="time" value={guest.pickupTime} onChange={(e) => updateGuest("pickupTime", e.target.value)} className={FIELD} />
+                </Field>
+                <Field label="Flight / train / bus number or pick-up address" htmlFor={id("pickupDetails")} wide>
+                  <input id={id("pickupDetails")} type="text" placeholder="6E 2145, or full address" value={guest.pickupDetails} onChange={(e) => updateGuest("pickupDetails", e.target.value)} className={FIELD} />
+                </Field>
+              </>
+            )}
             <Field label="Special requests" htmlFor={id("message")} wide>
-              <textarea id={id("message")} rows={3} placeholder="Early check-in, airport pickup, extra bed..." value={guest.message} onChange={(e) => updateGuest("message", e.target.value)} className={`${FIELD} h-auto py-2`} />
+              <textarea id={id("message")} rows={3} placeholder="Early check-in, extra bed..." value={guest.message} onChange={(e) => updateGuest("message", e.target.value)} className={`${FIELD} h-auto py-2`} />
             </Field>
           </div>
           {(submitError || errors.checkin || errors.checkout) && <p role="alert" className="text-sm text-destructive">{submitError || errors.checkin || errors.checkout}</p>}
