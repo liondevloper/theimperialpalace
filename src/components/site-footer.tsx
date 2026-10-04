@@ -13,6 +13,8 @@ const linkClass = 'text-sm text-muted-foreground transition-colors hover:text-pr
 // Emails must never wrap onto a second line. On phones they use a smaller size so two columns still fit.
 const emailClass = 'block whitespace-nowrap text-[10px] tracking-tight text-muted-foreground transition-colors hover:text-primary sm:text-sm sm:tracking-normal';
 const headingClass = 'mb-3 text-[11px] uppercase tracking-[0.35em] text-primary sm:mb-5';
+// Hotel name heading: twice the size of other headings, in the serif face used by the logo wordmark.
+const hotelNameClass = 'mb-3 font-serif text-[22px] font-normal tracking-wide text-primary sm:mb-5';
 // Round pill button in white with navy text, so it stands out from the gold-edged map above it.
 const DIRECTIONS_CLASS = 'inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-full border border-[#c9a84c] bg-white px-6 text-[11px] font-medium uppercase tracking-[0.2em] text-[#0b1426] shadow-lg transition-colors hover:bg-[#ecd594]';
 // The Google embed draws its own "open in Maps" card in the top-left corner. The iframe is made taller
@@ -95,7 +97,7 @@ function FooterMap() {
   );
 }
 
-// Original brand logos in their brand colours. X is black, so it flips to white in dark mode.
+// Original brand logos in their brand colours.
 const iconBtn = 'flex h-10 w-10 items-center justify-center rounded-full border border-border bg-white transition-transform hover:scale-110';
 
 function InstagramLink({ href, label }: { href: string; label: string }) {
@@ -113,13 +115,30 @@ function HotelSocials() {
   );
 }
 
-// Address, phones, fax, social icons and department emails. Each email stays on one line; emails sit in two columns.
+// Delicacy Bakery sits right under the hotel's fax and socials: name, tap-to-call number, then WhatsApp and Instagram logos.
+function BakeryContact() {
+  const bakery = RESTAURANTS.find((r) => r.slug === 'delicacy');
+  const bakeryInstagram = bakery ? instagramOf(bakery) : '';
+  const callLabel = `+${WHATSAPP.number.slice(0, 2)} ${WHATSAPP.number.slice(2)}`;
+  return (
+    <div className="mt-6">
+      <h4 className="text-[11px] uppercase tracking-[0.35em] text-primary">Delicacy Bakery</h4>
+      <a href={`tel:+${WHATSAPP.number}`} className={`${linkClass} mt-2 block`}>{callLabel}</a>
+      <div className="mt-3 flex justify-center gap-2 sm:justify-start">
+        <a href={whatsappUrl('Hello, I would like to know more about Delicacy Bakery.')} target="_blank" rel="noopener noreferrer" aria-label="Delicacy Bakery on WhatsApp" className={iconBtn}><WhatsappLogo weight="fill" className="h-5 w-5 text-[#25D366]" /></a>
+        {bakeryInstagram && <InstagramLink href={bakeryInstagram} label="Delicacy Bakery on Instagram" />}
+      </div>
+    </div>
+  );
+}
+
+// Address, phones, fax, socials, bakery and department emails. Each email stays on one line; emails sit in two columns.
 function ContactBlock() {
   const groups = emailGroups();
   const phones = contactPhones();
   return (
     <div className="mb-8 border-b border-border pb-8 text-center sm:text-left md:mb-12 md:pb-10">
-      <h3 className={headingClass}>The Imperial Palace</h3>
+      <h3 className={hotelNameClass}>The Imperial Palace</h3>
       <address className="grid gap-6 text-sm not-italic leading-6 text-muted-foreground sm:grid-cols-[auto_1fr] sm:gap-12">
         <div>
           <p>{FOOTER_ADDRESS_LINES.map((line) => <span key={line} className="block">{line}</span>)}</p>
@@ -128,6 +147,7 @@ function ContactBlock() {
             <a href={FAX.href} className={`${linkClass} block`}>Fax: {FAX.label}</a>
           </p>
           <HotelSocials />
+          <BakeryContact />
         </div>
         <div className="grid w-full grid-cols-[auto_auto] justify-between gap-x-3 gap-y-3 text-left sm:flex sm:w-auto sm:flex-wrap sm:justify-start sm:gap-x-10">
           {groups.map((group) => (
@@ -140,24 +160,6 @@ function ContactBlock() {
           ))}
         </div>
       </address>
-    </div>
-  );
-}
-
-// Delicacy Bakery: its WhatsApp number (with the WhatsApp logo) and Instagram logo.
-function BakeryBlock() {
-  const bakery = RESTAURANTS.find((r) => r.slug === 'delicacy');
-  const bakeryInstagram = bakery ? instagramOf(bakery) : '';
-  const whatsappLabel = `+${WHATSAPP.number.slice(0, 2)} ${WHATSAPP.number.slice(2)}`;
-  return (
-    <div className="relative mx-auto max-w-7xl border-t border-border px-5 py-8 text-center sm:text-left lg:px-8">
-      <h3 className={headingClass}>Delicacy Bakery</h3>
-      <div className="flex flex-wrap items-center justify-center gap-4 sm:justify-start">
-        <a href={whatsappUrl('Hello, I would like to know more about Delicacy Bakery.')} target="_blank" rel="noopener noreferrer" className={`${linkClass} inline-flex items-center gap-2`}>
-          <span className={iconBtn}><WhatsappLogo weight="fill" className="h-5 w-5 text-[#25D366]" /></span>{whatsappLabel}
-        </a>
-        {bakeryInstagram && <InstagramLink href={bakeryInstagram} label="Delicacy Bakery on Instagram" />}
-      </div>
     </div>
   );
 }
@@ -200,7 +202,6 @@ export default function SiteFooter() {
         </div>
       </Reveal>
       <FooterMap />
-      <BakeryBlock />
       <div className="relative flex flex-col items-center gap-2 border-t border-border px-5 py-4 text-xs text-muted-foreground md:py-6">
         <nav aria-label="Legal" className="flex gap-5">
           <Link to="/privacy-policy" className={linkClass}>Privacy Policy</Link>
