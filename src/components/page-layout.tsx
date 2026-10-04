@@ -3,6 +3,7 @@ import Seo from "./seo.tsx";
 import SiteHeader from "./site-header.tsx";
 import SiteFooter from "./site-footer.tsx";
 import FloatingActions from "./floating-actions.tsx";
+import ThemeSwitcher from "./theme-switcher.tsx";
 
 type Props = { title: string; description: string; children: ReactNode };
 
@@ -15,6 +16,7 @@ export default function PageLayout({ title, description, children }: Props) {
       <main id="main">{children}</main>
       <SiteFooter />
       <FloatingActions />
+      <ThemeSwitcher />
     </div>
   );
 }
