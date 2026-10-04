@@ -14,7 +14,8 @@ const linkClass = 'text-sm text-muted-foreground transition-colors hover:text-pr
 // Emails must never wrap onto a second line. On phones they use a smaller size so two columns still fit.
 const emailClass = 'block whitespace-nowrap text-[10px] tracking-tight text-muted-foreground transition-colors hover:text-primary sm:text-sm sm:tracking-normal';
 const headingClass = 'mb-3 text-[11px] uppercase tracking-[0.35em] text-primary sm:mb-5';
-const DIRECTIONS_CLASS = 'inline-flex min-h-10 cursor-pointer items-center justify-center gap-2 bg-gradient-to-r from-[#b8933a] to-[#ecd594] px-4 text-[11px] font-medium uppercase tracking-[0.2em] text-[#0b1426] shadow-lg transition-opacity hover:opacity-90';
+// Round pill button in white with navy text, so it stands out from the gold-edged map above it.
+const DIRECTIONS_CLASS = 'inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-full border border-[#c9a84c] bg-white px-6 text-[11px] font-medium uppercase tracking-[0.2em] text-[#0b1426] shadow-lg transition-colors hover:bg-[#ecd594]';
 // The Google embed draws its own "open in Maps" card in the top-left corner. The iframe is made taller
 // and shifted up inside a clipping box so that card is cut off, while the pin stays centred.
 const GOOGLE_CROP = 90;
@@ -32,7 +33,8 @@ const SOCIAL_LINKS = {
   x: 'https://x.com/imperial_rajkot',
 } as const;
 
-const FRAME_CLASS = 'relative overflow-hidden border border-[#c9a84c]/40 shadow-[0_30px_60px_-35px_rgba(0,0,0,0.8)]';
+// Rounded corners; overflow-hidden clips the map to the same shape.
+const FRAME_CLASS = 'relative overflow-hidden rounded-3xl border border-[#c9a84c]/40 shadow-[0_30px_60px_-35px_rgba(0,0,0,0.8)]';
 const HEIGHT_CLASS = 'h-[220px] md:h-[340px]';
 
 function DirectionsButton() {
