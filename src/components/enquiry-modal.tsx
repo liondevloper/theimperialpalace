@@ -12,6 +12,7 @@ type Props = { kind: EnquiryKind; open: boolean; onClose: () => void; defaults?:
 
 // Split layout: hotel photo + contact details on the left, the form on the right.
 // The form starts right at the top so the heading is visible the moment the pop-up opens.
+// The general enquiry pop-up has a subject picker that switches to the matching form (dining, wedding, event, wellness).
 export default function EnquiryModal({ kind, open, onClose, defaults }: Props) {
   const c = CONTACT_INFORMATION;
   const details = [
@@ -40,7 +41,7 @@ export default function EnquiryModal({ kind, open, onClose, defaults }: Props) {
           </div>
         </aside>
         <div className="p-5 sm:p-8">
-          <EnquiryForm kind={kind} defaults={defaults} stickySubmit />
+          <EnquiryForm kind={kind} defaults={defaults} stickySubmit subjectSwitch={kind === "contact"} />
         </div>
       </div>
     </Modal>
