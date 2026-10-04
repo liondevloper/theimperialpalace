@@ -32,7 +32,7 @@ export default function WhatsappField({ phone, value, same, onSameChange, onChan
         <PhoneInput id={id} value={value} onChange={onChange} invalid={!!error} describedBy={error ? `${id}-error` : undefined} />
       )}
       <label className="flex min-h-9 cursor-pointer items-center gap-2 text-xs text-muted-foreground">
-        <input type="checkbox" checked={same} onChange={(e) => onSameChange(e.target.checked)} className="h-4 w-4 accent-[#c9a84c]" />
+        <input type="checkbox" checked={same} onChange={(e) => onSameChange(e.target.checked)} className="h-4 w-4 accent-[var(--brand-gold)]" />
         My phone number is also my WhatsApp number
       </label>
       {error && <p id={`${id}-error`} className="text-xs text-destructive">{error}</p>}
