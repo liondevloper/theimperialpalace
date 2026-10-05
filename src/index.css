@@ -38,7 +38,8 @@
   --color-ring: var(--ring);
 }
 
-/* Website: royal navy + champagne gold (single look). */
+/* Default theme: "Royal Navy & Gold". Switched live with the floating theme button
+   (sets data-theme on <html>; see src/lib/theme.ts and theme-switcher.tsx). */
 :root {
   color-scheme: dark;
   --radius: 0.25rem;
@@ -60,9 +61,91 @@
   --border: oklch(0.36 0.05 262);
   --input: oklch(0.4 0.05 262);
   --ring: oklch(0.79 0.1 85);
+
+  /* Brand tokens used for hero bands, overlays, badges and modals. These are the ones that
+     change between demo themes; everything else above adapts through the semantic palette. */
+  --brand-ink: #0b1426;
+  --brand-ink-alt: #0f1a30;
+  --brand-ink-2: #111c33;
+  --brand-ink-soft: #152245;
+  --brand-gold: #c9a84c;
+  --brand-gold-dark: #b8933a;
+  --brand-gold-light: #d9bc6a;
+  --brand-gold-mid: #ecd594;
+  --brand-cream: #e8d5a3;
+  --brand-cream-2: #f1e2b8;
 }
 
-/* Header, logo areas and the admin control room use the light ivory look. */
+/* Demo theme 2: "Noir & Gold" — matte black with classic gold detailing. */
+html[data-theme="noir"] {
+  color-scheme: dark;
+  --background: oklch(0.155 0.008 70);
+  --foreground: oklch(0.94 0.018 85);
+  --card: oklch(0.195 0.012 70);
+  --card-foreground: oklch(0.94 0.018 85);
+  --popover: oklch(0.2 0.012 70);
+  --popover-foreground: oklch(0.94 0.018 85);
+  --primary: oklch(0.79 0.1 85);
+  --primary-foreground: oklch(0.16 0.01 70);
+  --secondary: oklch(0.235 0.014 72);
+  --secondary-foreground: oklch(0.92 0.02 85);
+  --muted: oklch(0.235 0.014 72);
+  --muted-foreground: oklch(0.72 0.03 80);
+  --accent: oklch(0.26 0.022 78);
+  --accent-foreground: oklch(0.94 0.018 85);
+  --destructive: oklch(0.68 0.19 25);
+  --border: oklch(0.32 0.025 75);
+  --input: oklch(0.36 0.025 75);
+  --ring: oklch(0.79 0.1 85);
+
+  --brand-ink: #141414;
+  --brand-ink-alt: #181818;
+  --brand-ink-2: #1c1c1c;
+  --brand-ink-soft: #202020;
+  --brand-gold: #d4af37;
+  --brand-gold-dark: #a67c27;
+  --brand-gold-light: #e6c767;
+  --brand-gold-mid: #ecd27a;
+  --brand-cream: #f0dfa0;
+  --brand-cream-2: #f8ecc0;
+}
+
+/* Demo theme 3: "Emerald & Gold" — deep emerald with antique gold. */
+html[data-theme="emerald"] {
+  color-scheme: dark;
+  --background: oklch(0.19 0.035 160);
+  --foreground: oklch(0.95 0.015 85);
+  --card: oklch(0.225 0.04 160);
+  --card-foreground: oklch(0.95 0.015 85);
+  --popover: oklch(0.23 0.04 160);
+  --popover-foreground: oklch(0.95 0.015 85);
+  --primary: oklch(0.78 0.11 88);
+  --primary-foreground: oklch(0.19 0.035 160);
+  --secondary: oklch(0.26 0.045 160);
+  --secondary-foreground: oklch(0.93 0.02 90);
+  --muted: oklch(0.26 0.045 160);
+  --muted-foreground: oklch(0.72 0.03 100);
+  --accent: oklch(0.28 0.05 160);
+  --accent-foreground: oklch(0.95 0.015 85);
+  --destructive: oklch(0.68 0.19 25);
+  --border: oklch(0.33 0.045 160);
+  --input: oklch(0.37 0.045 160);
+  --ring: oklch(0.78 0.11 88);
+
+  --brand-ink: #07211a;
+  --brand-ink-alt: #0a2a21;
+  --brand-ink-2: #0e2e24;
+  --brand-ink-soft: #113a2d;
+  --brand-gold: #c9a66b;
+  --brand-gold-dark: #a3824f;
+  --brand-gold-light: #dcc08a;
+  --brand-gold-mid: #d9bf93;
+  --brand-cream: #e3d2ac;
+  --brand-cream-2: #efe3c6;
+}
+
+/* Header, logo areas, modals and the admin control room always use the light ivory look,
+   independent of the active demo theme above. */
 .theme-ivory {
   color-scheme: light;
   --background: oklch(0.985 0.008 85);
@@ -96,11 +179,12 @@
 
   body {
     @apply bg-background text-foreground antialiased;
+    transition: background-color 0.6s ease, color 0.6s ease;
   }
 
   ::selection {
-    background: oklch(0.79 0.1 85);
-    color: oklch(0.2 0.045 262);
+    background: var(--brand-gold);
+    color: var(--brand-ink);
   }
 
   button:not(:disabled),

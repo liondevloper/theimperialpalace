@@ -36,7 +36,7 @@ function StepDots({ step }: { step: Step }) {
     <ol className="flex items-center gap-2 text-[10px] uppercase tracking-[0.25em] text-muted-foreground" aria-label="Booking steps">
       {["Your stay", "Guest details"].map((label, i) => (
         <li key={label} className="flex items-center gap-2" aria-current={i === index ? "step" : undefined}>
-          <span className={`flex h-6 w-6 items-center justify-center rounded-full border text-[10px] ${i <= index ? "border-[#b8933a] bg-[#b8933a] text-[#0f1a30]" : "border-border"}`}>{i + 1}</span>
+          <span className={`flex h-6 w-6 items-center justify-center rounded-full border text-[10px] ${i <= index ? "border-[var(--brand-gold)] bg-[var(--brand-gold)] text-[var(--brand-ink-alt)]" : "border-border"}`}>{i + 1}</span>
           <span className={i === index ? "text-foreground" : ""}>{label}</span>
           {i === 0 && <span className="mx-1 h-px w-6 bg-border" />}
         </li>
@@ -124,7 +124,7 @@ function BookStayFlow({ defaultRoom }: { defaultRoom?: string }) {
   if (step === "done") {
     return (
       <div className="flex flex-col items-center py-8 text-center" role="status">
-        <span className="mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-[#c9a84c] text-[#0f1a30]"><Check className="h-7 w-7" /></span>
+        <span className="mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-[var(--brand-gold)] text-[var(--brand-ink-alt)]"><Check className="h-7 w-7" /></span>
         <h2 className="font-serif text-3xl font-light text-foreground">{THANK_YOU}</h2>
         <p className="mt-3 max-w-sm text-sm leading-6 text-muted-foreground">
           Your booking request for {formatDate(stay.checkin)} to {formatDate(stay.checkout)} has been received. Our reservations team will confirm availability shortly.

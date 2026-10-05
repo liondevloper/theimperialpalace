@@ -24,17 +24,17 @@ export default function EnquiryModal({ kind, open, onClose, defaults }: Props) {
   return (
     <Modal open={open} onClose={onClose} label={FORM_CONFIGS[kind].title} split>
       <div className="grid md:grid-cols-[2fr_3fr]">
-        <aside className="relative hidden overflow-hidden bg-[#111c33] md:block">
+        <aside className="relative hidden overflow-hidden bg-[var(--brand-ink-2)] md:block">
           <Img src={HOTEL_IMAGES.exterior} alt="" width={700} height={1000} className="absolute inset-0 h-full w-full object-cover opacity-60" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0b1426] via-[#0b1426]/60 to-[#0b1426]/20" />
+          <div className="absolute inset-0 bg-[linear-gradient(to_top,var(--brand-ink),color-mix(in_oklab,var(--brand-ink)_60%,transparent),color-mix(in_oklab,var(--brand-ink)_20%,transparent))]" />
           <div className="relative flex h-full flex-col justify-end p-8">
-            <p className="text-[10px] uppercase tracking-[0.35em] text-[#e8d5a3]">{c.name} · 5-Star Hotel</p>
+            <p className="text-[10px] uppercase tracking-[0.35em] text-[var(--brand-cream)]">{c.name} · 5-Star Hotel</p>
             <p className="mt-3 font-serif text-3xl font-light leading-tight text-white">We would be delighted to host you</p>
             <ul className="mt-8 space-y-4">
               {details.map(({ icon: Icon, text, href }) => (
                 <li key={text} className="flex items-start gap-3 text-sm text-white/85">
-                  <Icon className="mt-0.5 h-4 w-4 shrink-0 text-[#d9bc6a]" />
-                  {href ? <a href={href} target={href.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer" className="break-words hover:text-[#e8d5a3]">{text}</a> : <span>{text}</span>}
+                  <Icon className="mt-0.5 h-4 w-4 shrink-0 text-[var(--brand-gold-light)]" />
+                  {href ? <a href={href} target={href.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer" className="break-words hover:text-[var(--brand-cream)]">{text}</a> : <span>{text}</span>}
                 </li>
               ))}
             </ul>

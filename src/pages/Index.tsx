@@ -108,7 +108,7 @@ function Hero() {
   const heroVideo = prefersSaveData() ? "" : str(HOME.heroVideo);
   const hasMedia = Boolean(heroImage || heroVideo);
   return (
-    <section ref={ref} className="relative flex min-h-[600px] flex-col overflow-hidden bg-[#0b1426] md:min-h-screen">
+    <section ref={ref} className="relative flex min-h-[600px] flex-col overflow-hidden bg-[var(--brand-ink)] md:min-h-screen">
       {hasMedia ? (
         <>
           <motion.div style={{ y }} initial={{ scale: 1.2 }} animate={{ scale: 1.04 }} transition={{ duration: 3, delay, ease: EASE }} className="absolute inset-0">
@@ -116,28 +116,28 @@ function Hero() {
             {heroImage && <Img src={heroImage} alt="The Imperial Palace, Rajkot" priority width={1920} height={1080} sizes="100vw" className="absolute inset-0 h-full w-full object-cover" />}
             {heroVideo && <HeroVideo src={heroVideo} />}
           </motion.div>
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0b1426] via-[#0b1426]/35 to-[#0b1426]/30" />
+          <div className="absolute inset-0 bg-[linear-gradient(to_top,var(--brand-ink),color-mix(in_oklab,var(--brand-ink)_35%,transparent),color-mix(in_oklab,var(--brand-ink)_30%,transparent))]" />
         </>
       ) : (
-        // No photo or video yet: royal navy backdrop with soft gold glow.
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_20%,rgba(201,168,76,0.22),transparent_55%),radial-gradient(ellipse_at_10%_90%,rgba(201,168,76,0.12),transparent_50%),linear-gradient(180deg,#152245_0%,#0b1426_100%)]" />
+        // No photo or video yet: themed backdrop with soft gold glow.
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_20%,color-mix(in_oklab,var(--brand-gold)_22%,transparent),transparent_55%),radial-gradient(ellipse_at_10%_90%,color-mix(in_oklab,var(--brand-gold)_12%,transparent),transparent_50%),linear-gradient(180deg,var(--brand-ink-soft)_0%,var(--brand-ink)_100%)]" />
       )}
       {/* Layout: eyebrow sits just below the fixed header; title + subtitle sit at the bottom. */}
       <motion.div style={{ opacity: fade }} className="relative z-10 mx-auto flex w-full max-w-7xl flex-1 flex-col justify-between px-5 pb-16 pt-[96px] md:pt-[108px] lg:px-8 lg:pb-24">
         <motion.div {...heroItem(delay + 0.2)} className="flex items-start gap-4">
-          <motion.span initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 1, delay: delay + 0.3, ease: EASE }} className="mt-2 h-px w-12 shrink-0 origin-left bg-[#d9bc6a]" />
-          <span className="max-w-md text-[11px] uppercase leading-6 tracking-[0.4em] text-[#e8d5a3] [text-shadow:0_1px_8px_rgba(0,0,0,0.5)]">{HOME.heroEyebrow}</span>
+          <motion.span initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 1, delay: delay + 0.3, ease: EASE }} className="mt-2 h-px w-12 shrink-0 origin-left bg-[var(--brand-gold-light)]" />
+          <span className="max-w-md text-[11px] uppercase leading-6 tracking-[0.4em] text-[var(--brand-cream)] [text-shadow:0_1px_8px_rgba(0,0,0,0.5)]">{HOME.heroEyebrow}</span>
         </motion.div>
         <div className="pt-16">
           <motion.h1 {...heroItem(delay + 0.35)} className="max-w-4xl font-serif text-4xl font-light leading-[1.04] text-white text-balance sm:text-6xl md:text-7xl">
-            {HOME.heroTitle} <em className="bg-gradient-to-r from-[#f1e2b8] via-[#d9bc6a] to-[#f1e2b8] bg-clip-text italic text-transparent">{HOME.heroHighlight}</em>
+            {HOME.heroTitle} <em className="bg-[linear-gradient(90deg,var(--brand-cream-2),var(--brand-gold-light),var(--brand-cream-2))] bg-clip-text italic text-transparent">{HOME.heroHighlight}</em>
           </motion.h1>
           {HOME.heroSubtitle && <motion.p {...heroItem(delay + 0.55)} className="mt-6 max-w-xl text-sm leading-7 text-white/85 md:text-base">{HOME.heroSubtitle}</motion.p>}
         </div>
       </motion.div>
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: delay + 1.6, duration: 1 }} className="absolute bottom-6 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-3 md:flex">
-        <span className="text-[10px] uppercase tracking-[0.4em] text-[#e8d5a3]/80">Scroll</span>
-        <motion.span animate={{ scaleY: [0, 1, 0], originY: [0, 0, 1] }} transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }} className="block h-12 w-px bg-gradient-to-b from-[#e8d5a3] to-transparent" />
+        <span className="text-[10px] uppercase tracking-[0.4em] text-[var(--brand-cream)]/80">Scroll</span>
+        <motion.span animate={{ scaleY: [0, 1, 0], originY: [0, 0, 1] }} transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }} className="block h-12 w-px bg-[linear-gradient(to_bottom,var(--brand-cream),transparent)]" />
       </motion.div>
     </section>
   );
@@ -150,8 +150,8 @@ function Marquee() {
     <div className="overflow-hidden border-y border-border bg-card py-4">
       <motion.div animate={{ x: ["0%", "-50%"] }} transition={{ duration: 30, repeat: Infinity, ease: "linear" }} className="flex w-max gap-12">
         {items.map((t, i) => (
-          <span key={`${t}-${i}`} className="flex items-center gap-12 whitespace-nowrap font-serif text-2xl italic text-[#e8d5a3] md:text-3xl">
-            {t}<span className="text-sm not-italic text-[#b8933a]">✦</span>
+          <span key={`${t}-${i}`} className="flex items-center gap-12 whitespace-nowrap font-serif text-2xl italic text-[var(--brand-cream)] md:text-3xl">
+            {t}<span className="text-sm not-italic text-[var(--brand-gold-dark)]">✦</span>
           </span>
         ))}
       </motion.div>
@@ -172,9 +172,9 @@ function WeddingBand() {
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   return (
-    <section ref={ref} className="relative overflow-hidden bg-[#0b1426]">
+    <section ref={ref} className="relative overflow-hidden bg-[var(--brand-ink)]">
       <ParallaxImage src={str(HOME.weddingImage, HOTEL_IMAGES.wedding)} alt="A wedding celebration at The Imperial Palace" progress={scrollYProgress} />
-      <div className="absolute inset-0 bg-gradient-to-r from-[#0b1426]/90 via-[#0b1426]/60 to-[#0b1426]/10" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,color-mix(in_oklab,var(--brand-ink)_90%,transparent),color-mix(in_oklab,var(--brand-ink)_60%,transparent),color-mix(in_oklab,var(--brand-ink)_10%,transparent))]" />
       <div className="relative mx-auto max-w-7xl px-5 py-20 md:py-28 lg:px-8">
         <Reveal>
           <SectionHeading eyebrow="Weddings & events" title={str(HOME.weddingTitle)} description={str(HOME.weddingText)} tone="dark" />
@@ -193,8 +193,8 @@ function EnquiryBand() {
   const perks = lines(HOME.enquiryPerks).map(splitPipe);
   return (
     <section className="relative overflow-hidden bg-card px-5 py-16 md:py-24 lg:px-8">
-      <div className="pointer-events-none absolute -left-32 top-0 h-96 w-96 rounded-full bg-[#b8933a]/15 blur-3xl" />
-      <div className="pointer-events-none absolute -right-32 bottom-0 h-96 w-96 rounded-full bg-[#d9bc6a]/10 blur-3xl" />
+      <div className="pointer-events-none absolute -left-32 top-0 h-96 w-96 rounded-full bg-[var(--brand-gold-dark)]/15 blur-3xl" />
+      <div className="pointer-events-none absolute -right-32 bottom-0 h-96 w-96 rounded-full bg-[var(--brand-gold-light)]/10 blur-3xl" />
       <div className="relative mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-2">
         <Reveal>
           <SectionHeading eyebrow="Enquire" title={str(HOME.enquiryTitle)} description={str(HOME.enquiryText)} />
@@ -222,7 +222,7 @@ function EnquiryBand() {
         <Reveal delay={0.2} className="relative">
           <div className="relative aspect-[4/5] overflow-hidden ring-1 ring-primary/40">
             <Img src={str(HOME.enquiryImage, HOTEL_IMAGES.exterior)} alt="The Imperial Palace at dusk" width={900} height={1125} sizes="(min-width: 1024px) 50vw, 100vw" className="h-full w-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0b1426]/70 to-transparent" />
+            <div className="absolute inset-0 bg-[linear-gradient(to_top,color-mix(in_oklab,var(--brand-ink)_70%,transparent),transparent)]" />
           </div>
           <motion.div animate={{ y: [0, -10, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }} className="absolute -bottom-6 left-4 right-4 border border-primary/40 bg-background/95 p-5 shadow-[0_30px_60px_-20px_rgba(6,12,26,0.8)] backdrop-blur sm:left-auto sm:right-[-1.5rem] sm:w-72">
             <p className="text-[10px] uppercase tracking-[0.3em] text-primary">Reservations desk</p>
@@ -252,7 +252,7 @@ export default function Index() {
             <dl className="mt-8 grid grid-cols-2 gap-6 border-t border-border pt-6 sm:grid-cols-4">
               {facts.map(([value, label], i) => (
                 <Reveal key={`${label}-${i}`} delay={0.2 + i * 0.1}>
-                  <dd className="bg-gradient-to-br from-[#c9a84c] to-[#f1e2b8] bg-clip-text font-serif text-4xl font-light text-transparent md:text-5xl"><CountUp value={value} /></dd>
+                  <dd className="bg-[linear-gradient(to_bottom_right,var(--brand-gold),var(--brand-cream-2))] bg-clip-text font-serif text-4xl font-light text-transparent md:text-5xl"><CountUp value={value} /></dd>
                   <dt className="mt-1 text-[11px] uppercase tracking-[0.2em] text-muted-foreground">{label}</dt>
                 </Reveal>
               ))}
@@ -273,8 +273,8 @@ export default function Index() {
                 <Link to={`/stay/${room.slug}`} className="group block">
                   <div className={`relative aspect-[4/5] ${imageCard}`}>
                     <Img src={room.images[0]} alt={`${room.name} at The Imperial Palace`} width={800} height={1000} sizes="(min-width: 768px) 33vw, 100vw" className={zoom} />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0b1426]/70 via-transparent to-transparent opacity-0 transition-opacity duration-700 group-hover:opacity-100" />
-                    {room.badge && <span className="absolute left-4 top-4 bg-[#0b1426]/70 px-3 py-1.5 text-[10px] uppercase tracking-[0.25em] text-[#e8d5a3] backdrop-blur">{room.badge}</span>}
+                    <div className="absolute inset-0 bg-[linear-gradient(to_top,color-mix(in_oklab,var(--brand-ink)_70%,transparent),transparent,transparent)] opacity-0 transition-opacity duration-700 group-hover:opacity-100" />
+                    {room.badge && <span className="absolute left-4 top-4 bg-[var(--brand-ink)]/70 px-3 py-1.5 text-[10px] uppercase tracking-[0.25em] text-[var(--brand-cream)] backdrop-blur">{room.badge}</span>}
                     <span className="absolute bottom-5 left-5 flex translate-y-4 items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-white opacity-0 transition-all duration-700 group-hover:translate-y-0 group-hover:opacity-100">Discover <ArrowRight className="h-4 w-4" /></span>
                   </div>
                   <h3 className="mt-4 font-serif text-2xl text-foreground transition-colors group-hover:text-primary">{room.name}</h3>
@@ -332,9 +332,9 @@ export default function Index() {
               <Reveal key={e.title} delay={i * 0.08} className={i < 2 ? "md:col-span-3" : "md:col-span-2"}>
                 <Link to={e.to} className={`group relative block ${i < 2 ? "aspect-[16/10]" : "aspect-[4/5]"} ${imageCard}`}>
                   <Img src={e.image} alt={e.title} width={1000} height={700} sizes={i < 2 ? "(min-width: 768px) 50vw, 100vw" : "(min-width: 768px) 33vw, 100vw"} className={zoom} />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0b1426]/85 via-[#0b1426]/20 to-transparent" />
+                  <div className="absolute inset-0 bg-[linear-gradient(to_top,color-mix(in_oklab,var(--brand-ink)_85%,transparent),color-mix(in_oklab,var(--brand-ink)_20%,transparent),transparent)]" />
                   <div className="absolute inset-x-0 bottom-0 p-6">
-                    <p className="text-[10px] uppercase tracking-[0.3em] text-[#e8d5a3]">{e.label}</p>
+                    <p className="text-[10px] uppercase tracking-[0.3em] text-[var(--brand-cream)]">{e.label}</p>
                     <h3 className="mt-2 font-serif text-2xl text-white md:text-3xl">{e.title}</h3>
                     <p className="mt-2 max-h-0 overflow-hidden text-sm leading-6 text-white/80 transition-all duration-700 group-hover:max-h-24">{e.text}</p>
                   </div>
